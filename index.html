@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS</title>
+    <link rel="stylesheet" href="lms.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+
+    <div id="top-navbar" class="hidden">
+
+        <button class="nav-btn" onclick="goBack()">
+                ← Back
+        </button>
+
+        <button class="nav-btn" onclick="goHome()">
+
+        🏠 Home
+
+        </button>
+
+    </div>
+
+    <!--COVER PAGE-->
+
+    <div id="cover-page" class="app-page">
+
+    <h1>LMS</h1>
+
+    <div class="container">
+
+        <button class="card" onclick="openSection('Vocabulary')">
+            Vocabulary
+        </button>
+
+        <button class="card" onclick="openSection('English')">
+            English
+        </button>
+
+    </div>
+
+</div>
+
+<!--SECTION HOMEPAGE-->
+
+<div id="section-page" class="app-page hidden">
+
+    <h1 id="section-title"></h1>
+
+    <div class="menu-grid">
+
+        <button class="menu-card" onclick="openLearn()">
+            
+            Learn
+        
+        </button>
+
+        <button class="menu-card" onclick="openAssessment()">
+
+        Assessment
+
+        </button>
+
+        <button class="menu-card">Revision</button>
+
+        <button class="menu-card" onclick="openMastered()">
+            Mastered
+        </button>
+
+        <button class="menu-card">Saved</button>
+
+        <button class="menu-card">Statistics</button>
+
+    </div>
+
+    </div>
+
+    <!-- Theme Page-->
+
+    <div id="learn-page" class="app-page hidden">
+
+        <h2>Select a Theme</h2>
+
+        <div id="themes-container" class="themes-grid"></div>
+
+    </div>
+
+    <!-- List Page-->
+
+    <div id="lists-page" class="app-page hidden">
+        
+        <h2 id="lists-title"></h2>
+
+        <div id="lists-container" class="themes-grid"></div>
+    </div>
+
+    <!--Item page-->
+
+    <div id="items-page" class="app-page hidden">
+
+        <h2 id="items-title"></h2>
+
+        <div id="items-container"></div>
+
+        <button id="complete-learning-btn" onclick="completeLearning()">
+
+            Complete Learning
+
+        </button>
+
+        <!--card navigation-->
+
+    <div class="card-navigation">
+
+    <button class="nav-btn"
+        onclick="previousItem()">
+
+        ← Previous
+
+    </button>
+
+    <button class="nav-btn"
+        onclick="nextItem()">
+
+        Next →
+
+    </button>
+
+</div>
+
+    </div>
+
+    
+
+
+    <!-- Assessment Page -->
+
+    <div id="assessment-page" class="app-page hidden">
+
+    <h2>Assessment</h2>
+
+    <div id="question-container"></div>
+
+</div>
+
+<!-- Mastered Page -->
+
+<div id="mastered-page" class="app-page hidden">
+
+    <h2>Mastered Questions</h2>
+
+    <div id="mastered-container"></div>
+
+</div>
+
+<!-- Revision Page -->
+
+<div id="revision-page" class="app-page hidden">
+
+    <h2>Revision Questions</h2>
+
+    <div id="revision-container"></div>
+
+    <button id="start-revision-btn" onclick="startRevisionAssessment()">
+
+        Start Revision Assessment
+
+    </button>
+
+</div>
+
+
+
+
+
+
+<script src="lms-content.js"></script>
+<script src="lms-learning.js"></script>
+<script src="lms-questions.js"></script>
+<script src="lms.js"></script>
+    
+</body>
+</html>
