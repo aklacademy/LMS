@@ -1,47 +1,110 @@
 let currentSection = "";
 
+let currentTheme = "";
+
 let currentList = "";
 
 let pageHistory = [];
 
+let currentSet = "";
+
+let revisionMode = false;
+
+let revisionItems = [];
+
+let revisionItemIndex = 0;
+
+let currentLearningArea = "";
+
+let currentCourse = "";
+
+let currentMode = "learn";
+
+let masteredMode = false;
+
+let masteredAssessmentMode = false;
+
+let currentRevisionQuestion = null;
+
+
 function showPage(pageId) {
 
-    const pages =
-        document.querySelectorAll(".app-page");
-
-    pages.forEach(function(page) {
-
-        page.classList.add("hidden");
-
-    });
-
-    document.getElementById(pageId)
-        .classList.remove("hidden");
-
-    // Save history
+    // FULL PAGE SWITCHING
 
     if (
-        pageHistory[pageHistory.length - 1]
-        !== pageId
+        pageId === "cover-page"
+        ||
+        pageId === "course-page"
     ) {
 
-        pageHistory.push(pageId);
+        document.getElementById(
+            "cover-page"
+        ).classList.add(
+            "hidden"
+        );
+
+        document.getElementById(
+            "course-page"
+        ).classList.add(
+            "hidden"
+        );
+
+        document.getElementById(pageId)
+            .classList.remove(
+                "hidden"
+            );
 
     }
 
-    // Navbar visibility
+    // INNER COURSE WORKSPACE SWITCHING
 
-    if (pageId === "cover-page") {
+    else {
 
-        document.getElementById("top-navbar")
-            .classList.add("hidden");
+        const pages =
+            document.querySelectorAll(
+                "#course-page .app-page"
+            );
+
+        pages.forEach(function(page) {
+
+            page.classList.add(
+                "hidden"
+            );
+
+        });
+
+        document.getElementById(pageId)
+            .classList.remove(
+                "hidden"
+            );
+
+    }
+
+    // SAVE HISTORY
+
+    
+
+    // NAVBAR VISIBILITY
+
+    if (
+        pageId === "cover-page"
+    ) {
+
+        document.getElementById(
+            "top-navbar"
+        ).classList.add(
+            "hidden"
+        );
 
     }
 
     else {
 
-        document.getElementById("top-navbar")
-            .classList.remove("hidden");
+        document.getElementById(
+            "top-navbar"
+        ).classList.remove(
+            "hidden"
+        );
 
     }
 
@@ -49,24 +112,46 @@ function showPage(pageId) {
 
 function goBack() {
 
-    pageHistory.pop();
-
-    const previousPage =
-        pageHistory[pageHistory.length - 1];
-
-    if (previousPage) {
-
-        showPage(previousPage);
-
-    }
+    goHome();
 
 }
 
 function goHome() {
 
-    pageHistory = [];
+    // RESET HISTORY
 
-    showPage("cover-page");
+    pageHistory = [
+        "course-page"
+    ];
+
+    // SHOW COURSE PAGE
+
+    document.getElementById(
+        "cover-page"
+    ).classList.add(
+        "hidden"
+    );
+
+    document.getElementById(
+        "course-page"
+    ).classList.remove(
+        "hidden"
+    );
+
+    // HIDE ALL INNER PAGES
+
+    const pages =
+        document.querySelectorAll(
+            "#course-page .app-page"
+        );
+
+    pages.forEach(function(page) {
+
+        page.classList.add(
+            "hidden"
+        );
+
+    });
 
 }
 
@@ -74,16 +159,699 @@ let currentQuestions = [];
 
 let currentQuestionIndex = 0;
 
-let masteredQuestions = [];
-
-let revisionQuestions = [];
-
-let completedLearningLists = [];
-
 let currentItems = [];
 
 let currentItemIndex = 0;
 
+let masteredAssessmentQuestions = {};
+
+let learnerProgress = {
+
+    lists: {}
+
+};
+
+// LIST INITIALIZER
+
+function initializeListProgress(listName) {
+
+    if (!learnerProgress.lists[listName]) {
+
+        learnerProgress.lists[listName] = {
+
+            learned: false,
+
+            completedLevels: [],
+
+            completedSets: [],
+
+            completedMasteredSets: [],
+
+            masteredRevisionQuestions: [],
+
+            revisionQuestions: [],
+
+            masteredQuestions: [],
+
+            attemptHistory: [],
+
+            mastered: false
+
+        };
+
+    }
+
+}
+
+
+function openCourse(courseName) {
+
+    currentCourse = courseName;
+
+    document.querySelector(
+        ".course-title"
+    ).innerText = courseName;
+
+    showPage("course-page");
+
+}
+
+
+function openAssessmentDashboard() {
+
+    currentMode = "assessment";
+
+    masteredMode = false;
+
+    showPage(
+        "assessment-dashboard-page"
+    );
+
+    document.querySelector(
+    "#assessment-dashboard-page h2"
+).innerText = "Assessment";
+
+    const container =
+        document.getElementById(
+            "assessment-dashboard-container"
+        );
+
+    container.innerHTML = "";
+
+    const selectedCourse =
+        courses.find(function(course) {
+
+            return (
+                course.title
+                === currentCourse
+            );
+
+        });
+
+    const learningAreas =
+        selectedCourse.learningAreas;
+
+    learningAreas.forEach(function(area) {
+
+    // CHECK IF AREA HAS
+    // ELIGIBLE LEARNED LISTS
+
+    const areaThemes =
+        themes.filter(function(theme) {
+
+            return (
+                theme.learningArea
+                === area
+            );
+
+        });
+
+    let hasEligibleLists = false;
+
+    areaThemes.forEach(function(theme) {
+
+        const themeLists =
+            lists.filter(function(list) {
+
+                return (
+                    list.themeTitle
+                    === theme.title
+                );
+
+            });
+
+        themeLists.forEach(function(list) {
+
+            const progress =
+                learnerProgress.lists[
+                    list.title
+                ];
+
+            if (
+                progress
+                &&
+                progress.learned
+                &&
+                !progress.mastered
+            ) {
+
+                hasEligibleLists = true;
+
+            }
+
+        });
+
+    });
+
+
+
+    // SHOW ONLY ELIGIBLE AREA
+
+    if (hasEligibleLists) {
+
+        container.innerHTML += `
+        
+            <button class="theme-card"
+                onclick="
+                    openThemes(
+                        '${area}'
+                    )
+                ">
+
+                ${area}
+
+            </button>
+
+        `;
+
+    }
+
+});
+
+}
+
+console.log(
+    "Completed Mastered Sets:",
+    currentListProgress
+        .completedMasteredSets
+);
+
+// Mastered Assessment Board
+
+function openMasteredAssessmentDashboard() {
+
+    currentMode =
+        "mastered-assessment";
+
+    masteredMode = false;
+
+    showPage(
+        "assessment-dashboard-page"
+    );
+
+    document.querySelector(
+        "#assessment-dashboard-page h2"
+    ).innerText =
+        "Mastered Assessment";
+
+    const container =
+        document.getElementById(
+            "assessment-dashboard-container"
+        );
+
+    container.innerHTML = "";
+
+    const selectedCourse =
+        courses.find(function(course) {
+
+            return (
+                course.title
+                === currentCourse
+            );
+
+        });
+
+    const learningAreas =
+        selectedCourse.learningAreas;
+
+    learningAreas.forEach(function(area) {
+
+    const areaThemes =
+        themes.filter(function(theme) {
+
+            return (
+                theme.learningArea
+                === area
+            );
+
+        });
+
+    let hasMasteredLists = false;
+
+    areaThemes.forEach(function(theme) {
+
+        const themeLists =
+            lists.filter(function(list) {
+
+                return (
+                    list.themeTitle
+                    === theme.title
+                );
+
+            });
+
+        themeLists.forEach(function(list) {
+
+            const progress =
+                learnerProgress.lists[
+                    list.title
+                ];
+
+            if (
+                progress
+                &&
+                progress.mastered
+            ) {
+
+                hasMasteredLists = true;
+
+            }
+
+        });
+
+    });
+
+    if (!hasMasteredLists) {
+
+        return;
+
+    }
+
+    container.innerHTML += `
+    
+        <button class="theme-card"
+            onclick="
+                openThemes(
+                    '${area}'
+                )
+            ">
+
+            ${area}
+
+        </button>
+
+    `;
+
+});
+
+}
+
+function openRevisionDashboard() {
+
+    currentMode = "revision";
+
+    masteredMode = false;
+
+    showPage(
+        "assessment-dashboard-page"
+    );
+
+    document.querySelector(
+        "#assessment-dashboard-page h2"
+    ).innerText = "Revision";
+
+    const container =
+        document.getElementById(
+            "assessment-dashboard-container"
+        );
+
+    container.innerHTML = "";
+
+    const selectedCourse =
+        courses.find(function(course) {
+
+            return (
+                course.title
+                === currentCourse
+            );
+
+        });
+
+    const learningAreas =
+        selectedCourse.learningAreas;
+
+    learningAreas.forEach(function(area) {
+
+        const areaThemes =
+            themes.filter(function(theme) {
+
+                return (
+                    theme.learningArea
+                    === area
+                );
+
+            });
+
+        let hasRevisionLists = false;
+
+        areaThemes.forEach(function(theme) {
+
+            const themeLists =
+                lists.filter(function(list) {
+
+                    return (
+                        list.themeTitle
+                        === theme.title
+                    );
+
+                });
+
+            themeLists.forEach(function(list) {
+
+                const progress =
+                    learnerProgress.lists[
+                        list.title
+                    ];
+
+                if (
+                    progress
+                    &&
+                     progress.completedSets
+                    .length > 0
+                        &&
+                        progress.revisionQuestions
+                    .length > 0
+){
+
+                    hasRevisionLists = true;
+
+                }
+
+            });
+
+        });
+
+        if (hasRevisionLists) {
+
+            container.innerHTML += `
+            
+                <button class="theme-card"
+                    onclick="
+                        openThemes(
+                            '${area}'
+                        )
+                    ">
+
+                    ${area}
+
+                </button>
+
+            `;
+
+        }
+
+    });
+
+}
+
+function openAssessmentReviewDashboard() {
+
+    currentMode =
+        "assessment-review";
+
+    showPage(
+        "assessment-dashboard-page"
+    );
+
+    document.querySelector(
+        "#assessment-dashboard-page h2"
+    ).innerText =
+        "Review Assessment";
+
+    const container =
+        document.getElementById(
+            "assessment-dashboard-container"
+        );
+
+    container.innerHTML = "";
+
+    const selectedCourse =
+        courses.find(function(course) {
+
+            return (
+                course.title
+                === currentCourse
+            );
+
+        });
+
+    const learningAreas =
+        selectedCourse.learningAreas;
+
+    learningAreas.forEach(function(area) {
+
+        const areaThemes =
+            themes.filter(function(theme) {
+
+                return (
+                    theme.learningArea
+                    === area
+                );
+
+            });
+
+        let hasReviewLists = false;
+
+        areaThemes.forEach(function(theme) {
+
+            const themeLists =
+                lists.filter(function(list) {
+
+                    return (
+                        list.themeTitle
+                        === theme.title
+                    );
+
+                });
+
+            themeLists.forEach(function(list) {
+
+                const progress =
+                    learnerProgress.lists[
+                        list.title
+                    ];
+
+                if (
+                    progress
+                    &&
+                    progress.completedSets
+                        .length > 0
+                ) {
+
+                    hasReviewLists = true;
+
+                }
+
+            });
+
+        });
+
+        if (hasReviewLists) {
+
+            container.innerHTML += `
+            
+                <button class="theme-card"
+                    onclick="
+                        openThemes(
+                            '${area}'
+                        )
+                    ">
+
+                    ${area}
+
+                </button>
+
+            `;
+
+        }
+
+    });
+
+}
+
+function openMasteredReviewDashboard() {
+
+    masteredMode = true;
+
+    currentMode = "mastered-review";
+
+    showPage("learn-page");
+
+    const themesContainer =
+        document.getElementById(
+            "themes-container"
+        );
+
+    themesContainer.innerHTML = "";
+
+    const selectedCourse =
+        courses.find(function(course) {
+
+            return (
+                course.title
+                === currentCourse
+            );
+
+        });
+
+    const learningAreas =
+        selectedCourse.learningAreas;
+
+    learningAreas.forEach(function(area) {
+
+    const areaThemes =
+        themes.filter(function(theme) {
+
+            return (
+                theme.learningArea
+                === area
+            );
+
+        });
+
+    let hasMasteredLists = false;
+
+    areaThemes.forEach(function(theme) {
+
+        const themeLists =
+            lists.filter(function(list) {
+
+                return (
+                    list.themeTitle
+                    === theme.title
+                );
+
+            });
+
+        themeLists.forEach(function(list) {
+
+            const progress =
+                learnerProgress.lists[
+                    list.title
+                ];
+
+            if (
+                progress
+                &&
+                progress.mastered
+            ) {
+
+                hasMasteredLists = true;
+
+            }
+
+        });
+
+    });
+
+    if (!hasMasteredLists) {
+
+        return;
+
+    }
+
+    themesContainer.innerHTML += `
+    
+        <button class="theme-card"
+            onclick="
+                openThemes(
+                    '${area}'
+                )
+            ">
+
+            ${area}
+
+        </button>
+
+    `;
+
+});
+}
+
+//Open Learn
+
+function openLearn() {
+
+    currentMode = "learn";
+
+    masteredMode = false;
+
+    showPage("learn-page");
+
+    const themesContainer =
+        document.getElementById(
+            "themes-container"
+        );
+
+    themesContainer.innerHTML = "";
+
+    const selectedCourse =
+        courses.find(function(course) {
+
+            return (
+                course.title
+                === currentCourse
+            );
+
+        });
+
+    const learningAreas =
+        selectedCourse.learningAreas;
+
+    learningAreas.forEach(function(area) {
+
+        let hasEligibleContent = false;
+
+        const areaThemes =
+            themes.filter(function(theme) {
+
+                return (
+                    theme.learningArea
+                    === area
+                );
+
+            });
+
+        areaThemes.forEach(function(theme) {
+
+            const themeLists =
+                lists.filter(function(list) {
+
+                    return (
+                        list.themeTitle
+                        === theme.title
+                    );
+
+                });
+
+            themeLists.forEach(function(list) {
+
+                if (
+                    learningItems[list.title]
+                ) {
+
+                    hasEligibleContent = true;
+
+                }
+
+            });
+
+        });
+
+        if (!hasEligibleContent) {
+
+            return;
+
+        }
+
+        themesContainer.innerHTML += `
+        
+            <button class="theme-card"
+                onclick="
+                    openThemes(
+                        '${area}'
+                    )
+                ">
+
+                ${area}
+
+            </button>
+
+        `;
+
+    });
+
+}
 
 // open sections
 
@@ -98,78 +866,73 @@ function openSection(sectionName) {
 
 }
 
-// open learn
+// open Themes
 
-function openLearn() {
+function openThemes(areaName) {
+
+    currentSection = areaName;
 
     showPage("learn-page");
 
     const themesContainer =
-        document.getElementById("themes-container");
+        document.getElementById(
+            "themes-container"
+        );
 
     themesContainer.innerHTML = "";
 
-    let themes = [];
+    const filteredThemes =
+        themes.filter(function(theme) {
 
-    if (currentSection === "Vocabulary") {
+            return (
+                theme.learningArea
+                === areaName
+            );
 
-        themes = vocabularyThemes;
-    }
+        });
 
-    else if (currentSection === "English") {
+    filteredThemes.forEach(function(theme) {
 
-        themes = englishThemes;
-    }
+        let hasEligibleContent = false;
 
-Object.keys(themes).forEach(function(theme) {
+        const themeLists =
+            lists.filter(function(list) {
 
-    themesContainer.innerHTML += `
-    
-        <button class="theme-card"
-            onclick="openLists('${theme}')">
+                return (
+                    list.themeTitle
+                    === theme.title
+                );
 
-            ${theme}
+            });
 
-        </button>
+        themeLists.forEach(function(list) {
 
-    `;
+            if (
+                learningItems[list.title]
+            ) {
 
-});
+                hasEligibleContent = true;
 
-}
+            }
 
-function openLists(themeName) {
+        });
 
-    showPage("lists-page");
+        if (!hasEligibleContent) {
 
-    document.getElementById("lists-title")
-        .innerText = themeName;
+            return;
 
-    const listsContainer =
-        document.getElementById("lists-container");
+        }
 
-    listsContainer.innerHTML = "";
-
-    let lists = [];
-
-    if (currentSection === "Vocabulary") {
-
-        lists = vocabularyThemes[themeName];
-    }
-
-    else if (currentSection === "English") {
-
-        lists = englishThemes[themeName];
-    }
-
-    lists.forEach(function(list) {
-
-        listsContainer.innerHTML += `
+        themesContainer.innerHTML += `
         
             <button class="theme-card"
-                onclick="openItems('${list}')">
+                onclick="
+                    openLists(
+                        '${theme.title}'
+                    )
+                ">
 
-                ${list}
+                ${theme.title}
 
             </button>
 
@@ -179,6 +942,118 @@ function openLists(themeName) {
 
 }
 
+function openLists(themeName) {
+
+    currentTheme = themeName;
+
+    showPage("lists-page");
+
+    document.getElementById(
+        "lists-title"
+    ).innerText = themeName;
+
+    const listsContainer =
+        document.getElementById(
+            "lists-container"
+        );
+
+    listsContainer.innerHTML = "";
+
+    const filteredLists =
+        lists.filter(function(list) {
+
+            return (
+                list.themeTitle
+                === themeName
+            );
+
+        });
+
+    filteredLists.forEach(function(list) {
+
+    // SHOW ONLY IF CONTENT EXISTS
+
+    if (
+        learningItems[list.title]
+    ) { 
+
+         // MASTERED REVIEW FILTER
+
+    if (
+        currentMode
+        === "mastered-review"
+    ) 
+
+    {
+
+        const progress =
+            learnerProgress.lists[
+                list.title
+            ];
+
+        if (
+    !progress
+    ||
+    !progress.mastered
+) {
+
+    return;
+
+}
+
+    }
+
+
+
+        listsContainer.innerHTML += `
+        
+            <button class="theme-card"
+                onclick="
+
+                ${
+    currentMode === "learn"
+
+    ? `openItems('${list.title}')`
+
+    : currentMode === "assessment"
+
+    ? `openAssessment('${list.title}')`
+
+    : currentMode === "revision"
+
+    ? `openRevision('${list.title}')`
+
+    : currentMode === "assessment-review"
+
+    ? `openAssessmentReviewSets('${list.title}')`
+
+    : currentMode === "mastered-review"
+
+    ? `openItems('${list.title}')`
+
+    : currentMode === "mastered-assessment"
+
+    ? `openMasteredAssessment('${list.title}')`
+
+    : currentMode === "mastered-revision"
+
+    ? `openMasteredRevision('${list.title}')`
+
+    : ""
+}
+
+">
+
+                ${list.title}
+
+            </button>
+
+        `;
+
+    }
+
+});
+}
 
 // open item
 
@@ -189,10 +1064,42 @@ function openItems(listName) {
 
     showPage("items-page");
 
-    document.getElementById("items-title")
-        .innerText = listName;
+    const completeBtn =
+        document.getElementById(
+            "complete-learning-btn"
+        );
 
-    currentItems = learningItems[listName];
+    if (
+        masteredMode
+        &&
+        completeBtn
+    ) {
+
+        completeBtn.style.display =
+            "none";
+
+    }
+
+    document.getElementById(
+        "items-title"
+    ).innerText =
+        listName;
+
+    currentItems =
+        learningItems[listName] || [];
+
+    if (
+        currentItems.length === 0
+    ) {
+
+        document.getElementById(
+            "items-container"
+        ).innerHTML =
+            "<p>No learning items yet.</p>";
+
+        return;
+
+    }
 
     currentItemIndex = 0;
 
@@ -204,13 +1111,44 @@ function openItems(listName) {
 
 function showItemCard() {
 
-    const itemsContainer =
-        document.getElementById("items-container");
-
-    itemsContainer.innerHTML = "";
-
     const item =
         currentItems[currentItemIndex];
+
+    if (masteredMode) {
+
+        showMasteredReviewCard();
+
+    }
+
+    else if (
+        item.contentType === "word"
+    ) {
+
+        showVocabularyCard(item);
+
+    }
+
+    else if (
+        item.contentType === "lesson"
+    ) {
+
+        showLessonCard(item);
+
+    }
+
+    updateNavigationButtons();
+
+}
+
+
+function showVocabularyCard(item) {
+
+    const itemsContainer =
+        document.getElementById(
+            "items-container"
+        );
+
+    // NORMAL LEARNING MODE
 
     itemsContainer.innerHTML = `
     
@@ -222,44 +1160,81 @@ function showItemCard() {
                 ${currentItems.length}
             </p>
 
-            <h2>${item.word}</h2>
+            <h2>
+                ${item.title}
+            </h2>
 
             <p>
-                <strong>Part of Speech:</strong>
-                ${item.partOfSpeech}
+
+                <strong>
+                    Part of Speech:
+                </strong>
+
+                ${item.content.partOfSpeech}
+
             </p>
 
             <p>
-                <strong>Pronunciation:</strong>
-                ${item.pronunciation}
+
+                <strong>
+                    Pronunciation:
+                </strong>
+
+                ${item.content.pronunciation}
+
             </p>
 
             <p>
-                <strong>Definition:</strong>
-                ${item.definition}
+
+                <strong>
+                    Definition:
+                </strong>
+
+                ${item.content.definition}
+
             </p>
 
             <p>
-                <strong>Synonyms:</strong>
-                ${item.synonyms}
+
+                <strong>
+                    Synonyms:
+                </strong>
+
+                ${item.content.synonyms}
+
             </p>
 
             <p>
-                <strong>Antonyms:</strong>
-                ${item.antonyms}
+
+                <strong>
+                    Antonyms:
+                </strong>
+
+                ${item.content.antonyms}
+
             </p>
 
             <div class="examples">
 
-                <strong>Examples:</strong>
+                <strong>
+                    Examples:
+                </strong>
 
                 <ul>
 
-                    ${item.examples.map(function(example) {
+                    ${item.content.examples.map(
+                        function(example) {
 
-                        return `<li>${example}</li>`;
+                            return `
+                            
+                                <li>
+                                    ${example}
+                                </li>
 
-                    }).join("")}
+                            `;
+
+                        }
+                    ).join("")}
 
                 </ul>
 
@@ -269,46 +1244,188 @@ function showItemCard() {
 
     `;
 
+}
+
+
+function showLessonCard(item) {
+
+    const itemsContainer =
+        document.getElementById(
+            "items-container"
+        );
+
+    // NORMAL LEARNING MODE
+
+    itemsContainer.innerHTML = `
+    
+        <div class="item-card">
+
+            <p>
+                Lesson ${currentItemIndex + 1}
+                of
+                ${currentItems.length}
+            </p>
+
+            <h2>
+                ${item.title}
+            </h2>
+
+            <div>
+
+                <strong>
+                    Learning Objectives:
+                </strong>
+
+                <ul>
+
+                    ${item.content.learningObjectives.map(
+                        function(objective) {
+
+                            return `
+                            
+                                <li>
+                                    ${objective}
+                                </li>
+
+                            `;
+
+                        }
+                    ).join("")}
+
+                </ul>
+
+            </div>
+
+            <p>
+
+                <strong>
+                    Introduction:
+                </strong>
+
+                ${item.content.introduction}
+
+            </p>
+
+            <p>
+
+                <strong>
+                    Explanation:
+                </strong>
+
+                ${item.content.explanation}
+
+            </p>
+
+            <div>
+
+                <strong>
+                    Examples:
+                </strong>
+
+                <ul>
+
+                    ${item.content.examples.map(
+                        function(example) {
+
+                            return `
+                            
+                                <li>
+                                    ${example}
+                                </li>
+
+                            `;
+
+                        }
+                    ).join("")}
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+function updateNavigationButtons() {
+
     const previousButton =
-    document.querySelector(".card-navigation button:first-child");
+        document.querySelector(
+            ".card-navigation button:first-child"
+        );
 
-const nextButton =
-    document.querySelector(".card-navigation button:last-child");
+    const completeButton =
+        document.getElementById(
+            "complete-learning-btn"
+        );
 
+        if (!completeButton) {
 
-// Hide previous button on first card
-
-if (currentItemIndex === 0) {
-
-    previousButton.style.visibility = "hidden";
-
-}
-
-else {
-
-    previousButton.style.visibility = "visible";
+    return;
 
 }
 
+    const nextButton =
+        document.querySelector(
+            ".card-navigation button:last-child"
+        );
 
-// Hide next button on last card
+    // PREVIOUS BUTTON
 
-if (
-    currentItemIndex
-    === currentItems.length - 1
+    if (currentItemIndex === 0) {
+
+        previousButton.style.visibility =
+            "hidden";
+
+    }
+
+    else {
+
+        previousButton.style.visibility =
+            "visible";
+
+    }
+
+    // NEXT BUTTON
+
+    if (
+        currentItemIndex
+        === currentItems.length - 1
+    ) {
+
+        nextButton.style.visibility =
+            "hidden";
+
+    }
+
+    else {
+
+        nextButton.style.visibility =
+            "visible";
+
+    }
+
+    // COMPLETE ALWAYS VISIBLE
+
+     if (
+    currentMode === "learn"
 ) {
 
-    nextButton.style.visibility = "hidden";
+    completeButton.style.visibility =
+        "visible";
 
 }
 
 else {
 
-    nextButton.style.visibility = "visible";
-
-}   
+    completeButton.style.visibility =
+        "hidden";
 
 }
+
+}
+
 
 function nextItem() {
 
@@ -319,7 +1436,17 @@ function nextItem() {
 
         currentItemIndex++;
 
-        showItemCard();
+        if (masteredMode) {
+
+            showMasteredReviewCard();
+
+        }
+
+        else {
+
+            showItemCard();
+
+        }
 
     }
 
@@ -331,7 +1458,17 @@ function previousItem() {
 
         currentItemIndex--;
 
-        showItemCard();
+        if (masteredMode) {
+
+    showMasteredReviewCard();
+
+}
+
+else {
+
+    showItemCard();
+
+}
 
     }
 
@@ -340,31 +1477,198 @@ function previousItem() {
 
 function completeLearning() {
 
-    if (!completedLearningLists.includes(currentList)) {
+    initializeListProgress(currentList);
 
-        completedLearningLists.push(currentList);
+    if (masteredMode) {
 
-    }
-
-    alert("Learning Completed. Assessment Unlocked.");
-
-    console.log(completedLearningLists);
+    return;
 
 }
 
-function openAssessment() {
+    learnerProgress.lists[currentList]
+        .learned = true;
 
-    if (!completedLearningLists.includes(currentList)) {
+    alert(
+        "Learning Completed. Assessment Unlocked."
+    );
 
-        alert("Complete learning first to unlock assessment.");
+    console.log(learnerProgress);
+
+}
+
+//OPEN ASSESSMENT
+
+
+function openAssessment(listName) {
+
+    currentList = listName;
+
+    initializeListProgress(currentList);
+
+    if (
+        !learnerProgress.lists[currentList]
+            .learned
+    ) {
+
+        alert(
+            "Complete learning first to unlock assessment."
+        );
 
         return;
+
     }
+
+    showPage("assessment-sets-page");
+
+    const setsContainer =
+        document.getElementById(
+            "assessment-sets-container"
+        );
+
+    setsContainer.innerHTML = "";
+
+    const sets =
+        assessmentQuestions[currentList];
+
+        console.log(currentList);
+
+console.log(
+    assessmentQuestions[currentList]
+);
+
+    const setNames =
+    Object.keys(sets).filter(
+        function(setName) {
+
+            return setName.startsWith(
+                "Set"
+            );
+
+        }
+    );
+
+const completedSets =
+    learnerProgress.lists[currentList]
+        .completedSets;
+
+let activeSetIndex =
+    setNames.findIndex(function(setName) {
+
+        const unresolvedQuestions =
+            learnerProgress.lists[currentList]
+                .revisionQuestions
+                .filter(function(question) {
+
+                    return (
+                        question.setName
+                        === setName
+                    );
+
+                });
+
+        const isFullyMastered =
+    completedSets.includes(setName)
+    &&
+    unresolvedQuestions.length === 0;
+
+        return !isFullyMastered;
+
+    });
+
+setNames.forEach(function(setName, index) {
+
+    let buttonLabel = setName;
+
+    let disabled = "";
+
+    // COMPLETED
+
+    const unresolvedQuestions =
+    learnerProgress.lists[currentList]
+        .revisionQuestions
+        .filter(function(question) {
+
+            return (
+                question.setName
+                === setName
+            );
+
+        });
+
+            const isFullyMastered =
+    completedSets.includes(setName)
+    &&
+    unresolvedQuestions.length === 0;
+
+    
+
+
+
+    // FULLY MASTERED
+
+  if (isFullyMastered) {
+
+    buttonLabel =
+        "✅ " + setName;
+
+}
+
+    // ACTIVE
+
+    else if (
+        index === activeSetIndex
+    ) {
+
+        buttonLabel =
+            "▶ " + setName;
+
+    }
+
+    // LOCKED
+
+    else {
+
+        buttonLabel =
+            "🔒 " + setName;
+
+        disabled = "disabled";
+
+    }
+
+    setsContainer.innerHTML += `
+    
+        <button class="theme-card"
+            ${disabled}
+            onclick="${
+    isFullyMastered
+
+    ? `openAssessmentReview('${setName}')`
+
+    : `openQuestionSet('${setName}')`
+}">
+
+            ${buttonLabel}
+
+        </button>
+
+    `;
+
+});
+
+}
+
+
+//OPEN QUESTION SET
+
+
+function openQuestionSet(setName) {
+
+    currentSet = setName;
 
     showPage("assessment-page");
 
     currentQuestions =
-        assessmentQuestions[currentList];
+        assessmentQuestions[currentList][currentSet];
 
     currentQuestionIndex = 0;
 
@@ -372,18 +1676,34 @@ function openAssessment() {
 
 }
 
-
 function showQuestion() {
 
     const questionContainer =
-        document.getElementById("question-container");
-
-    questionContainer.innerHTML = "";
+        document.getElementById(
+            "question-container"
+        );
 
     const question =
-        currentQuestions[currentQuestionIndex];
+        currentQuestions[
+            currentQuestionIndex
+        ];
 
-    questionContainer.innerHTML += `
+    if (!question) {
+
+        return;
+
+    }
+
+    const answerFunction =
+
+        currentMode ===
+        "mastered-assessment"
+
+            ? "checkMasteredAnswer"
+
+            : "checkAnswer";
+
+    questionContainer.innerHTML = `
     
         <div class="item-card">
 
@@ -398,7 +1718,7 @@ function showQuestion() {
                     return `
                     
                         <button class="option-btn"
-                            onclick="checkAnswer('${option}')">
+                            onclick="${answerFunction}('${option}')">
 
                             ${option}
 
@@ -422,115 +1742,448 @@ function checkAnswer(selectedOption) {
     const currentQuestion =
         currentQuestions[currentQuestionIndex];
 
-    if (selectedOption === currentQuestion.correctAnswer) {
 
-        masteredQuestions.push(currentQuestion);
+        initializeListProgress(currentList);
 
-        alert("Correct! Moved to Mastered.");
+const currentListProgress =
+    learnerProgress.lists[currentList];
+
+const questionRecord = {
+
+    questionId:
+        currentQuestion.questionId,
+
+    contentId:
+        currentQuestion.contentId,
+
+    question:
+        currentQuestion.question,
+
+    options:
+        currentQuestion.options,
+
+    list:
+        currentList,
+
+    setName:
+        currentSet,
+
+    selectedAnswer:
+        selectedOption,
+
+    correctAnswer:
+        currentQuestion.correctAnswer
+
+};
+
+console.log(
+    learnerProgress
+);
+
+const attemptRecord = {
+
+    questionId:
+        currentQuestion.questionId,
+
+    contentId:
+        currentQuestion.contentId,
+
+    question:
+        currentQuestion.question,
+
+    selectedAnswer:
+        selectedOption,
+
+    correctAnswer:
+        currentQuestion.correctAnswer,
+
+    isCorrect:
+        selectedOption
+        === currentQuestion.correctAnswer,
+
+    setName:
+        currentSet,
+
+    attemptType:
+        revisionMode
+            ? "revision"
+            : "assessment"
+
+};
+
+const alreadyAttempted =
+    currentListProgress.attemptHistory
+        .some(function(item) {
+
+            return (
+
+                item.questionId
+                === currentQuestion.questionId
+
+                &&
+
+                item.setName
+                === currentSet
+
+            );
+
+        });
+
+if (!alreadyAttempted) {
+
+    currentListProgress.attemptHistory
+        .push(attemptRecord);
+
+}
+
+
+    // CORRECT ANSWER
+
+    if (
+        selectedOption
+        === currentQuestion.correctAnswer
+    ) {
+
+        currentListProgress.masteredQuestions
+            .push(questionRecord);
+
+        // Remove from revision if mastered later
+
+        currentListProgress.revisionQuestions =
+    currentListProgress.revisionQuestions.filter(
+                function(item) {
+
+                    return !(
+    item.contentId
+    === currentQuestion.contentId
+    &&
+    item.setName
+    === currentSet
+);
+
+                }
+            );
+
+        alert(
+            "Correct! Moved to Mastered."
+        );
 
     }
 
-    else {
+    // WRONG ANSWER
 
-        revisionQuestions.push(currentQuestion);
 
-        alert("Wrong! Moved to Revision.");
+else {
+
+    const alreadyExists =
+        currentListProgress.revisionQuestions
+            .some(function(item) {
+
+                return (
+                    item.contentId
+    === currentQuestion.contentId
+
+    &&  
+
+    item.setName
+    === currentSet
+                );
+
+            });
+
+    if (!alreadyExists) {
+
+        currentListProgress.revisionQuestions
+            .push(questionRecord);
 
     }
+
+    console.log(
+    currentListProgress.revisionQuestions
+);
+
+    alert(
+        "Wrong! Moved to Revision."
+    );
+
+}
+
+    // Remove duplicate mastered items
+
+    currentListProgress.masteredQuestions =
+        currentListProgress.masteredQuestions.filter(
+            (item, index, self) =>
+                index === self.findIndex(
+                    t =>
+                        t.contentId
+                        === item.contentId
+                )
+        );
+
+    // Remove duplicate revision items
+
+  
+currentListProgress.revisionQuestions =
+    currentListProgress.revisionQuestions.filter(
+        (item, index, self) =>
+            index === self.findIndex(
+                t =>
+
+                    t.contentId
+                    === item.contentId
+
+                    &&
+
+                    t.setName
+                    === item.setName
+
+            )
+    );
 
     currentQuestionIndex++;
 
-    if (currentQuestionIndex < currentQuestions.length) {
+    console.log(currentQuestionIndex);
+
+console.log(currentQuestions.length);
+
+    // NEXT QUESTION
+
+    if (
+        currentQuestionIndex
+        < currentQuestions.length
+    ) {
 
         showQuestion();
 
     }
 
-    else {
+   else {
 
-        alert("Assessment Completed");
+    console.log(
+        "Completion block running"
+    );
 
-        console.log("Mastered:", masteredQuestions);
+    if (
+    !currentListProgress.completedSets
+        .includes(currentSet)
+) {
 
-        console.log("Revision:", revisionQuestions);
+    currentListProgress.completedSets
+        .push(currentSet);
 
-    }
+} 
+
+    const questionContainer =
+        document.getElementById(
+            "question-container"
+        );
+
+    questionContainer.innerHTML = `
+    
+        <div class="item-card">
+
+            <h2>
+                Assessment Completed
+            </h2>
+
+            <p>
+                You have completed this set.
+            </p>
+
+        </div>
+
+    `;
+
+    revisionMode = false;
+
+    const totalSets =
+    Object.keys(
+        assessmentQuestions[currentList]
+    ).filter(function(setName) {
+
+        return (
+            setName === "Set 1"
+            ||
+            setName === "Set 2"
+        );
+
+    }).length;
+
+const completedSetsCount =
+    currentListProgress.completedSets
+        .filter(function(setName) {
+
+            return setName.startsWith(
+                "Set"
+            );
+
+        }).length;
+
+if (
+
+    completedSetsCount === totalSets
+
+    &&
+
+    currentListProgress
+        .revisionQuestions.length === 0
+
+) {
+
+
+    console.log(totalSets);
+
+    console.log(completedSetsCount);
+
+    console.log(
+        currentListProgress.completedSets
+    );
+
+    console.log(
+        currentListProgress.revisionQuestions
+    );
+
+    currentListProgress.mastered =
+        true;
+
+}
+
+    console.log(learnerProgress);
+
+}
 
 }
 
 function openMastered() {
 
+    initializeListProgress(currentList);
+
+    const currentListProgress =
+        learnerProgress.lists[currentList];
+
     showPage("mastered-page");
 
     const masteredContainer =
-        document.getElementById("mastered-container");
+        document.getElementById(
+            "mastered-container"
+        );
 
     masteredContainer.innerHTML = "";
 
-    if (masteredQuestions.length === 0) {
+    if (
+        currentListProgress.masteredQuestions
+            .length === 0
+    ) {
 
         masteredContainer.innerHTML = `
         
-            <p>No mastered questions yet.</p>
-        
-        `;
-
-        return;
-    }
-
-    masteredQuestions.forEach(function(question) {
-
-        masteredContainer.innerHTML += `
-        
             <div class="item-card">
 
-                <h3>${question.question}</h3>
-
-                <p>
-                    ✓ Correct Answer:
-                    ${question.correctAnswer}
-                </p>
+                <h2>
+                    No Mastered Questions
+                </h2>
 
             </div>
 
         `;
 
-    });
+        return;
+
+    }
+
+    currentListProgress.masteredQuestions
+        .forEach(function(question) {
+
+            masteredContainer.innerHTML += `
+            
+                <div class="item-card">
+
+                    <h3>
+                        ${question.word}
+                    </h3>
+
+                    <p>
+                        ${question.questionId}
+                    </p>
+
+                </div>
+
+            `;
+
+        });
 
 }
 
 function openRevision() {
 
+    initializeListProgress(currentList);
+
+    const currentListProgress =
+        learnerProgress.lists[currentList];
+
     showPage("revision-page");
 
     const revisionContainer =
-        document.getElementById("revision-container");
+        document.getElementById(
+            "revision-container"
+        );
 
     revisionContainer.innerHTML = "";
 
-    if (revisionQuestions.length === 0) {
+    // No revision questions
+
+    if (
+        currentListProgress.revisionQuestions
+            .length === 0
+    ) {
 
         revisionContainer.innerHTML = `
         
-            <p>No revision questions.</p>
-        
+            <div class="item-card">
+
+                <h2>
+                    No Revision Questions
+                </h2>
+
+            </div>
+
         `;
 
         return;
+
     }
 
-    revisionQuestions.forEach(function(question) {
+    // Show revision grouped by set
+
+    const groupedRevision =
+    groupRevisionByContent(
+        currentListProgress
+            .revisionQuestions
+    );
+
+Object.keys(groupedRevision)
+    .forEach(function(contentId) {
 
         revisionContainer.innerHTML += `
         
             <div class="item-card">
 
-                <h3>${question.question}</h3>
+                <h2>
 
-                <p>
-                    Correct Answer:
-                    ${question.correctAnswer}
-                </p>
+                    ${contentId}
+
+                </h2>
+
+                <button class="nav-btn"
+                    onclick="
+                        loadRevisionCard(
+                            '${contentId}'
+                        )
+                    ">
+
+                    Review
+
+                </button>
 
             </div>
 
@@ -539,6 +2192,218 @@ function openRevision() {
     });
 
 }
+
+
+function loadRevisionCard(contentId) {
+
+    const currentItems =
+        learningItems[currentList];
+
+    const matchedItem =
+        currentItems.find(function(item) {
+
+            return (
+                item.contentId
+                === contentId
+            );
+
+        });
+
+    console.log(currentItems);
+
+    console.log(contentId);
+
+    console.log(matchedItem);
+
+    const currentListProgress =
+        learnerProgress.lists[currentList];
+
+    const revisionQuestion =
+        currentListProgress.revisionQuestions
+            .find(function(question) {
+
+                return (
+                    question.contentId
+                    === contentId
+                );
+
+            });
+
+    const revisionContentIds =
+    currentListProgress.revisionQuestions
+        .map(function(question) {
+
+            return question.contentId;
+
+        });
+
+revisionItems =
+    currentItems.filter(function(item) {
+
+        return revisionContentIds.includes(
+            item.contentId
+        );
+
+    });
+
+revisionItemIndex =
+    revisionItems.findIndex(function(item) {
+
+        return (
+            item.contentId
+            === contentId
+        );
+
+    });
+
+    currentRevisionQuestion =
+        revisionQuestion;
+
+    showPage("items-page");
+
+     document.querySelector(
+    ".card-navigation"
+).innerHTML = `
+    
+    <button class="nav-btn"
+        onclick="previousRevisionItem()">
+
+        ← Previous
+
+    </button>
+
+    <button class="nav-btn"
+        onclick="completeRevision()">
+
+        Complete
+
+    </button>
+
+    <button class="nav-btn"
+        onclick="nextRevisionItem()">
+
+        Next →
+
+    </button>
+
+`;
+
+    showRevisionCard();
+
+}
+
+function nextRevisionItem() {
+
+    if (
+        revisionItemIndex
+        < revisionItems.length - 1
+    ) {
+
+        revisionItemIndex++;
+
+        const nextItem =
+            revisionItems[
+                revisionItemIndex
+            ];
+
+        const currentListProgress =
+            learnerProgress.lists[
+                currentList
+            ];
+
+        currentRevisionQuestion =
+            currentListProgress
+                .revisionQuestions
+                .find(function(question) {
+
+                    return (
+                        question.contentId
+                        === nextItem.contentId
+                    );
+
+                });
+
+        showRevisionCard();
+
+    }
+
+}
+
+function previousRevisionItem() {
+
+    if (
+        revisionItemIndex > 0
+    ) {
+
+        revisionItemIndex--;
+
+        const previousItem =
+            revisionItems[
+                revisionItemIndex
+            ];
+
+        const currentListProgress =
+            learnerProgress.lists[
+                currentList
+            ];
+
+        currentRevisionQuestion =
+            currentListProgress
+                .revisionQuestions
+                .find(function(question) {
+
+                    return (
+                        question.contentId
+                        === previousItem.contentId
+                    );
+
+                });
+
+        showRevisionCard();
+
+    }
+
+}
+
+function completeRevision() {
+
+    const currentListProgress =
+        learnerProgress.lists[currentList];
+
+        console.log(
+    "Revision Questions:",
+    currentListProgress.revisionQuestions
+);
+
+console.log(
+    "Current Set:",
+    currentSet
+);
+
+    currentQuestions =
+        currentListProgress.revisionQuestions
+            .filter(function(question) {
+
+                return (
+                    question.setName
+                    === currentSet
+                );
+
+            });
+
+    currentQuestionIndex = 0;
+
+    revisionMode = true;
+
+    showPage("assessment-page");
+
+    showQuestion();
+
+}
+
+// OLD REVISION RETEST ENGINE
+// CURRENTLY UNUSED
+// PRESERVED FOR FUTURE RETRY FEATURE
 
 function startRevisionAssessment() {
 
@@ -554,8 +2419,1009 @@ function startRevisionAssessment() {
 
 }
 
-showPage("cover-page");
+
+function openRevisionSet(setName) {
+
+    initializeListProgress(currentList);
+
+    const currentListProgress =
+        learnerProgress.lists[currentList];
+
+    currentSet = setName;
+
+    // Find unresolved content
+
+    const unresolvedContent =
+        currentListProgress.revisionQuestions
+            .filter(function(question) {
+
+                return (
+                    question.setName
+                    === setName
+                );
+
+            })
+            .map(function(question) {
+
+                return question.contentId;
+
+            });
+
+    // Pull matching learning cards
+
+    revisionItems =
+        learningItems[currentList]
+            .filter(function(item) {
+
+                return unresolvedContent
+                    .includes(item.contentId);
+
+            });
+
+    revisionItemIndex = 0;
+
+    showPage("items-page");
+
+    showRevisionCard();
+
+}
+
+function showRevisionCard() {
+
+    const itemsContainer =
+        document.getElementById(
+            "items-container"
+        );
+
+    itemsContainer.innerHTML = "";
+
+    const item =
+        revisionItems[revisionItemIndex];
+
+    itemsContainer.innerHTML = `
+    
+        <div class="item-card revision-card">
+
+    <div class="revision-feedback">
+
+        <p>
+
+            <strong>
+                Question:
+            </strong>
+
+            ${currentRevisionQuestion.question}
+
+        </p>
+
+        <p>
+
+            <strong>
+                Your Answer:
+            </strong>
+
+            ❌ ${currentRevisionQuestion.selectedAnswer}
+
+        </p>
+
+        <p>
+
+            <strong>
+                Correct Answer:
+            </strong>
+
+            ✅ ${currentRevisionQuestion.correctAnswer}
+
+        </p>
+
+    </div>
+
+    <div class="revision-learning-card">
+
+        <h2>
+            ${item.title}
+        </h2>
+
+        <p>
+
+            <strong>
+                Definition:
+            </strong>
+
+            ${item.content.definition}
+
+        </p>
+
+        <p>
+
+            <strong>
+                Synonyms:
+            </strong>
+
+            ${item.content.synonyms}
+
+        </p>
+
+        <p>
+
+            <strong>
+                Antonyms:
+            </strong>
+
+            ${item.content.antonyms}
+
+        </p>
+
+        <div class="examples">
+
+            <strong>
+                Examples:
+            </strong>
+
+            <ul>
+
+                ${item.content.examples.map(
+                    function(example) {
+
+                        return `
+                        
+                            <li>
+                                ${example}
+                            </li>
+
+                        `;
+
+                    }
+                ).join("")}
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</div>
+
+    `;
+
+}
 
 
+function groupRevisionByContent(
+    revisionQuestions
+) {
+
+    const grouped = {};
+
+    revisionQuestions.forEach(function(question) {
+
+        const contentId =
+            question.contentId;
+
+        if (!grouped[contentId]) {
+
+            grouped[contentId] = [];
+
+        }
+
+        grouped[contentId]
+            .push(question);
+
+    });
+
+    return grouped;
+
+}
+
+function openAssessmentReview(setName) {
+
+    currentSet = setName;
+
+    initializeListProgress(currentList);
+
+    const currentListProgress =
+        learnerProgress.lists[currentList];
+
+    const attemptHistory =
+        currentListProgress.attemptHistory
+            .filter(function(attempt) {
+
+                return (
+                    attempt.setName
+                    === setName
+                );
+
+            });
+
+    showPage("assessment-page");
+
+    // RESET ACTIVE QUIZ STATE
+
+    currentQuestions = [];
+
+    currentQuestionIndex = 0;
+
+    const questionContainer =
+        document.getElementById(
+            "question-container"
+        );
+
+    questionContainer.innerHTML = "";
+
+    // EMPTY STATE
+
+    if (attemptHistory.length === 0) {
+
+        questionContainer.innerHTML = `
+        
+            <div class="item-card">
+
+                <h2>
+                    No Attempt History
+                </h2>
+
+                <p>
+                    ${setName}
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    // RENDER REVIEW CARDS
+
+    attemptHistory.forEach(function(attempt) {
+
+        questionContainer.innerHTML += `
+        
+            <div class="item-card">
+
+                <p>
+
+                    <strong>
+                        Question:
+                    </strong>
+
+                    ${attempt.question}
+
+                </p>
+
+                <p>
+
+                    <strong>
+                        Your First Answer:
+                    </strong>
+
+                    ${
+                        attempt.isCorrect
+                        ? "✅"
+                        : "❌"
+                    }
+
+                    ${attempt.selectedAnswer}
+
+                </p>
+
+                <p>
+
+                    <strong>
+                        Correct Answer:
+                    </strong>
+
+                    ✅ ${attempt.correctAnswer}
+
+                </p>
+
+            </div>
+
+        `;
+
+    });
+
+    // RETURN BUTTON
+
+    questionContainer.innerHTML += `
+    
+        <div style="margin-top: 20px;">
+
+            <button
+                class="theme-card"
+                style="
+                    width: 100%;
+                    text-align: center;
+                "
+                onclick="
+                    openAssessment(
+                        '${currentList}'
+                    )
+                ">
+
+                ← Back to Assessment Sets
+
+            </button>
+
+        </div>
+
+    `;
+
+}
 
 
+function toggleMasteredMenu() {
+
+    document.getElementById(
+        "mastered-submenu"
+    ).classList.toggle(
+        "hidden"
+    );
+
+}
+
+function toggleAssessmentMenu() {
+
+    document.getElementById(
+        "assessment-submenu"
+    ).classList.toggle(
+        "hidden"
+    );
+
+}
+
+
+// REVIEW Board
+
+function showMasteredReviewCard() {
+
+    console.log(
+        "MASTERED REVIEW CARD"
+    );
+
+    const itemsContainer =
+        document.getElementById(
+            "items-container"
+        );
+
+    itemsContainer.innerHTML = "";
+
+    const item =
+        currentItems[currentItemIndex];
+
+        console.log(item);
+
+    // VOCABULARY REVIEW
+
+    if (
+        item.contentType === "word"
+    ) {
+
+        itemsContainer.innerHTML = `
+        
+            <div class="item-card">
+
+                <h2>
+                    ${item.title}
+                </h2>
+
+                <p>
+
+                    <strong>
+                        Definition:
+                    </strong>
+
+                    ${item.content.definition}
+
+                </p>
+
+                <div class="examples">
+
+                    <strong>
+                        Examples:
+                    </strong>
+
+                    <ul>
+
+                        ${item.content.examples.map(
+                            function(example) {
+
+                                return `
+                                
+                                    <li>
+                                        ${example}
+                                    </li>
+
+                                `;
+
+                            }
+                        ).join("")}
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+    // LESSON REVIEW
+
+    else if (
+        item.contentType === "lesson"
+    ) {
+
+        itemsContainer.innerHTML = `
+        
+            <div class="item-card">
+
+                <h2>
+                    ${item.title}
+                </h2>
+
+                <p>
+
+                    <strong>
+                        Explanation:
+                    </strong>
+
+                    ${item.content.explanation}
+
+                </p>
+
+                <div class="examples">
+
+                    <strong>
+                        Examples:
+                    </strong>
+
+                    <ul>
+
+                        ${item.content.examples.map(
+                            function(example) {
+
+                                return `
+                                
+                                    <li>
+                                        ${example}
+                                    </li>
+
+                                `;
+
+                            }
+                        ).join("")}
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+    updateNavigationButtons();
+
+}
+
+function openAssessmentReviewSets(
+    listName
+) {
+
+    currentList = listName;
+
+    showPage(
+        "assessment-sets-page"
+    );
+
+    const setsContainer =
+        document.getElementById(
+            "assessment-sets-container"
+        );
+
+    setsContainer.innerHTML = "";
+
+    const completedSets =
+        learnerProgress.lists[
+            currentList
+        ].completedSets;
+
+    completedSets.forEach(function(
+        setName
+    ) {
+
+        setsContainer.innerHTML += `
+        
+            <button class="theme-card"
+                onclick="
+                    openAssessmentReview(
+                        '${setName}'
+                    )
+                ">
+
+                ✅ ${setName}
+
+            </button>
+
+        `;
+
+    });
+
+}
+
+function openMasteredAssessment(
+    listName
+) {
+
+    currentList = listName;
+
+    initializeListProgress(
+        currentList
+    );
+
+    showPage(
+        "assessment-sets-page"
+    );
+
+    const setsContainer =
+        document.getElementById(
+            "assessment-sets-container"
+        );
+
+    setsContainer.innerHTML = "";
+
+    const sets =
+        assessmentQuestions[currentList];
+
+    if (!sets) {
+
+        return;
+
+    }
+
+    const progress =
+        learnerProgress.lists[
+            currentList
+        ];
+
+    const completedMasteredSets =
+        progress
+            .completedMasteredSets
+        || [];
+
+    const masteredSets =
+        Object.keys(sets)
+            .filter(function(setName) {
+
+                return setName.startsWith(
+                    "Day"
+                );
+
+            });
+
+    masteredSets.forEach(function(setName) {
+
+        const unresolvedQuestions =
+            progress
+                .masteredRevisionQuestions
+                .filter(function(question) {
+
+                    return (
+                        question.setName
+                        === setName
+                    );
+
+                });
+
+        const isFullyCompleted =
+
+            completedMasteredSets
+                .includes(setName)
+
+            &&
+
+            unresolvedQuestions
+                .length === 0;
+
+        if (
+            isFullyCompleted
+        ) {
+
+            return;
+
+        }
+
+        setsContainer.innerHTML += `
+        
+            <button class="theme-card"
+                onclick="
+                    openMasteredQuestionSet(
+                        '${setName}'
+                    )
+                ">
+
+                ${setName}
+
+            </button>
+
+        `;
+
+    });
+
+}
+function openMasteredQuestionSet(
+    setName
+) {
+
+    currentSet = setName;
+
+    showPage(
+        "assessment-page"
+    );
+
+    currentQuestions =
+        assessmentQuestions[currentList]
+            [currentSet];
+
+    currentQuestionIndex = 0;
+
+    masteredAssessmentMode = true;
+
+    showQuestion();
+
+}
+
+
+function checkMasteredAnswer(
+    selectedOption
+) {
+
+    const currentQuestion =
+        currentQuestions[currentQuestionIndex];
+
+    initializeListProgress(
+        currentList
+    );
+
+    const currentListProgress =
+        learnerProgress.lists[
+            currentList
+        ];
+
+    const questionRecord = {
+
+        questionId:
+            currentQuestion.questionId,
+
+        contentId:
+            currentQuestion.contentId,
+
+        question:
+            currentQuestion.question,
+
+        options:
+            currentQuestion.options,
+
+        list:
+            currentList,
+
+        setName:
+            currentSet,
+
+        selectedAnswer:
+            selectedOption,
+
+        correctAnswer:
+            currentQuestion.correctAnswer
+
+    };
+
+    // CORRECT
+
+    if (
+        selectedOption
+        === currentQuestion.correctAnswer
+    ) {
+
+        currentListProgress
+            .masteredRevisionQuestions =
+
+            currentListProgress
+                .masteredRevisionQuestions
+                .filter(function(item) {
+
+                    return !(
+                        item.contentId
+                        === currentQuestion.contentId
+                    );
+
+                });
+
+        alert(
+            "Correct!"
+        );
+
+    }
+
+    // WRONG
+
+    else {
+
+        const alreadyExists =
+            currentListProgress
+                .masteredRevisionQuestions
+                .some(function(item) {
+
+                    return (
+                        item.contentId
+                        === currentQuestion.contentId
+                    );
+
+                });
+
+        if (!alreadyExists) {
+
+            currentListProgress
+                .masteredRevisionQuestions
+                .push(questionRecord);
+
+        }
+
+        alert(
+            "Wrong! Moved to Revision."
+        );
+
+    }
+
+    currentQuestionIndex++;
+
+if (
+    currentQuestionIndex
+    < currentQuestions.length
+) {
+
+    showQuestion();
+
+}
+
+else {
+
+    if (
+
+        currentListProgress
+            .masteredRevisionQuestions
+            .length === 0
+
+        &&
+
+        !currentListProgress
+            .completedMasteredSets
+            .includes(currentSet)
+
+    ) {
+
+        currentListProgress
+            .completedMasteredSets
+            .push(currentSet);
+
+    }
+
+    alert(
+        "Mastered Assessment Completed"
+    );
+
+    openMasteredAssessment(
+        currentList
+    );
+
+}
+
+}
+
+function openMasteredRevisionDashboard() {
+
+    currentMode =
+        "mastered-revision";
+
+    masteredMode = false;
+
+    showPage(
+        "assessment-dashboard-page"
+    );
+
+    document.querySelector(
+        "#assessment-dashboard-page h2"
+    ).innerText =
+        "Mastered Revision";
+
+    const container =
+        document.getElementById(
+            "assessment-dashboard-container"
+        );
+
+    container.innerHTML = "";
+
+    const selectedCourse =
+        courses.find(function(course) {
+
+            return (
+                course.title
+                === currentCourse
+            );
+
+        });
+
+    const learningAreas =
+        selectedCourse.learningAreas;
+
+    learningAreas.forEach(function(area) {
+
+        const areaThemes =
+            themes.filter(function(theme) {
+
+                return (
+                    theme.learningArea
+                    === area
+                );
+
+            });
+
+        let hasRevisionLists = false;
+
+        areaThemes.forEach(function(theme) {
+
+            const themeLists =
+                lists.filter(function(list) {
+
+                    return (
+                        list.themeTitle
+                        === theme.title
+                    );
+
+                });
+
+            themeLists.forEach(function(list) {
+
+                const progress =
+                    learnerProgress.lists[
+                        list.title
+                    ];
+
+                if (
+
+                    progress
+
+                    &&
+
+                    progress
+                        .completedMasteredSets
+                        .length > 0
+
+                    &&
+
+                    progress
+                        .masteredRevisionQuestions
+                        .length > 0
+
+                ) {
+
+                    hasRevisionLists = true;
+
+                }
+
+            });
+
+        });
+
+        if (hasRevisionLists) {
+
+            container.innerHTML += `
+            
+                <button class="theme-card"
+                    onclick="
+                        openThemes(
+                            '${area}'
+                        )
+                    ">
+
+                    ${area}
+
+                </button>
+
+            `;
+
+        }
+
+    });
+
+}
+
+function openMasteredRevision() {
+
+    initializeListProgress(
+        currentList
+    );
+
+    const currentListProgress =
+        learnerProgress.lists[
+            currentList
+        ];
+
+    showPage(
+        "revision-page"
+    );
+
+    const revisionContainer =
+        document.getElementById(
+            "revision-container"
+        );
+
+    revisionContainer.innerHTML = "";
+
+    if (
+        currentListProgress
+            .masteredRevisionQuestions
+            .length === 0
+    ) {
+
+        revisionContainer.innerHTML = `
+        
+            <div class="item-card">
+
+                <h2>
+                    No Revision Questions
+                </h2>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    const groupedRevision =
+        groupRevisionByContent(
+
+            currentListProgress
+                .masteredRevisionQuestions
+
+        );
+
+    Object.keys(groupedRevision)
+        .forEach(function(contentId) {
+
+            revisionContainer.innerHTML += `
+            
+                <div class="item-card">
+
+                    <h2>
+
+                        ${contentId}
+
+                    </h2>
+
+                    <button class="nav-btn"
+                        onclick="
+                            loadMasteredRevisionCard(
+                                '${contentId}'
+                            )
+                        ">
+
+                        Review
+
+                    </button>
+
+                </div>
+
+            `;
+
+        });
+
+}
+
+showPage("cover-page"); 
