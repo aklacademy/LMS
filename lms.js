@@ -4005,9 +4005,7 @@ function openProgressDashboard() {
 function toggleMenu() {
 
     document
-        .querySelector(
-            ".sidebar"
-        )
+        .querySelector(".sidebar")
         .classList.toggle(
             "mobile-open"
         );
