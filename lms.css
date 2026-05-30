@@ -171,10 +171,11 @@ h1 {
     padding: 10px 20px;
     border: none;
     border-radius: 10px;
-    background-color: var(--card-bg);
-    color: white;
+    background-color:   #79D8C5;
+    color: #220070;
     cursor: pointer;
     font-size: 16px;
+    font-weight: 600
 }
 
 .nav-btn:hover,
