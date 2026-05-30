@@ -95,7 +95,7 @@ h1 {
 
 .theme-card:hover {
 
-    background-color: var(--accent);
+    background-color: var(--page-bg);
     transform: scale(1.03);
     color: var(--primary);
      border-color: var(--primary);
