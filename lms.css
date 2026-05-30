@@ -335,7 +335,19 @@ h1 {
 
 @media (max-width: 768px) {
 
-     #top-navbar button:not(:first-child) {
+     #top-navbar {
+
+        justify-content: flex-start;
+
+    }
+
+    #menu-toggle {
+
+        display: block;
+
+    }
+
+    #top-navbar .nav-btn:not(#menu-toggle) {
 
         display: none;
 
