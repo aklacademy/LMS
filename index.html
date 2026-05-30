@@ -15,9 +15,16 @@
 
 <body>
 
-    <!-- TOP NAVBAR -->
-
     <div id="top-navbar">
+
+
+        <button
+    class="nav-btn"
+    onclick="toggleMenu()">
+
+    ☰
+
+</button>
 
         <button class="nav-btn"
             onclick="goBack()">
@@ -90,6 +97,13 @@
             </h2>
 
             <button class="sidebar-btn"
+    onclick="openProgressDashboard()">
+
+    📊 Progress
+
+</button>
+
+            <button class="sidebar-btn"
                 onclick="openLearn()">
 
                 Learn
@@ -146,6 +160,7 @@
 
     </button>
 
+
     <div id="mastered-submenu"
         class="hidden">
 
@@ -176,15 +191,36 @@
 
         </button>
 
+        
+
     </div>
 
 </div>
 
 </div>
 
+
+
         <!-- MAIN CONTENT AREA -->
 
         <div class="main-content">
+
+            <!-- PROGRESS DASHBOARD PAGE -->
+
+<div id="progress-dashboard-page"
+    class="app-page hidden">
+
+    <h2>
+
+        Progress Dashboard
+
+    </h2>
+
+    <div id="progress-dashboard-container">
+
+    </div>
+
+</div>
 
             <!-- LEARN PAGE -->
 
@@ -253,6 +289,7 @@
                 </div>
 
             </div>
+            
 
             <!-- ASSESSMENT DASHBOARD -->
 
@@ -353,6 +390,9 @@
     </div>
 
 </div>
+
+
+
 
     <!-- SCRIPTS -->
 
