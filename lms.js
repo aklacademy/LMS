@@ -999,6 +999,17 @@ function openThemes(areaName) {
 
     });
 
+    // CLOSE MOBILE MENU
+
+    if (window.innerWidth <= 768) {
+
+        document
+            .querySelector(".sidebar")
+            .classList
+            .remove("mobile-open");
+
+    }
+
 }
 
 function openLists(themeName) {
