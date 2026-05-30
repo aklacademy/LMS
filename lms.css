@@ -109,7 +109,7 @@ h1 {
 
 .item-card {
 
-    background-color: white;
+    background-color: var(--card-bg);
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 14px;
@@ -141,7 +141,7 @@ h1 {
 }
 
 .option-btn:hover {
-    background-color: var(--accent);
+    background-color: var(--card-bg);
     color: var(--primary);
 }
 
@@ -160,7 +160,7 @@ h1 {
     display: flex;
     justify-content: space-between;
     padding: 15px 20px;
-    background-color: var(--white);
+    background-color: var(--card-bg);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -171,7 +171,7 @@ h1 {
     padding: 10px 20px;
     border: none;
     border-radius: 10px;
-    background-color: var(--primary);
+    background-color: var(--card-bg);
     color: white;
     cursor: pointer;
     font-size: 16px;
@@ -180,7 +180,7 @@ h1 {
 .nav-btn:hover,
 #complete-learning-btn:hover {
 
-    background-color: var(--accent);
+    background-color: var(--card-bg);
 
     color: var(--primary);
 
@@ -208,7 +208,7 @@ h1 {
 
     width: 250px;
 
-    background: var(--primary);
+    background: #DCEEEF;
 
     color: white;
 
