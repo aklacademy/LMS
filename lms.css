@@ -344,9 +344,9 @@ h1 {
 
 @media (max-width: 768px) {
 
-     #top-navbar {
+     #top-navbar .nav-btn:not(#menu-toggle) {
 
-        justify-content: flex-start;
+        display: none;
 
     }
 
