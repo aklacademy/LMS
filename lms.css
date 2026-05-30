@@ -244,9 +244,9 @@ h1 {
 
     border-radius: 10px;
 
-    background: rgba(255,255,255,0.12);
+    background: #79D8C5;
 
-    color: white;
+    color: #220070;
 
     cursor: pointer;
 
@@ -266,9 +266,9 @@ h1 {
 
     border-radius: 10px;
 
-    background: rgba(255,255,255,0.12);
+    background: #79D8C5;
 
-    color: white;
+    color: #220070;
 
     text-align: left;
 
@@ -416,6 +416,8 @@ h1 {
         min-width: 140px;
 
         text-align: center;
+        background: #79D8C5;
+        color: #220070;
 
     }
 
