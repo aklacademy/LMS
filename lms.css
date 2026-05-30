@@ -335,16 +335,29 @@ h1 {
 
 @media (max-width: 768px) {
 
-    .sidebar {
+   .sidebar {
 
-        display: none;
+        position: fixed;
+
+        top: 0;
+
+        left: -280px;
+
+        width: 280px;
+
+        height: 100vh;
+
+        z-index: 1000;
+
+        transition: 0.3s;
+
     }
 
     .sidebar.mobile-open {
 
-        display: flex;
-    }
+        left: 0;
 
+    }
     body {
 
         padding: 15px;
