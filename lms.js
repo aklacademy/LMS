@@ -195,11 +195,22 @@ function initializeListProgress(listName) {
 
             attemptHistory: [],
 
-            mastered: false
+            mastered: false,
+
+            masteredAssessmentCompleted: false
 
         };
 
     }
+
+    const progress =
+        learnerProgress.lists[listName];
+
+    progress.completedMasteredSets =
+        progress.completedMasteredSets || [];
+
+    progress.masteredRevisionQuestions =
+        progress.masteredRevisionQuestions || [];
 
 }
 
@@ -330,121 +341,6 @@ function openAssessmentDashboard() {
 
 }
 
-console.log(
-    "Completed Mastered Sets:",
-    currentListProgress
-        .completedMasteredSets
-);
-
-// Mastered Assessment Board
-
-function openMasteredAssessmentDashboard() {
-
-    currentMode =
-        "mastered-assessment";
-
-    masteredMode = false;
-
-    showPage(
-        "assessment-dashboard-page"
-    );
-
-    document.querySelector(
-        "#assessment-dashboard-page h2"
-    ).innerText =
-        "Mastered Assessment";
-
-    const container =
-        document.getElementById(
-            "assessment-dashboard-container"
-        );
-
-    container.innerHTML = "";
-
-    const selectedCourse =
-        courses.find(function(course) {
-
-            return (
-                course.title
-                === currentCourse
-            );
-
-        });
-
-    const learningAreas =
-        selectedCourse.learningAreas;
-
-    learningAreas.forEach(function(area) {
-
-    const areaThemes =
-        themes.filter(function(theme) {
-
-            return (
-                theme.learningArea
-                === area
-            );
-
-        });
-
-    let hasMasteredLists = false;
-
-    areaThemes.forEach(function(theme) {
-
-        const themeLists =
-            lists.filter(function(list) {
-
-                return (
-                    list.themeTitle
-                    === theme.title
-                );
-
-            });
-
-        themeLists.forEach(function(list) {
-
-            const progress =
-                learnerProgress.lists[
-                    list.title
-                ];
-
-            if (
-                progress
-                &&
-                progress.mastered
-            ) {
-
-                hasMasteredLists = true;
-
-            }
-
-        });
-
-    });
-
-    if (!hasMasteredLists) {
-
-        return;
-
-    }
-
-    container.innerHTML += `
-    
-        <button class="theme-card"
-            onclick="
-                openThemes(
-                    '${area}'
-                )
-            ">
-
-            ${area}
-
-        </button>
-
-    `;
-
-});
-
-}
 
 function openRevisionDashboard() {
 
@@ -656,6 +552,169 @@ function openAssessmentReviewDashboard() {
         }
 
     });
+
+}
+
+
+
+// Mastered Assessment Board
+
+function openMasteredAssessmentDashboard() {
+
+    currentMode =
+        "mastered-assessment";
+
+    masteredMode = false;
+
+    showPage(
+        "assessment-dashboard-page"
+    );
+
+    document.querySelector(
+        "#assessment-dashboard-page h2"
+    ).innerText =
+        "Mastered Assessment";
+
+    const container =
+        document.getElementById(
+            "assessment-dashboard-container"
+        );
+
+    container.innerHTML = "";
+
+    const selectedCourse =
+        courses.find(function(course) {
+
+            return (
+                course.title
+                === currentCourse
+            );
+
+        });
+
+    const learningAreas =
+        selectedCourse.learningAreas;
+
+    learningAreas.forEach(function(area) {
+
+    const areaThemes =
+        themes.filter(function(theme) {
+
+            return (
+                theme.learningArea
+                === area
+            );
+
+        });
+
+    let hasMasteredLists = false;
+
+    areaThemes.forEach(function(theme) {
+
+        const themeLists =
+            lists.filter(function(list) {
+
+                return (
+                    list.themeTitle
+                    === theme.title
+                );
+
+            });
+
+        themeLists.forEach(function(list) {
+
+            const progress =
+                learnerProgress.lists[
+                    list.title
+                ];
+
+            const daySets =
+    assessmentQuestions[
+        list.title
+    ];
+
+if (!daySets) {
+
+    return;
+
+}
+
+const hasPendingMasteredSet =
+
+    Object.keys(daySets)
+        .some(function(setName) {
+
+            if (
+                !setName.startsWith(
+                    "Day"
+                )
+            ) {
+
+                return false;
+
+            }
+
+            const unresolvedQuestions =
+                progress
+                    .masteredRevisionQuestions
+                    .filter(function(question) {
+
+                        return (
+                            question.setName
+                            === setName
+                        );
+
+                    });
+
+            const isFullyCompleted =
+
+                progress
+                    .completedMasteredSets
+                    .includes(setName)
+
+                &&
+
+                unresolvedQuestions
+                    .length === 0;
+
+            return !isFullyCompleted;
+
+        });
+
+if (
+    hasPendingMasteredSet
+) {
+
+    hasMasteredLists = true;
+
+}
+
+        });
+
+    });
+
+    if (!hasMasteredLists) {
+
+        return;
+
+    }
+
+    container.innerHTML += `
+    
+        <button class="theme-card"
+            onclick="
+                openThemes(
+                    '${area}'
+                )
+            ">
+
+            ${area}
+
+        </button>
+
+    `;
+
+});
 
 }
 
@@ -1000,10 +1059,28 @@ function openLists(themeName) {
     return;
 
 }
+    
 
     }
 
+    let displayTitle =
+    list.title;
 
+const progress =
+    learnerProgress.lists[
+        list.title
+    ];
+
+if (
+    progress
+    &&
+    progress.learned
+) {
+
+    displayTitle =
+        "✅ " + list.title;
+
+}
 
         listsContainer.innerHTML += `
         
@@ -1044,7 +1121,7 @@ function openLists(themeName) {
 
 ">
 
-                ${list.title}
+                ${displayTitle}
 
             </button>
 
@@ -1477,23 +1554,28 @@ else {
 
 function completeLearning() {
 
-    initializeListProgress(currentList);
+    initializeListProgress(
+        currentList
+    );
 
     if (masteredMode) {
 
-    return;
+        return;
 
-}
+    }
 
     learnerProgress.lists[currentList]
         .learned = true;
+
+    saveProgress();
 
     alert(
         "Learning Completed. Assessment Unlocked."
     );
 
-    console.log(learnerProgress);
-
+    openLists(
+        currentTheme
+    );
 }
 
 //OPEN ASSESSMENT
@@ -2047,7 +2129,7 @@ if (
         true;
 
 }
-
+    saveProgress();
     console.log(learnerProgress);
 
 }
@@ -2396,7 +2478,6 @@ console.log(
     revisionMode = true;
 
     showPage("assessment-page");
-
     showQuestion();
 
 }
@@ -3017,6 +3098,16 @@ function openMasteredAssessment(
 
                 });
 
+                console.log(
+    "Completed:",
+    progress.completedMasteredSets
+);
+
+console.log(
+    "Revision:",
+    progress.masteredRevisionQuestions
+);
+
         const isFullyCompleted =
 
             completedMasteredSets
@@ -3026,6 +3117,26 @@ function openMasteredAssessment(
 
             unresolvedQuestions
                 .length === 0;
+
+                console.log(
+    "SET:",
+    setName
+);
+
+console.log(
+    "COMPLETED SETS:",
+    completedMasteredSets
+);
+
+console.log(
+    "UNRESOLVED QUESTIONS:",
+    unresolvedQuestions
+);
+
+console.log(
+    "IS FULLY COMPLETED:",
+    isFullyCompleted
+);
 
         if (
             isFullyCompleted
@@ -3053,6 +3164,7 @@ function openMasteredAssessment(
     });
 
 }
+
 function openMasteredQuestionSet(
     setName
 ) {
@@ -3135,8 +3247,15 @@ function checkMasteredAnswer(
                 .filter(function(item) {
 
                     return !(
+
                         item.contentId
-                        === currentQuestion.contentId
+                            === currentQuestion.contentId
+
+                        &&
+
+                        item.setName
+                            === currentSet
+
                     );
 
                 });
@@ -3152,13 +3271,21 @@ function checkMasteredAnswer(
     else {
 
         const alreadyExists =
+
             currentListProgress
                 .masteredRevisionQuestions
                 .some(function(item) {
 
                     return (
+
                         item.contentId
-                        === currentQuestion.contentId
+                            === currentQuestion.contentId
+
+                        &&
+
+                        item.setName
+                            === currentSet
+
                     );
 
                 });
@@ -3177,51 +3304,119 @@ function checkMasteredAnswer(
 
     }
 
-    currentQuestionIndex++;
+    // REMOVE DUPLICATES
 
-if (
-    currentQuestionIndex
-    < currentQuestions.length
-) {
-
-    showQuestion();
-
-}
-
-else {
-
-    if (
+    currentListProgress
+        .masteredRevisionQuestions =
 
         currentListProgress
             .masteredRevisionQuestions
-            .length === 0
+            .filter(
+                (item, index, self) =>
 
-        &&
+                    index ===
+                    self.findIndex(
+                        t =>
 
-        !currentListProgress
-            .completedMasteredSets
-            .includes(currentSet)
+                            t.contentId
+                                === item.contentId
 
+                            &&
+
+                            t.setName
+                                === item.setName
+                    )
+            );
+
+    currentQuestionIndex++;
+
+    // NEXT QUESTION
+
+    if (
+        currentQuestionIndex
+        < currentQuestions.length
     ) {
 
-        currentListProgress
-            .completedMasteredSets
-            .push(currentSet);
+        showQuestion();
 
     }
 
-    alert(
-        "Mastered Assessment Completed"
-    );
+    // SET COMPLETED
 
-    openMasteredAssessment(
-        currentList
-    );
+    else {
+
+        if (
+            !currentListProgress
+                .completedMasteredSets
+                .includes(currentSet)
+        ) {
+
+            currentListProgress
+                .completedMasteredSets
+                .push(currentSet);
+
+        }
+
+        // FINAL MASTERED STATE
+
+        const allDaySets =
+
+            Object.keys(
+                assessmentQuestions[
+                    currentList
+                ]
+            ).filter(function(setName) {
+
+                return setName.startsWith(
+                    "Day"
+                );
+
+            });
+
+        const completedDaySets =
+
+            currentListProgress
+                .completedMasteredSets
+                .filter(function(setName) {
+
+                    return setName.startsWith(
+                        "Day"
+                    );
+
+                });
+
+        const allMasteredFinished =
+
+            completedDaySets.length
+                === allDaySets.length
+
+            &&
+
+            currentListProgress
+                .masteredRevisionQuestions
+                .length === 0;
+
+        if (
+            allMasteredFinished
+        ) {
+
+            currentListProgress
+                .masteredAssessmentCompleted = true;
+
+        }
+
+        alert(
+            "Mastered Assessment Completed"
+        );
+
+        saveProgress();
+        openMasteredAssessment(
+            currentList
+        );
+
+    }
 
 }
-
-}
-
 function openMasteredRevisionDashboard() {
 
     currentMode =
@@ -3293,21 +3488,15 @@ function openMasteredRevisionDashboard() {
 
                 if (
 
-                    progress
+    progress
 
-                    &&
+    &&
 
-                    progress
-                        .completedMasteredSets
-                        .length > 0
+    progress
+        .masteredRevisionQuestions
+        .length > 0
 
-                    &&
-
-                    progress
-                        .masteredRevisionQuestions
-                        .length > 0
-
-                ) {
+) {
 
                     hasRevisionLists = true;
 
@@ -3407,6 +3596,7 @@ function openMasteredRevision() {
 
                     <button class="nav-btn"
                         onclick="
+                            console.log('BUTTON CLICKE');
                             loadMasteredRevisionCard(
                                 '${contentId}'
                             )
@@ -3423,5 +3613,407 @@ function openMasteredRevision() {
         });
 
 }
+
+function loadMasteredRevisionCard(
+    contentId
+) {
+
+  console.log(
+    "LOAD MASTERED REVISION CALLED"
+);
+
+console.log(
+    "contentId:",
+    contentId
+);
+
+console.log(
+    "currentList:",
+    currentList
+);
+
+console.log(
+    "masteredRevisionQuestions:",
+    learnerProgress.lists[currentList]
+        .masteredRevisionQuestions
+);
+
+    const currentItems =
+        learningItems[currentList];
+
+    const currentListProgress =
+        learnerProgress.lists[
+            currentList
+        ];
+
+    const revisionQuestion =
+        currentListProgress
+            .masteredRevisionQuestions
+            .find(function(question) {
+
+                return (
+                    question.contentId
+                    === contentId
+                );
+
+            });
+
+    const revisionContentIds =
+        currentListProgress
+            .masteredRevisionQuestions
+            .map(function(question) {
+
+                return question.contentId;
+
+            });
+
+    revisionItems =
+        currentItems.filter(function(item) {
+
+            return revisionContentIds
+                .includes(
+                    item.contentId
+                );
+
+        });
+
+    revisionItemIndex =
+        revisionItems.findIndex(function(item) {
+
+            return (
+                item.contentId
+                === contentId
+            );
+
+        });
+
+    currentRevisionQuestion =
+        revisionQuestion;
+
+    showPage(
+        "items-page"
+    );
+
+    document.querySelector(
+        ".card-navigation"
+    ).innerHTML = `
+    
+        <button class="nav-btn"
+            onclick="
+                previousMasteredRevisionItem()
+            ">
+
+            ← Previous
+
+        </button>
+
+        <button class="nav-btn"
+            onclick="
+                completeMasteredRevision()
+            ">
+
+            Complete
+
+        </button>
+
+        <button class="nav-btn"
+            onclick="
+                nextMasteredRevisionItem()
+            ">
+
+            Next →
+
+        </button>
+
+    `;
+
+   showRevisionCard();
+
+}
+
+function completeMasteredRevision() {
+
+    currentQuestions =
+    learnerProgress.lists[currentList]
+        .masteredRevisionQuestions;
+
+    currentQuestionIndex = 0;
+
+    currentMode =
+        "mastered-assessment";
+
+    showPage(
+        "assessment-page"
+    );
+
+    showQuestion();
+
+}
+
+function resetCardNavigation() {
+
+    document.querySelector(
+        ".card-navigation"
+    ).innerHTML = `
+    
+        <button class="nav-btn"
+            onclick="previousItem()">
+
+            ← Previous
+
+        </button>
+
+        <button class="nav-btn"
+            onclick="nextItem()">
+
+            Next →
+
+        </button>
+
+    `;
+
+}
+
+
+function updateRevisionNavigationButtons() {
+
+    const previousButton =
+        document.querySelector(
+            ".card-navigation button:first-child"
+        );
+
+    const nextButton =
+        document.querySelector(
+            ".card-navigation button:last-child"
+        );
+
+    if (
+        revisionItemIndex === 0
+    ) {
+
+        previousButton.style.visibility =
+            "hidden";
+
+    }
+
+    else {
+
+        previousButton.style.visibility =
+            "visible";
+
+    }
+
+    if (
+        revisionItemIndex
+        === revisionItems.length - 1
+    ) {
+
+        nextButton.style.visibility =
+            "hidden";
+
+    }
+
+    else {
+
+        nextButton.style.visibility =
+            "visible";
+
+    }
+
+}
+
+function nextMasteredRevisionItem() {
+
+    if (
+        revisionItemIndex
+        < revisionItems.length - 1
+    ) {
+
+        revisionItemIndex++;
+
+        const nextItem =
+            revisionItems[
+                revisionItemIndex
+            ];
+
+        const currentListProgress =
+            learnerProgress.lists[
+                currentList
+            ];
+
+        currentRevisionQuestion =
+            currentListProgress
+                .masteredRevisionQuestions
+                .find(function(question) {
+
+                    return (
+                        question.contentId
+                        === nextItem.contentId
+                    );
+
+                });
+
+        showRevisionCard();
+
+    }
+
+}
+
+function previousMasteredRevisionItem() {
+
+    if (
+        revisionItemIndex > 0
+    ) {
+
+        revisionItemIndex--;
+
+        const previousItem =
+            revisionItems[
+                revisionItemIndex
+            ];
+
+        const currentListProgress =
+            learnerProgress.lists[
+                currentList
+            ];
+
+        currentRevisionQuestion =
+            currentListProgress
+                .masteredRevisionQuestions
+                .find(function(question) {
+
+                    return (
+                        question.contentId
+                        === previousItem.contentId
+                    );
+
+                });
+
+        showRevisionCard();
+
+    }
+
+}
+
+
+function saveProgress() {
+
+    localStorage.setItem(
+        "learnerProgress",
+        JSON.stringify(
+            learnerProgress
+        )
+    );
+
+}
+
+
+function loadProgress() {
+
+    const savedProgress =
+        localStorage.getItem(
+            "learnerProgress"
+        );
+
+    if (savedProgress) {
+
+        learnerProgress =
+            JSON.parse(
+                savedProgress
+            );
+
+    }
+
+}
+
+
+function openProgressDashboard() {
+
+    showPage(
+        "progress-dashboard-page"
+    );
+
+    const container =
+        document.getElementById(
+            "progress-dashboard-container"
+        );
+
+    let totalLists = 0;
+
+    let learnedLists = 0;
+
+    let masteredLists = 0;
+
+    Object.keys(
+        learnerProgress.lists
+    ).forEach(function(listName) {
+
+        totalLists++;
+
+        const progress =
+            learnerProgress.lists[
+                listName
+            ];
+
+        if (
+            progress.learned
+        ) {
+
+            learnedLists++;
+
+        }
+
+        if (
+            progress.mastered
+        ) {
+
+            masteredLists++;
+
+        }
+
+    });
+
+    container.innerHTML = `
+    
+        <div class="item-card">
+
+            <h2>
+                Overall Progress
+            </h2>
+
+            <p>
+                Total Lists:
+                ${totalLists}
+            </p>
+
+            <p>
+                Learned Lists:
+                ${learnedLists}
+            </p>
+
+            <p>
+                Mastered Lists:
+                ${masteredLists}
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+function toggleMenu() {
+
+    document
+        .querySelector(
+            ".sidebar"
+        )
+        .classList.toggle(
+            "mobile-open"
+        );
+
+}
+
+loadProgress();
 
 showPage("cover-page"); 
