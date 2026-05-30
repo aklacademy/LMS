@@ -335,6 +335,16 @@ h1 {
 
 @media (max-width: 768px) {
 
+    .sidebar {
+
+        display: none;
+    }
+
+    .sidebar.mobile-open {
+
+        display: flex;
+    }
+
     body {
 
         padding: 15px;
@@ -353,11 +363,9 @@ h1 {
 
         width: 100%;
 
-        flex-direction: row;
+        flex-direction: column;
 
         flex-wrap: wrap;
-
-        justify-content: center;
 
         gap: 10px;
 
