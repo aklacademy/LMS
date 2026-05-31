@@ -21,3 +21,55 @@ body {
     display: none !important;
 
 }
+
+/* =========================
+   NAVBAR
+========================= */
+
+#top-navbar {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 15px 20px;
+
+    background: #FFFFFF;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 1000;
+
+}
+
+.nav-btn {
+
+    padding: 10px 18px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #79D8C5;
+
+    color: #220070;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+.nav-btn:hover {
+
+    opacity: 0.9;
+
+}
