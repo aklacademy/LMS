@@ -4015,11 +4015,37 @@ function openProgressDashboard() {
 
 function toggleMenu() {
 
+    const sidebar =
+        document.querySelector(
+            ".sidebar"
+        );
+
+    const overlay =
+        document.getElementById(
+            "sidebar-overlay"
+        );
+
+    sidebar.classList.toggle(
+        "mobile-open"
+    );
+
+    overlay.classList.toggle(
+        "active"
+    );
+
+}
+
+function closeSidebar() {
+
     document
         .querySelector(".sidebar")
-        .classList.toggle(
-            "mobile-open"
-        );
+        .classList
+        .remove("mobile-open");
+
+    document
+        .getElementById("sidebar-overlay")
+        .classList
+        .remove("active");
 
 }
 
