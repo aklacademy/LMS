@@ -339,10 +339,10 @@ h1 {
 
 
 /* =========================
-   MOBILE RESPONSIVE
+   /* MOBILE + TABLET */
 ========================= */
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
 
      #top-navbar .nav-btn:not(#menu-toggle) {
 
@@ -376,7 +376,7 @@ h1 {
 
         z-index: 1000;
 
-        transition: 0.3s;
+        transition: left 0.3s ease;
 
     }
 
