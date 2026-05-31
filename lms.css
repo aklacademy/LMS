@@ -339,15 +339,24 @@ h1 {
 
 
 /* =========================
-   /* MOBILE + TABLET */
+   MOBILE + TABLET
 ========================= */
 
 @media (max-width: 1024px) {
 
-     #top-navbar .nav-btn:not(#menu-toggle) {
-         
-        #bakc-btn,
-        #home-btn
+    /* PAGE */
+
+    body {
+
+        padding: 0;
+
+    }
+
+    /* TOP BAR */
+
+    #back-btn,
+    #home-btn {
+
         display: none;
 
     }
@@ -358,8 +367,19 @@ h1 {
 
     }
 
+    /* APP LAYOUT */
 
-   .sidebar {
+    .app-layout {
+
+        display: block;
+
+        height: auto;
+
+    }
+
+    /* SIDEBAR DRAWER */
+
+    .sidebar {
 
         position: fixed;
 
@@ -373,7 +393,15 @@ h1 {
 
         z-index: 1000;
 
+        overflow-y: auto;
+
         transition: left 0.3s ease;
+
+        box-sizing: border-box;
+
+        padding: 20px;
+
+        background: #DCEEEF;
 
     }
 
@@ -383,56 +411,62 @@ h1 {
 
     }
 
+    /* OVERLAY */
+
     .sidebar-overlay {
 
-    position: fixed;
+        position: fixed;
 
-    top: 0;
-    left: 0;
+        top: 0;
 
-    width: 100%;
-    height: 100%;
+        left: 0;
 
-    background: rgba(0,0,0,0.4);
+        width: 100%;
 
-    z-index: 999;
+        height: 100%;
 
-    display: none;
+        background: rgba(0,0,0,0.4);
 
-}
+        z-index: 999;
 
-.sidebar-overlay.active {
+        display: none;
 
-    display: block;
+    }
 
-}
-    
-    body {
+    .sidebar-overlay.active {
+
+        display: block;
+
+    }
+
+    /* CONTENT */
+
+    .main-content {
+
+        width: 100%;
+
+        margin: 0;
 
         padding: 15px;
 
-    }
-
-    .app-layout {
-
-        flex-direction: column;
-
-        height: auto;
+        box-sizing: border-box;
 
     }
+
+    /* SIDEBAR BUTTONS */
 
     .sidebar-btn,
     .sidebar-sub-btn {
 
-        width: auto;
+        width: 100%;
 
-        min-width: 140px;
+        min-width: auto;
 
-        text-align: center;
-        background: #79D8C5;
-        color: #220070;
+        text-align: left;
 
     }
+
+    /* GRIDS */
 
     .menu-grid,
     .themes-grid {
@@ -441,35 +475,21 @@ h1 {
 
     }
 
+    /* CARDS */
+
     .card {
 
         width: 100%;
 
-        max-width: 350px;
+        max-width: none;
 
         height: auto;
 
         min-height: 120px;
 
-        margin: 0 auto;
-
     }
 
     .theme-card {
-
-        width: 100%;
-
-    }
-
-    .card-navigation {
-
-        flex-direction: column;
-
-        gap: 10px;
-
-    }
-
-    .nav-btn {
 
         width: 100%;
 
@@ -481,6 +501,8 @@ h1 {
 
     }
 
+    /* OPTIONS */
+
     .option-btn {
 
         width: 100%;
@@ -489,9 +511,21 @@ h1 {
 
     }
 
-    .main-content {
+    /* NAVIGATION */
 
-        padding: 15px;
+    .card-navigation {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 10px;
+
+    }
+
+    .nav-btn {
+
+        width: 100%;
 
     }
 
