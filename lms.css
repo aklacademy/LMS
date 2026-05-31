@@ -345,7 +345,9 @@ h1 {
 @media (max-width: 1024px) {
 
      #top-navbar .nav-btn:not(#menu-toggle) {
-
+         
+        #bakc-btn,
+        #home-btn
         display: none;
 
     }
