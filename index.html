@@ -1,1 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>LMS</title>
+
+    <link rel="stylesheet" href="lms.css">
+
+</head>
+
+<body>
+
+    <div
+    id="sidebar-overlay"
+    class="sidebar-overlay"
+    onclick="closeSidebar()">
+</div>
+
+    <div id="top-navbar">
+
+<button
+    id="menu-toggle"
+    class="nav-btn"
+    onclick="toggleMenu()">
+
+    ☰
+<button
+    id="back-btn"
+    class="nav-btn"
+    onclick="goBack()">
+
+    ← Back
+
+</button>
+
+<button
+    id="home-btn"
+    class="nav-btn"
+    onclick="goHome()">
+
+    🏠 Home
+
+</button>
+
+    <!-- COVER PAGE -->
+
+<div id="cover-page"
+    class="app-page">
+
+    <h1>
+
+        LMS
+
+    </h1>
+
+    <div class="themes-grid">
+
+        <button class="theme-card"
+            onclick="
+                openCourse(
+                    'Spoken English'
+                )
+            ">
+
+            Test
+
+        </button>
+
+        <button class="theme-card"
+            onclick="
+                openCourse(
+                    'Phonics'
+                )
+            ">
+
+            Test1
+
+        </button>
+
+    </div>
+
+</div>
+
+    <!-- COURSE PAGE -->
+
+    <div id="course-page"
+        class="app-layout hidden">
+
+        <!-- LEFT SIDEBAR -->
+
+        <div class="sidebar">
+
+            <h2 class="course-title">
+
+                Spoken English
+
+            </h2>
+
+            <button class="sidebar-btn"
+    onclick="openProgressDashboard()">
+
+    📊 Progress
+
+</button>
+
+            <button class="sidebar-btn"
+                onclick="openLearn()">
+
+                Learn
+
+            </button>
+
+                      <div>
+
+    <button class="sidebar-btn"
+        onclick="toggleAssessmentMenu()">
+
+        Assessment
+
+    </button>
+
+    <div id="assessment-submenu"
+        class="hidden">
+
+        <button class="sidebar-sub-btn"
+            onclick="
+                openAssessmentDashboard()
+            ">
+
+            Assessment
+
+        </button>
+
+        <button class="sidebar-sub-btn"
+            onclick="
+                openAssessmentReviewDashboard()
+            ">
+
+            Review Assessment
+
+        </button>
+
+    </div>
+
+</div>
+
+            <button class="sidebar-btn"
+                onclick="openRevisionDashboard()">
+
+                Revision
+
+            </button>
+
+<div>
+
+    <button class="sidebar-btn"
+        onclick="toggleMasteredMenu()">
+
+        Mastered
+
+    </button>
+
+
+    <div id="mastered-submenu"
+        class="hidden">
+
+        <button class="sidebar-sub-btn"
+            onclick="
+                openMasteredReviewDashboard()
+            ">
+
+            Review
+
+        </button>
+
+        <button class="sidebar-sub-btn"
+            onclick="
+                openMasteredAssessmentDashboard()
+            ">
+
+            Assessment
+
+        </button>
+
+        <button class="sidebar-sub-btn"
+            onclick="
+                openMasteredRevisionDashboard()
+            ">
+
+            Revision
+
+        </button>
+
+        
+
+    </div>
+
+</div>
+
+</div>
+
+
+
+        <!-- MAIN CONTENT AREA -->
+
+        <div class="main-content">
+
+            <!-- PROGRESS DASHBOARD PAGE -->
+
+<div id="progress-dashboard-page"
+    class="app-page hidden">
+
+    <h2>
+
+        Progress Dashboard
+
+    </h2>
+
+    <div id="progress-dashboard-container">
+
+    </div>
+
+</div>
+
+            <!-- LEARN PAGE -->
+
+            <div id="learn-page"
+                class="app-page">
+
+                <h2>
+
+                    Learn
+
+                </h2>
+
+                <div id="themes-container"
+                    class="themes-grid">
+
+                </div>
+
+            </div>
+
+            <!-- LISTS PAGE -->
+
+            <div id="lists-page"
+                class="app-page hidden">
+
+                <h2 id="lists-title"></h2>
+
+                <div id="lists-container"
+                    class="themes-grid">
+
+                </div>
+
+            </div>
+
+            <!-- ITEMS PAGE -->
+
+            <div id="items-page"
+                class="app-page hidden">
+
+                <h2 id="items-title"></h2>
+
+                <div id="items-container"></div>
+
+                <div class="card-navigation">
+
+                    <button class="nav-btn"
+                        onclick="previousItem()">
+
+                        ← Previous
+
+                    </button>
+
+                    <button id="complete-learning-btn"
+                    onclick="completeLearning()">
+
+                    Complete Learning
+            
+                </button>
+
+                    <button class="nav-btn"
+                        onclick="nextItem()">
+
+                        Next →
+
+                    </button>
+
+                </div>
+
+            </div>
+            
+
+            <!-- ASSESSMENT DASHBOARD -->
+
+            <div id="assessment-dashboard-page"
+                class="app-page hidden">
+
+                <h2>
+
+                    Assessment
+
+                </h2>
+
+                <div id="assessment-dashboard-container">
+
+                </div>
+
+            </div>
+
+            <!-- ASSESSMENT SETS -->
+
+            <div id="assessment-sets-page"
+                class="app-page hidden">
+
+                <h2>
+
+                    Select Assessment Set
+
+                </h2>
+
+                <div id="assessment-sets-container"
+                    class="themes-grid">
+
+                </div>
+
+            </div>
+
+            <!-- QUESTION PAGE -->
+
+            <div id="assessment-page"
+                class="app-page hidden">
+
+                <h2>
+
+                    Assessment
+
+                </h2>
+
+                <div id="question-container"></div>
+
+            </div>
+
+            <!-- REVISION PAGE -->
+
+            <div id="revision-page"
+                class="app-page hidden">
+
+                <h2>
+
+                    Revision
+
+                </h2>
+
+                <div id="revision-container"></div>
+
+            </div>
+
+            <!-- MASTERED PAGE -->
+
+<div id="mastered-page"
+    class="app-page hidden">
+
+    <h2>
+
+        Mastered
+
+    </h2>
+
+    <div class="themes-grid">
+
+        <button class="theme-card"
+            onclick="
+                openMasteredAssessmentDashboard()
+            ">
+
+            Assessment
+
+        </button>
+
+        <button class="theme-card"
+            onclick="
+                openMasteredRevisionDashboard()
+            ">
+
+            Revision
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+
+    <!-- SCRIPTS -->
+
+    <script src="lms-content.js"></script>
+    <script src="lms-questions.js"></script>
+    <script src="lms-courses.js"></script>
+    <script src="lms-themes.js"></script>
+    <script src="lms-lists.js"></script>
+    <script src="lms.js"></script>
+
+</body>
+</html>
