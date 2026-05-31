@@ -529,4 +529,11 @@ h1 {
 
     }
 
+    #back-btn,
+    #home-btn {
+
+        display: none;
+
+    }
+
 }
