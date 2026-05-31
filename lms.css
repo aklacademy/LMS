@@ -75,3 +75,76 @@ body {
     opacity: 0.9;
 
 }
+
+/* =========================
+   COVER PAGE
+========================= */
+
+#cover-page {
+
+    padding: 40px 20px;
+
+}
+
+#cover-page h1 {
+
+    margin-bottom: 40px;
+
+    color: #220070;
+
+    font-size: 36px;
+
+}
+
+/* COURSE GRID */
+
+.themes-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(250px, 1fr)
+    );
+
+    gap: 20px;
+
+    max-width: 900px;
+
+    margin: 0 auto;
+
+}
+
+/* COURSE CARD */
+
+.theme-card {
+
+    padding: 30px;
+
+    border: none;
+
+    border-radius: 16px;
+
+    background: #FFFFFF;
+
+    color: #220070;
+
+    font-size: 22px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 12px
+        rgba(0,0,0,0.08);
+
+    transition: 0.3s;
+
+}
+
+.theme-card:hover {
+
+    transform: translateY(-3px);
+
+}
