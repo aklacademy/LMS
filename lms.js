@@ -221,12 +221,13 @@ function openCourse(courseName) {
 
     document.querySelector(
         ".course-title"
-    ).innerText = courseName;
+    ).textContent = courseName;
 
     showPage("course-page");
 
-}
+    showPage("course-home-page");
 
+}
 
 function openAssessmentDashboard() {
 
