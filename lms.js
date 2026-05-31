@@ -997,6 +997,12 @@ function openThemes(areaName) {
 
         `;
 
+        if (window.innerWidth <= 1024) {
+
+    closeSidebar();
+
+}
+
     });
 
     // CLOSE MOBILE MENU
@@ -1694,9 +1700,6 @@ setNames.forEach(function(setName, index) {
     unresolvedQuestions.length === 0;
 
     
-
-
-
     // FULLY MASTERED
 
   if (isFullyMastered) {
@@ -1747,6 +1750,12 @@ setNames.forEach(function(setName, index) {
     `;
 
 });
+
+    if (window.innerWidth <= 1024) {
+
+    closeSidebar();
+
+}
 
 }
 
@@ -2283,6 +2292,12 @@ Object.keys(groupedRevision)
         `;
 
     });
+
+    if (window.innerWidth <= 1024) {
+
+    closeSidebar();
+
+}
 
 }
 
