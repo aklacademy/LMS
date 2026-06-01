@@ -323,7 +323,7 @@ function openAssessmentDashboard() {
 
         container.innerHTML += `
         
-            <button class="theme-card"
+            <button class="learning-area-card"
                 onclick="
                     openThemes(
                         '${area}'
@@ -727,12 +727,12 @@ function openMasteredReviewDashboard() {
 
     showPage("learn-page");
 
-    const themesContainer =
+    const learningAreasContainer =
         document.getElementById(
-            "themes-container"
+            "learning-areas-container"
         );
 
-    themesContainer.innerHTML = "";
+learningAreasContainer.innerHTML = "";
 
     const selectedCourse =
         courses.find(function(course) {
@@ -800,7 +800,7 @@ function openMasteredReviewDashboard() {
 
     }
 
-    themesContainer.innerHTML += `
+    learningAreasContainer.innerHTML += `
     
         <button class="theme-card"
             onclick="
@@ -828,12 +828,12 @@ function openLearn() {
 
     showPage("learn-page");
 
-    const themesContainer =
+    const learningAreasContainer =
         document.getElementById(
-            "themes-container"
+            "learning-areas-container"
         );
 
-    themesContainer.innerHTML = "";
+    learningAreasContainer.innerHTML = "";
 
     const selectedCourse =
         courses.find(function(course) {
@@ -894,9 +894,9 @@ function openLearn() {
 
         }
 
-        themesContainer.innerHTML += `
+        learningAreasContainer.innerHTML += `
         
-            <button class="theme-card"
+            <button class="learning-area-card"
                 onclick="
                     openThemes(
                         '${area}'
@@ -932,7 +932,7 @@ function openThemes(areaName) {
 
     currentSection = areaName;
 
-    showPage("learn-page");
+    showPage("themes-page");
 
     const themesContainer =
         document.getElementById(
@@ -1102,7 +1102,7 @@ if (
 
         listsContainer.innerHTML += `
         
-            <button class="theme-card"
+            <button class="list-card"
                 onclick="
 
                 ${
@@ -1249,35 +1249,53 @@ function showVocabularyCard(item) {
     
         <div class="item-card">
 
-            <p>
-                Card ${currentItemIndex + 1}
-                of
-                ${currentItems.length}
-            </p>
+            <div class="item-header">
 
-            <h2>
-                ${item.title}
-            </h2>
+                <div class="item-info">
 
-            <p>
+                    <p class="card-counter">
 
-                <strong>
-                    Part of Speech:
-                </strong>
+                        Card ${currentItemIndex + 1}
+                        of
+                        ${currentItems.length}
 
-                ${item.content.partOfSpeech}
+                    </p>
 
-            </p>
+                    <h2>
 
-            <p>
+                        ${item.title}
 
-                <strong>
-                    Pronunciation:
-                </strong>
+                    </h2>
 
-                ${item.content.pronunciation}
+                    <p>
 
-            </p>
+                        <strong>
+                            Part of Speech:
+                        </strong>
+
+                        ${item.content.partOfSpeech}
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            Pronunciation:
+                        </strong>
+
+                        ${item.content.pronunciation}
+
+                    </p>
+
+                </div>
+
+                <div class="item-image">
+
+                    Image Coming Soon
+
+                </div>
+
+            </div>
 
             <p>
 
@@ -1337,9 +1355,9 @@ function showVocabularyCard(item) {
 
         </div>
 
-    `;
-
-}
+        `;
+        
+     }
 
 
 function showLessonCard(item) {
@@ -1809,6 +1827,14 @@ function showQuestion() {
     questionContainer.innerHTML = `
     
         <div class="item-card">
+
+        <p class="card-counter">
+
+    Question ${currentQuestionIndex + 1}
+    of
+    ${currentQuestions.length}
+
+</p>
 
             <h3>
                 ${question.question}
