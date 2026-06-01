@@ -58,35 +58,35 @@
 
     <h1>
 
-        LMS
+        AK LINGUISTIC ACADEMY LMS
 
     </h1>
 
-    <div class="themes-grid">
+    <div class="course-grid">
 
-        <button class="theme-card"
-            onclick="
-                openCourse(
-                    'Spoken English'
-                )
-            ">
+    <button class="course-card"
+        onclick="
+            openCourse(
+                'Spoken English'
+            )
+        ">
 
-            Test
+        Test
 
-        </button>
+    </button>
 
-        <button class="theme-card"
-            onclick="
-                openCourse(
-                    'Phonics'
-                )
-            ">
+    <button class="course-card"
+        onclick="
+            openCourse(
+                'Phonics'
+            )
+        ">
 
-            Test1
+        Test1
 
-        </button>
+    </button>
 
-    </div>
+</div>
 
 </div>
 
@@ -115,7 +115,7 @@
             <button class="sidebar-btn"
                 onclick="openLearn()">
 
-                Learn
+                Learning Areas
 
             </button>
 
@@ -178,7 +178,7 @@
                 openMasteredReviewDashboard()
             ">
 
-            Review
+            Review 
 
         </button>
 
@@ -230,13 +230,19 @@
 
         <p>
 
-            Master spoken and written English through structured learning, assessment, revision, and mastery activities.
+           Every lesson completed is a step toward confident communication.
 
         </p>
 
         <p>
 
-            Select a section from the menu to get started.
+            Learn regularly, practise consistently, and watch your English improve day by day.
+
+        </p>
+
+        <p>
+
+            Choose a section from the menu and begin your learning journey.
 
         </p>
 
@@ -266,16 +272,36 @@
 
                 <h2>
 
-                    Learn
+                     Learning Areas
 
                 </h2>
 
-                <div id="themes-container"
-                    class="themes-grid">
+                
+
+                <div id="learning-areas-container"
+                    class="learning-area-grid">
 
                 </div>
 
             </div>
+
+            <!-- THEMES PAGE -->
+
+<div id="themes-page"
+     class="app-page hidden">
+
+    <h2>
+
+        Themes
+
+    </h2>
+
+    <div id="themes-container"
+         class="theme-grid">
+
+    </div>
+
+</div>
 
             <!-- LISTS PAGE -->
 
@@ -285,7 +311,7 @@
                 <h2 id="lists-title"></h2>
 
                 <div id="lists-container"
-                    class="themes-grid">
+                    class="list-grid">
 
                 </div>
 
@@ -335,9 +361,23 @@
 
                 <h2>
 
+
                     Assessment
 
                 </h2>
+
+                 <p class="page-description">
+
+    Select a learning area to assess your mastery.
+
+</p>
+
+                <div id="assessment-dashboard-container"
+     class="learning-area-grid">
+
+</div>
+
+               
 
                 <div id="assessment-dashboard-container">
 
