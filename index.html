@@ -15,30 +15,39 @@
 
 <body>
 
+    <div
+    id="sidebar-overlay"
+    class="sidebar-overlay"
+    onclick="closeSidebar()">
+</div>
+
     <div id="top-navbar">
 
-
-        <button
+<button
+    id="menu-toggle"
     class="nav-btn"
     onclick="toggleMenu()">
 
     ☰
+</button>
+
+        <button
+    id="back-btn"
+    class="nav-btn"
+    onclick="goBack()">
+
+    ← Back
 
 </button>
 
-        <button class="nav-btn"
-            onclick="goBack()">
+<button
+    id="home-btn"
+    class="nav-btn"
+    onclick="goHome()">
 
-            ← Back
+    🏠 Home
 
-        </button>
-
-        <button class="nav-btn"
-            onclick="goHome()">
-
-            🏠 Home
-
-        </button>
+</button>
 
     </div>
 
@@ -49,35 +58,35 @@
 
     <h1>
 
-        LMS
+        AK LINGUISTIC ACADEMY LMS
 
     </h1>
 
-    <div class="themes-grid">
+    <div class="course-grid">
 
-        <button class="theme-card"
-            onclick="
-                openCourse(
-                    'Spoken English'
-                )
-            ">
+    <button class="course-card"
+        onclick="
+            openCourse(
+                'Spoken English'
+            )
+        ">
 
-            Test
+        Test
 
-        </button>
+    </button>
 
-        <button class="theme-card"
-            onclick="
-                openCourse(
-                    'Phonics'
-                )
-            ">
+    <button class="course-card"
+        onclick="
+            openCourse(
+                'Phonics'
+            )
+        ">
 
-            Test1
+        Test1
 
-        </button>
+    </button>
 
-    </div>
+</div>
 
 </div>
 
@@ -106,7 +115,7 @@
             <button class="sidebar-btn"
                 onclick="openLearn()">
 
-                Learn
+                Learning Areas
 
             </button>
 
@@ -169,7 +178,7 @@
                 openMasteredReviewDashboard()
             ">
 
-            Review
+            Review 
 
         </button>
 
@@ -205,10 +214,45 @@
 
         <div class="main-content">
 
+
+            <!--WELCOME MESSAGE-->
+
+
+           <div id="course-home-page" class="app-page">
+
+    <div class="welcome-card">
+
+        <h2>
+
+            Welcome to Spoken English
+
+        </h2>
+
+        <p>
+
+           Every lesson completed is a step toward confident communication.
+
+        </p>
+
+        <p>
+
+            Learn regularly, practise consistently, and watch your English improve day by day.
+
+        </p>
+
+        <p>
+
+            Choose a section from the menu and begin your learning journey.
+
+        </p>
+
+    </div>
+
+</div>
+
             <!-- PROGRESS DASHBOARD PAGE -->
 
-<div id="progress-dashboard-page"
-    class="app-page hidden">
+<div id="progress-dashboard-page" class="app-page hidden">
 
     <h2>
 
@@ -224,21 +268,40 @@
 
             <!-- LEARN PAGE -->
 
-            <div id="learn-page"
-                class="app-page">
+            <div id="learn-page" class="app-page hidden">
 
                 <h2>
 
-                    Learn
+                     Learning Areas
 
                 </h2>
 
-                <div id="themes-container"
-                    class="themes-grid">
+                
+
+                <div id="learning-areas-container"
+                    class="learning-area-grid">
 
                 </div>
 
             </div>
+
+            <!-- THEMES PAGE -->
+
+<div id="themes-page"
+     class="app-page hidden">
+
+    <h2>
+
+        Themes
+
+    </h2>
+
+    <div id="themes-container"
+         class="theme-grid">
+
+    </div>
+
+</div>
 
             <!-- LISTS PAGE -->
 
@@ -248,7 +311,7 @@
                 <h2 id="lists-title"></h2>
 
                 <div id="lists-container"
-                    class="themes-grid">
+                    class="list-grid">
 
                 </div>
 
@@ -298,9 +361,23 @@
 
                 <h2>
 
+
                     Assessment
 
                 </h2>
+
+                 <p class="page-description">
+
+    Select a learning area to assess your mastery.
+
+</p>
+
+                <div id="assessment-dashboard-container"
+     class="learning-area-grid">
+
+</div>
+
+               
 
                 <div id="assessment-dashboard-container">
 
