@@ -4,11 +4,11 @@
 
     --accent: #79D8C5;
 
-    --page-bg: #F5F7FA;
+    --page-bg: #F3F5F8;
 
     --sidebar-bg: #DCEEEF;
 
-    --card-bg: #FAFBFC;
+    --card-bg: #FBFCFD;
 
     --text-primary: #2D3748;
 
@@ -574,9 +574,12 @@ body {
     border-radius: 20px;
 
     box-shadow:
-        0 4px 12px rgba(0,0,0,0.08);
+        0 8px 24px rgba(0,0,0,0.08);
 
     text-align: left;
+
+    border-top:
+        3px solid var(--primary);
 
 }
 
@@ -797,6 +800,7 @@ body {
 }
 
 
+
 /* =========================
    ASSESSMENT
 ========================= */
@@ -827,67 +831,269 @@ body {
 }
 
 
-ASSESSMENT
+/* =========================
+   ASSESSMENT SETS
+========================= */
 
-.item-card h3 {
+.assessment-set-card {
 
-    font-size: 30px;
-
-    color: var(--primary);
-
-    line-height: 1.6;
-
-    margin-bottom: 30px;
-
-    font-weight: 700;
-
-}
-
-.options-container {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 12px;
-
-}
-
-
-
-.option-btn {
-
-    padding: 14px 24px;
+    background: var(--card-bg);
 
     border: none;
 
-    border-radius: 12px;
+    border-radius: 18px;
 
-    background: #F8FAFC;
+    padding: 24px;
 
-    color: var(--primary);
-
-    font-size: 16px;
-
-    font-weight: 600;
+    min-height: 110px;
 
     cursor: pointer;
 
+    font-size: 24px;
+
+    font-weight: 600;
+
+    color: var(--primary);
+
     box-shadow:
-        0 2px 6px rgba(0,0,0,0.08);
+        0 4px 12px rgba(0,0,0,0.08);
 
     transition: 0.3s;
 
 }
 
+.assessment-set-card:hover {
+
+    transform: translateY(-4px);
+
+    border-left:
+        6px solid #79D8C5;
+
+}
+
+.assessment-set-card:disabled {
+
+    opacity: 0.55;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+}
+
+
+.assessment-sets-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 220px));
+
+    justify-content: center;
+
+    gap: 24px;
+
+    margin-top: 30px;
+
+}
+
+
+/* =========================
+   ASSESSMENT QUESTION
+========================= */
+
+.item-card h3 {
+
+    font-size: 30px;
+
+    line-height: 1.7;
+
+    color: var(--primary);
+
+    margin-bottom: 40px;
+
+    font-weight: 700;
+
+     max-width: 850px;
+
+}
+
+
+.options-container {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+    
+
+}
+
+
+.option-btn {
+
+    width: 100%;
+
+    text-align: left;
+
+    padding: 20px 24px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background: #F8FAFC;
+
+    color: var(--primary);
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    box-shadow:
+        0 2px 6px rgba(0,0,0,0.08);
+     
+
+}
+
+
 .option-btn:hover {
 
     background: #79D8C5;
 
-    transform: translateY(-2px);
+    transform: translateY(4px);
 
 }
 
+
+.revision-feedback {
+
+    background: #F8FAFC;
+
+    border-radius: 14px;
+
+    padding: 15px;
+
+    margin-bottom: 12px;
+
+    border-left: 4px solid #79D8C5;
+
+}
+
+.revision-feedback strong {
+
+    color: var(--primary);
+
+}
+
+.revision-feedback .revision-question {
+
+    font-size: 25px;
+
+    font-weight: 600;
+
+    color: var(--primary);
+
+    margin-bottom: 20px;
+
+}
+
+
+
+.revision-learning-card {
+
+    padding-top: 10px;
+
+}
+
+.revision-card {
+
+    max-width: 900px;
+
+    margin: 0 auto;
+
+}
+
+.revision-dashboard-card {
+
+    text-align: center;
+
+}
+
+
+.revision-divider {
+
+    border: none;
+
+    border-top: 1px solid rgba(34, 0, 112, 0.15);
+
+    margin: 24px 0;
+
+}
+
+
+/* =========================
+   SEARCH PAGE
+========================= */
+
+.search-controls {
+
+    display: flex;
+
+    gap: 1rem;
+
+    justify-content: center;
+
+    margin-bottom: 2rem;
+
+}
+
+#search-filter,
+#search-input {
+
+    padding: 0.75rem;
+
+    border-radius: 8px;
+
+    border: 1px solid #ccc;
+
+    min-width: 220px;
+
+}
+
+#search-results {
+
+    display: flex;
+
+    justify-content: center;
+
+}
+
+
+.search-result-card {
+
+    background: white;
+
+    padding: 1rem;
+
+    margin-bottom: 1rem;
+
+    border-radius: 10px;
+
+    max-width: 500px;
+
+    margin-left: auto;
+
+    margin-right: auto;
+
+    cursor: pointer;
+
+}
 
 
 .app-page h2 {
