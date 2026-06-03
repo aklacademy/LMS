@@ -53,40 +53,22 @@
 
     <!-- COVER PAGE -->
 
+<!-- COVER PAGE -->
+
 <div id="cover-page"
     class="app-page">
 
     <h1>
 
-        AK LINGUISTIC ACADEMY LMS
+        LMS Practice
 
     </h1>
 
-    <div class="course-grid">
+    <div
+        id="course-container"
+        class="course-grid">
 
-    <button class="course-card"
-        onclick="
-            openCourse(
-                'Spoken English'
-            )
-        ">
-
-        Test
-
-    </button>
-
-    <button class="course-card"
-        onclick="
-            openCourse(
-                'Phonics'
-            )
-        ">
-
-        Test1
-
-    </button>
-
-</div>
+    </div>
 
 </div>
 
@@ -101,9 +83,25 @@
 
             <h2 class="course-title">
 
-                Spoken English
+</h2>
 
-            </h2>
+
+<button class="sidebar-btn"
+    onclick="openAdminPage()">
+
+    Admin
+
+</button>
+
+
+<button class="sidebar-btn"
+    onclick="openSearch()">
+
+    Search
+
+</button>
+
+
 
             <button class="sidebar-btn"
     onclick="openProgressDashboard()">
@@ -118,6 +116,8 @@
                 Learning Areas
 
             </button>
+
+            
 
                       <div>
 
@@ -222,33 +222,65 @@
 
     <div class="welcome-card">
 
-        <h2>
+    <h2 id="welcome-title"></h2>
 
-            Welcome to Spoken English
+    <p id="welcome-message"></p>
 
-        </h2>
+</div>
+</div>
 
-        <p>
 
-           Every lesson completed is a step toward confident communication.
+<!-- SEARCH PAGE -->
 
-        </p>
 
-        <p>
 
-            Learn regularly, practise consistently, and watch your English improve day by day.
+<div id="search-page"
+    class="app-page hidden">
 
-        </p>
+    <h2>
 
-        <p>
+        Search
 
-            Choose a section from the menu and begin your learning journey.
+    </h2>
 
-        </p>
+    <div class="search-controls">
+
+        <select id="search-filter">
+
+        </select>
+
+        <input
+            type="text"
+            id="search-input"
+            placeholder="Type keyword..."
+            oninput="searchContent()">
+
+    </div>
+
+    <div id="search-results">
 
     </div>
 
 </div>
+
+<!--ADMIN PAGE-->
+
+<div id="admin-page"
+    class="app-page hidden">
+
+    <h2>
+
+        Admin Dashboard
+
+    </h2>
+
+    <div id="admin-container">
+
+    </div>
+
+</div>
+
+
 
             <!-- PROGRESS DASHBOARD PAGE -->
 
@@ -285,6 +317,7 @@
 
             </div>
 
+            
             <!-- THEMES PAGE -->
 
 <div id="themes-page"
@@ -377,11 +410,7 @@
 
 </div>
 
-               
-
-                <div id="assessment-dashboard-container">
-
-                </div>
+            
 
             </div>
 
@@ -397,7 +426,7 @@
                 </h2>
 
                 <div id="assessment-sets-container"
-                    class="themes-grid">
+                    class="assessment-sets-grid">
 
                 </div>
 
@@ -408,13 +437,15 @@
             <div id="assessment-page"
                 class="app-page hidden">
 
-                <h2>
+                <h2 id="assessment-title">
 
                     Assessment
 
                 </h2>
 
-                <div id="question-container"></div>
+                <div id="question-container">
+
+                </div>
 
             </div>
 
@@ -429,9 +460,10 @@
 
                 </h2>
 
-                <div id="revision-container"></div>
+                <div id="revision-container"
+     class="assessment-sets-grid">
 
-            </div>
+</div>
 
             <!-- MASTERED PAGE -->
 
