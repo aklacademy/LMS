@@ -128,6 +128,53 @@ const assessmentQuestions = {
             
             }
 
+        ],
+
+        "Day 7": [
+
+            {
+                questionId: "M007",
+
+                category: "mastered",
+
+                contentId: "WJV3",
+
+                question:
+                "What does 'hire' mean?",
+
+                options: [
+                    "Employ",
+                    "Dismiss",
+                    "Ignore",
+                    "Escape"
+                ],
+
+                correctAnswer: "Employ"
+            },
+
+            {
+
+                questionId: "M008",
+                category: "mastered",
+                contentId: "WJV4",
+
+                question: 
+
+                "My friend decided to ______________ me",
+
+                options: [
+
+                    "hire",
+                    "fire",
+                    "select",
+                    "reject"
+                ],
+
+                correctAnswer: "hire"
+
+            
+            }
+
         ]
 
     }
