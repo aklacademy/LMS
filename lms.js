@@ -24,6 +24,10 @@ let masteredMode = false;
 
 let masteredAssessmentMode = false;
 
+let currentReviewIndex = 0;
+
+let isMasteredRevision = false;
+
 let currentRevisionQuestion = null;
 
 
@@ -214,20 +218,497 @@ function initializeListProgress(listName) {
 
 }
 
+function openAdminPage() {
+
+    showPage(
+        "admin-page"
+    );
+
+    const container =
+        document.getElementById(
+            "admin-container"
+        );
+
+    const selectedCourse =
+        courses.find(function(course) {
+
+            return (
+                course.title
+                === currentCourse
+            );
+
+        });
+
+    let themeCount = 0;
+
+    let listCount = 0;
+
+    let itemCount = 0;
+
+    let setCount = 0;
+
+    let questionCount = 0;
+
+    selectedCourse.learningAreas
+        .forEach(function(area) {
+
+            const areaThemes =
+                themes.filter(function(theme) {
+
+                    return (
+                        theme.learningArea
+                        === area
+                    );
+
+                });
+
+            themeCount +=
+                areaThemes.length;
+
+            areaThemes.forEach(function(theme) {
+
+                const themeLists =
+                    lists.filter(function(list) {
+
+                        return (
+                            list.themeTitle
+                            === theme.title
+                        );
+
+                    });
+
+                listCount +=
+                    themeLists.length;
+
+                themeLists.forEach(function(list) {
+
+                    if (
+                        learningItems[
+                            list.title
+                        ]
+                    ) {
+
+                        itemCount +=
+                            learningItems[
+                                list.title
+                            ].length;
+
+                    }
+
+                    if (
+                        assessmentQuestions[
+                            list.title
+                        ]
+                    ) {
+
+                        Object.keys(
+                            assessmentQuestions[
+                                list.title
+                            ]
+                        ).forEach(function(key) {
+
+                            if (
+                                key.startsWith(
+                                    "Set"
+                                )
+                            ) {
+
+                                setCount++;
+
+                                questionCount +=
+                                    assessmentQuestions[
+                                        list.title
+                                    ][key].length;
+
+                            }
+
+                        });
+
+                    }
+
+                });
+
+            });
+
+        });
+
+    container.innerHTML = `
+    
+        <div class="item-card">
+
+            <h3>
+
+                ${selectedCourse.title}
+
+            </h3>
+
+            <p>
+
+                Learning Areas:
+                ${selectedCourse.learningAreas.length}
+
+            </p>
+
+            <p>
+
+                Themes:
+                ${themeCount}
+
+            </p>
+
+            <p>
+
+                Lists:
+                ${listCount}
+
+            </p>
+
+            <p>
+
+                Items:
+                ${itemCount}
+
+            </p>
+
+            <p>
+
+                Assessment Sets:
+                ${setCount}
+
+            </p>
+
+            <p>
+
+                Assessment Questions:
+                ${questionCount}
+
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+function openSearch() {
+
+
+    showPage(
+        "search-page"
+    );
+
+    const filter =
+        document.getElementById(
+            "search-filter"
+        );
+
+    filter.innerHTML = "";
+
+    filter.innerHTML += `
+    
+        <option value="all">
+
+            All Learning Areas
+
+        </option>
+
+    `;
+
+    const selectedCourse =
+        courses.find(function(course) {
+
+            return (
+                course.title
+                === currentCourse
+            );
+
+        });
+
+    selectedCourse.learningAreas
+        .forEach(function(area) {
+
+            filter.innerHTML += `
+            
+                <option value="${area}">
+
+                    ${area}
+
+                </option>
+
+            `;
+
+        });
+
+    document.getElementById(
+        "search-input"
+    ).value = "";
+
+    document.getElementById(
+        "search-results"
+    ).innerHTML = "";
+
+}
+
+
+function searchContent() {
+
+    let resultsFound = false;
+
+    const selectedArea =
+        document.getElementById(
+            "search-filter"
+        ).value;
+
+    const searchTerm =
+        document.getElementById(
+            "search-input"
+        ).value
+        .toLowerCase();
+
+    const resultsContainer =
+        document.getElementById(
+            "search-results"
+        );
+
+    resultsContainer.innerHTML = "";
+
+    if (
+        searchTerm.trim() === ""
+    ) {
+
+        return;
+
+    }
+
+    Object.keys(
+    learningItems
+).forEach(function(listName) {
+
+    learningItems[listName]
+        .forEach(function(item) {
+
+            const matchesArea =
+
+                selectedArea === "all"
+
+                ||
+
+                item.learningArea
+                === selectedArea;
+
+             let matchesSearch = false;
+
+if (
+    selectedArea === "Vocabulary"
+) {
+
+    matchesSearch =
+
+        item.title
+            .toLowerCase()
+            .startsWith(
+                searchTerm
+            );
+
+}
+
+else {
+
+    matchesSearch =
+
+        item.title
+            .toLowerCase()
+            .includes(
+                searchTerm
+            );
+
+}
+
+            if (
+                matchesArea
+                &&
+                matchesSearch
+            ) {
+
+                resultsFound = true;
+
+                resultsContainer.innerHTML += `
+                
+                    <div class="search-result-card"
+
+    onclick="
+        openSearchResult(
+            '${listName}',
+            '${item.contentId}'
+        )
+    ">
+
+                        <h3>
+
+                            ${item.title}
+
+                        </h3>
+
+                        <p>
+
+                            ${item.learningArea}
+
+                        </p>
+
+                    </div>
+
+                `;
+            }
+
+});
+
+});
+
+
+if (!resultsFound) {
+
+    resultsContainer.innerHTML = `
+    
+        <div class="item-card">
+
+            <h3>
+
+                No results found
+
+            </h3>
+
+            <p>
+
+                Check your spelling or try another keyword.
+
+            </p>
+
+        </div>
+
+    `;
+
+}
+}
+
+
+function openSearchResult(
+
+    listName,
+    contentId
+) {
+
+    currentList =
+        listName;
+
+    currentItems =
+        learningItems[
+            listName
+        ];
+
+    currentItemIndex =
+        currentItems.findIndex(
+            function(item) {
+
+                return (
+                    item.contentId
+                    === contentId
+                );
+
+            }
+        );
+
+    showPage(
+        "items-page"
+    );
+
+    document.querySelector(
+    ".card-navigation"
+).innerHTML = `
+
+    <button
+        class="nav-btn"
+        onclick="openSearch()">
+
+        ← Back to Search
+
+    </button>
+
+`;
+
+currentMode = "search";
+
+    showItemCard();
+
+}
+
 
 function openCourse(courseName) {
 
     currentCourse = courseName;
 
+    const selectedCourse =
+        courses.find(function(course) {
+
+            return (
+                course.title
+                === courseName
+            );
+
+        });
+
     document.querySelector(
         ".course-title"
-    ).textContent = courseName;
+    ).textContent =
+        selectedCourse.title;
+
+    document.getElementById(
+        "welcome-title"
+    ).textContent =
+        selectedCourse.welcomeTitle;
+
+    document.getElementById(
+        "welcome-message"
+    ).textContent =
+        selectedCourse.welcomeMessage;
 
     showPage("course-page");
 
     showPage("course-home-page");
 
 }
+
+
+function renderCourses() {
+
+    const courseContainer =
+        document.getElementById(
+            "course-container"
+        );
+
+    courseContainer.innerHTML = "";
+
+    courses.forEach(function(course) {
+
+        courseContainer.innerHTML += `
+        
+            <button
+                class="course-card"
+                onclick="
+                    openCourse(
+                        '${course.title}'
+                    )
+                ">
+
+                ${course.title}
+
+            </button>
+
+        `;
+
+    });
+
+}
+
 
 function openAssessmentDashboard() {
 
@@ -959,8 +1440,8 @@ function openThemes(areaName) {
             lists.filter(function(list) {
 
                 return (
-                    list.themeTitle
-                    === theme.title
+                    list.themeId
+                    === theme.themeId
                 );
 
             });
@@ -1005,17 +1486,6 @@ function openThemes(areaName) {
 }
 
     });
-
-    // CLOSE MOBILE MENU
-
-    if (window.innerWidth <= 768) {
-
-        document
-            .querySelector(".sidebar")
-            .classList
-            .remove("mobile-open");
-
-    }
 
 }
 
@@ -1289,11 +1759,15 @@ function showVocabularyCard(item) {
 
                 </div>
 
-                <div class="item-image">
+                 <div class="item-image">
 
-                    Image Coming Soon
+    ${
+        item.content.image
+        ? `<img src="${item.content.image}">`
+        : "Image Coming Soon"
+    }
 
-                </div>
+</div>
 
             </div>
 
@@ -1463,21 +1937,37 @@ function showLessonCard(item) {
 
 function updateNavigationButtons() {
 
+    if (
+    currentMode === "search"
+) {
+
+    document.querySelector(
+        ".card-navigation"
+    ).innerHTML = `
+
+        <button
+            class="nav-btn"
+            onclick="openSearch()">
+
+            ← Back to Search
+
+        </button>
+
+    `;
+
+    return;
+
+}
+
     const previousButton =
         document.querySelector(
             ".card-navigation button:first-child"
         );
 
     const completeButton =
-        document.getElementById(
-            "complete-learning-btn"
-        );
-
-        if (!completeButton) {
-
-    return;
-
-}
+    document.getElementById(
+        "complete-learning-btn"
+    );
 
     const nextButton =
         document.querySelector(
@@ -1521,19 +2011,23 @@ function updateNavigationButtons() {
 
     // COMPLETE ALWAYS VISIBLE
 
-     if (
-    currentMode === "learn"
-) {
+    if (completeButton) {
 
-    completeButton.style.visibility =
-        "visible";
+    if (
+        currentMode === "learn"
+    ) {
 
-}
+        completeButton.style.visibility =
+            "visible";
 
-else {
+    }
 
-    completeButton.style.visibility =
-        "hidden";
+    else {
+
+        completeButton.style.visibility =
+            "hidden";
+
+    }
 
 }
 
@@ -2247,6 +2741,11 @@ function openRevision() {
 
     initializeListProgress(currentList);
 
+    document.querySelector(
+    "#revision-page h2"
+).textContent =
+    "Revision";
+
     const currentListProgress =
         learnerProgress.lists[currentList];
 
@@ -2268,7 +2767,7 @@ function openRevision() {
 
         revisionContainer.innerHTML = `
         
-            <div class="item-card">
+            <div class="item-card revision-dashboard-card">
 
                 <h2>
                     No Revision Questions
@@ -2293,30 +2792,32 @@ function openRevision() {
 Object.keys(groupedRevision)
     .forEach(function(contentId) {
 
+        const matchedItem =
+    learningItems[currentList]
+        .find(function(item) {
+
+            return (
+                item.contentId
+                === contentId
+            );
+
+        });
+
         revisionContainer.innerHTML += `
-        
-            <div class="item-card">
+    
+    <button
+        class="assessment-set-card"
+        onclick="
+            loadRevisionCard(
+                '${contentId}'
+            )
+        ">
 
-                <h2>
+        ${matchedItem.title}
 
-                    ${contentId}
+    </button>
 
-                </h2>
-
-                <button class="nav-btn"
-                    onclick="
-                        loadRevisionCard(
-                            '${contentId}'
-                        )
-                    ">
-
-                    Review
-
-                </button>
-
-            </div>
-
-        `;
+`;
 
     });
 
@@ -2343,12 +2844,6 @@ function loadRevisionCard(contentId) {
             );
 
         });
-
-    console.log(currentItems);
-
-    console.log(contentId);
-
-    console.log(matchedItem);
 
     const currentListProgress =
         learnerProgress.lists[currentList];
@@ -2394,7 +2889,11 @@ revisionItemIndex =
     currentRevisionQuestion =
         revisionQuestion;
 
+        isMasteredRevision = false;
+
     showPage("items-page");
+
+    
 
      document.querySelector(
     ".card-navigation"
@@ -2422,6 +2921,7 @@ revisionItemIndex =
     </button>
 
 `;
+
 
     showRevisionCard();
 
@@ -2618,6 +3118,15 @@ function showRevisionCard() {
 
     <div class="revision-feedback">
 
+    <p class="card-counter">
+
+        Revision
+        ${revisionItemIndex + 1}
+        of
+        ${revisionItems.length}
+
+    </p>
+
         <p>
 
             <strong>
@@ -2649,6 +3158,8 @@ function showRevisionCard() {
         </p>
 
     </div>
+
+    <hr class="revision-divider">
 
     <div class="revision-learning-card">
 
@@ -2718,7 +3229,59 @@ function showRevisionCard() {
 
     `;
 
+     updateRevisionButtons();   
+
 }
+
+function updateRevisionButtons() {
+
+    const previousButton =
+        document.querySelector(
+            ".card-navigation button:first-child"
+        );
+
+    const nextButton =
+        document.querySelector(
+            ".card-navigation button:last-child"
+        );
+
+    // PREVIOUS
+
+    if (revisionItemIndex === 0) {
+
+        previousButton.style.visibility =
+            "hidden";
+
+    }
+
+    else {
+
+        previousButton.style.visibility =
+            "visible";
+
+    }
+
+    // NEXT
+
+    if (
+        revisionItemIndex
+        === revisionItems.length - 1
+    ) {
+
+        nextButton.style.visibility =
+            "hidden";
+
+    }
+
+    else {
+
+        nextButton.style.visibility =
+            "visible";
+
+    }
+
+}
+
 
 
 function groupRevisionByContent(
@@ -2806,84 +3369,229 @@ function openAssessmentReview(setName) {
 
     }
 
-    // RENDER REVIEW CARDS
+   currentReviewIndex = 0;
 
-    attemptHistory.forEach(function(attempt) {
-
-        questionContainer.innerHTML += `
-        
-            <div class="item-card">
-
-                <p>
-
-                    <strong>
-                        Question:
-                    </strong>
-
-                    ${attempt.question}
-
-                </p>
-
-                <p>
-
-                    <strong>
-                        Your First Answer:
-                    </strong>
-
-                    ${
-                        attempt.isCorrect
-                        ? "✅"
-                        : "❌"
-                    }
-
-                    ${attempt.selectedAnswer}
-
-                </p>
-
-                <p>
-
-                    <strong>
-                        Correct Answer:
-                    </strong>
-
-                    ✅ ${attempt.correctAnswer}
-
-                </p>
-
-            </div>
-
-        `;
-
-    });
-
-    // RETURN BUTTON
-
-    questionContainer.innerHTML += `
-    
-        <div style="margin-top: 20px;">
-
-            <button
-                class="theme-card"
-                style="
-                    width: 100%;
-                    text-align: center;
-                "
-                onclick="
-                    openAssessment(
-                        '${currentList}'
-                    )
-                ">
-
-                ← Back to Assessment Sets
-
-            </button>
-
-        </div>
-
-    `;
+showAssessmentReviewCard();
 
 }
 
+function showAssessmentReviewCard() {
+
+    const questionContainer =
+        document.getElementById(
+            "question-container"
+        );
+
+    const currentListProgress =
+        learnerProgress.lists[currentList];
+
+    const attemptHistory =
+        currentListProgress.attemptHistory
+            .filter(function(attempt) {
+
+                return (
+                    attempt.setName
+                    === currentSet
+                );
+
+            });
+
+    const attempt =
+        attemptHistory[
+            currentReviewIndex
+        ];
+
+    questionContainer.innerHTML = `
+
+    <div class="item-card">
+
+        <p class="card-counter">
+
+            Question
+            ${currentReviewIndex + 1}
+            of
+            ${attemptHistory.length}
+
+        </p>
+
+        <h3>
+
+            ${attempt.question}
+
+        </h3>
+
+        <p>
+
+            <strong>
+                Your First Answer:
+            </strong>
+
+            ${
+                attempt.isCorrect
+                ? "✅"
+                : "❌"
+            }
+
+            ${attempt.selectedAnswer}
+
+        </p>
+
+        <p>
+
+            <strong>
+                Correct Answer:
+            </strong>
+
+            ✅ ${attempt.correctAnswer}
+
+        </p>
+
+    </div>
+
+    <div class="card-navigation">
+
+        <button
+    id="review-previous-btn"
+    class="nav-btn"
+    onclick="previousAssessmentReview()">
+
+            ← Previous
+
+        </button>
+
+        <button
+            class="nav-btn"
+            onclick="
+                openAssessmentReviewSets(
+                    currentList
+                )
+            ">
+
+            Back
+
+        </button>
+
+        <button
+    id="review-next-btn"
+    class="nav-btn"
+    onclick="nextAssessmentReview()">
+
+            Next →
+
+        </button>
+
+    </div>
+
+`;
+
+updateAssessmentReviewButtons();
+
+}
+
+
+function nextAssessmentReview() {
+
+    const currentListProgress =
+        learnerProgress.lists[currentList];
+
+    const attemptHistory =
+        currentListProgress.attemptHistory
+            .filter(function(attempt) {
+
+                return (
+                    attempt.setName
+                    === currentSet
+                );
+
+            });
+
+    if (
+        currentReviewIndex
+        < attemptHistory.length - 1
+    ) {
+
+        currentReviewIndex++;
+
+        showAssessmentReviewCard();
+
+    }
+
+}
+
+
+function previousAssessmentReview() {
+
+    if (
+        currentReviewIndex > 0
+    ) {
+
+        currentReviewIndex--;
+
+        showAssessmentReviewCard();
+
+    }
+
+}
+
+
+function updateAssessmentReviewButtons() {
+
+    const previousButton =
+        document.getElementById(
+            "review-previous-btn"
+        );
+
+    const nextButton =
+        document.getElementById(
+            "review-next-btn"
+        );
+
+    const currentListProgress =
+        learnerProgress.lists[currentList];
+
+    const attemptHistory =
+        currentListProgress.attemptHistory
+            .filter(function(attempt) {
+
+                return (
+                    attempt.setName
+                    === currentSet
+                );
+
+            });
+
+    if (currentReviewIndex === 0) {
+
+        previousButton.style.visibility =
+            "hidden";
+
+    }
+
+    else {
+
+        previousButton.style.visibility =
+            "visible";
+
+    }
+
+    if (
+        currentReviewIndex
+        === attemptHistory.length - 1
+    ) {
+
+        nextButton.style.visibility =
+            "hidden";
+
+    }
+
+    else {
+
+        nextButton.style.visibility =
+            "visible";
+
+    }
+
+}
 
 function toggleMasteredMenu() {
 
@@ -2910,9 +3618,6 @@ function toggleAssessmentMenu() {
 
 function showMasteredReviewCard() {
 
-    console.log(
-        "MASTERED REVIEW CARD"
-    );
 
     const itemsContainer =
         document.getElementById(
@@ -2935,6 +3640,15 @@ function showMasteredReviewCard() {
         itemsContainer.innerHTML = `
         
             <div class="item-card">
+
+            <p class="card-counter">
+
+    Mastered Review
+    ${currentItemIndex + 1}
+    of
+    ${currentItems.length}
+
+</p>
 
                 <h2>
                     ${item.title}
@@ -3038,6 +3752,28 @@ function showMasteredReviewCard() {
 
     }
 
+    document.querySelector(
+    ".card-navigation"
+).innerHTML = `
+
+    <button
+        class="nav-btn"
+        onclick="previousItem()">
+
+        ← Previous
+
+    </button>
+
+    <button
+        class="nav-btn"
+        onclick="nextItem()">
+
+        Next →
+
+    </button>
+
+`;
+
     updateNavigationButtons();
 
 }
@@ -3128,20 +3864,20 @@ function openMasteredAssessment(
         || [];
 
     const masteredSets =
-        Object.keys(sets)
-            .filter(function(setName) {
+    Object.keys(sets)
+        .filter(function(setName) {
 
-                return setName.startsWith(
-                    "Day"
-                );
+            return setName.startsWith(
+                "Day"
+            );
 
-            });
+        });
 
-    masteredSets.forEach(function(setName) {
+const activeDayIndex =
+    masteredSets.findIndex(function(setName) {
 
         const unresolvedQuestions =
-            progress
-                .masteredRevisionQuestions
+            progress.masteredRevisionQuestions
                 .filter(function(question) {
 
                     return (
@@ -3150,16 +3886,6 @@ function openMasteredAssessment(
                     );
 
                 });
-
-                console.log(
-    "Completed:",
-    progress.completedMasteredSets
-);
-
-console.log(
-    "Revision:",
-    progress.masteredRevisionQuestions
-);
 
         const isFullyCompleted =
 
@@ -3171,52 +3897,92 @@ console.log(
             unresolvedQuestions
                 .length === 0;
 
-                console.log(
-    "SET:",
-    setName
-);
-
-console.log(
-    "COMPLETED SETS:",
-    completedMasteredSets
-);
-
-console.log(
-    "UNRESOLVED QUESTIONS:",
-    unresolvedQuestions
-);
-
-console.log(
-    "IS FULLY COMPLETED:",
-    isFullyCompleted
-);
-
-        if (
-            isFullyCompleted
-        ) {
-
-            return;
-
-        }
-
-        setsContainer.innerHTML += `
-        
-            <button class="theme-card"
-                onclick="
-                    openMasteredQuestionSet(
-                        '${setName}'
-                    )
-                ">
-
-                ${setName}
-
-            </button>
-
-        `;
+        return !isFullyCompleted;
 
     });
 
+masteredSets.forEach(function(
+    setName,
+    index
+) {
+
+    const unresolvedQuestions =
+        progress
+            .masteredRevisionQuestions
+            .filter(function(question) {
+
+                return (
+                    question.setName
+                    === setName
+                );
+
+            });
+
+    const isFullyCompleted =
+
+        completedMasteredSets
+            .includes(setName)
+
+        &&
+
+        unresolvedQuestions
+            .length === 0;
+
+    let buttonLabel =
+        setName;
+
+    let disabled =
+        "";
+
+    if (
+        isFullyCompleted
+    ) {
+
+        buttonLabel =
+            "✅ " + setName;
+
+    }
+
+    else if (
+        index === activeDayIndex
+    ) {
+
+        buttonLabel =
+            "▶ " + setName;
+
+    }
+
+    else {
+
+        buttonLabel =
+            "🔒 " + setName;
+
+        disabled =
+            "disabled";
+
+    }
+
+    setsContainer.innerHTML += `
+    
+        <button
+            class="theme-card"
+            ${disabled}
+            onclick="
+                openMasteredQuestionSet(
+                    '${setName}'
+                )
+            ">
+
+            ${buttonLabel}
+
+        </button>
+
+    `;
+
+});
+
 }
+
 
 function openMasteredQuestionSet(
     setName
@@ -3588,6 +4354,11 @@ function openMasteredRevision() {
         currentList
     );
 
+    document.querySelector(
+    "#revision-page h2"
+).textContent =
+    "Mastered Revision";
+
     const currentListProgress =
         learnerProgress.lists[
             currentList
@@ -3637,31 +4408,41 @@ function openMasteredRevision() {
     Object.keys(groupedRevision)
         .forEach(function(contentId) {
 
+            const matchedItem =
+    learningItems[currentList]
+        .find(function(item) {
+
+            return (
+                item.contentId
+                === contentId
+            );
+
+        });
+
             revisionContainer.innerHTML += `
-            
-                <div class="item-card">
+    
+    <div class="item-card revision-dashboard-card">
 
-                    <h2>
+        <h2>
 
-                        ${contentId}
+            ${matchedItem.title}
 
-                    </h2>
+        </h2>
 
-                    <button class="nav-btn"
-                        onclick="
-                            console.log('BUTTON CLICKE');
-                            loadMasteredRevisionCard(
-                                '${contentId}'
-                            )
-                        ">
+        <button class="nav-btn"
+            onclick="
+                loadMasteredRevisionCard(
+                    '${contentId}'
+                )
+            ">
 
-                        Review
+            Review
 
-                    </button>
+        </button>
 
-                </div>
+    </div>
 
-            `;
+`;
 
         });
 
@@ -3670,26 +4451,6 @@ function openMasteredRevision() {
 function loadMasteredRevisionCard(
     contentId
 ) {
-
-  console.log(
-    "LOAD MASTERED REVISION CALLED"
-);
-
-console.log(
-    "contentId:",
-    contentId
-);
-
-console.log(
-    "currentList:",
-    currentList
-);
-
-console.log(
-    "masteredRevisionQuestions:",
-    learnerProgress.lists[currentList]
-        .masteredRevisionQuestions
-);
 
     const currentItems =
         learningItems[currentList];
@@ -3751,7 +4512,8 @@ console.log(
         ".card-navigation"
     ).innerHTML = `
     
-        <button class="nav-btn"
+        <button 
+        class="nav-btn"
             onclick="
                 previousMasteredRevisionItem()
             ">
@@ -4094,3 +4856,5 @@ function closeSidebar() {
 loadProgress();
 
 showPage("cover-page"); 
+
+renderCourses();
