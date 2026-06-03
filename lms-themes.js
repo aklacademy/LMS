@@ -26,7 +26,7 @@ window.themes = [
 
         learningArea: "Grammar",
 
-        title: "ConditionalConditional Statements"
+        title: "Conditional Statements"
 
     }
 
