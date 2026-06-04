@@ -1108,4 +1108,224 @@ body {
 
 }
 
+#menu-toggle {
+
+    display: none;
+
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 1024px) {
+
+    .sidebar {
+
+        width: 220px;
+
+        padding: 20px;
+
+    }
+
+    .main-content {
+
+        padding: 25px;
+
+    }
+
+    .course-title {
+
+        font-size: 22px;
+
+    }
+
+    .sidebar-btn {
+
+        font-size: 16px;
+
+        padding: 14px;
+
+    }
+
+    .item-card {
+
+        padding: 25px;
+
+    }
+
+    .item-info h2 {
+
+        font-size: 34px;
+
+    }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+
+        width: 240px;
+
+        position: fixed;
+
+        top: 60px;
+
+        left: -240px;
+
+        height: 100vh;
+
+        z-index: 2000;
+
+        transition: 0.3s;
+
+        height: calc(100vh - 60px);
+
+        overflow-y: auto;
+
+        -webkit-overflow-scrolling: touch;
+
+        box-sizing: border-box;
+
+    }
+
+    #top-navbar {
+
+        z-index: 3000;
+
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 8px;
+
+}
+
+.nav-btn {
+
+        flex: 1;
+
+        min-width: 90px;
+
+        padding: 12px 16px;
+
+    }
+
+      #back-btn {
+
+        font-size: 0;
+
+    }
+
+    #back-btn::before {
+
+        content: "↩";
+        font-size: 18px;
+
+    }
+
+    #home-btn {
+
+        font-size: 0;
+
+    }
+
+    #home-btn::before {
+
+        content: "🏠";
+        font-size: 18px;
+
+    }
+
+    #courses-btn {
+
+        font-size: 0;
+
+    }
+
+    #courses-btn::before {
+
+        content: "📚";
+        font-size: 18px;
+
+    }
+
+    .sidebar.mobile-open {
+
+        left: 0;
+
+    }
+
+    .main-content {
+
+        width: 100%;
+
+        padding: 20px;
+
+    }
+
+    .card-navigation {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 12px;
+
+    }
+
+    .card-navigation .nav-btn,
+
+    #complete-learning-btn {
+
+        width: 100%;
+
+        min-width: 0;
+
+    }
+
+
+ #menu-toggle {
+
+        display: block;
+
+    }
+
+    .app-layout {
+
+        display: block;
+
+    }
+
+     .search-controls {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 12px;
+
+    }
+
+    #search-filter,
+    #search-input {
+
+        width: 100%;
+
+        box-sizing: border-box;
+
+    }
+
+}
+
+
+
+
+
 
