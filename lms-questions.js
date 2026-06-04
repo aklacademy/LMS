@@ -1,14 +1,19 @@
-const assessmentQuestions = {
+window.assessmentQuestions = [
 
-    "Forest Words": {
-
-        "Set 1": [
-
-            {
-                questionId: "0001",
+            {   
+                courseId: "C001",
+                themeId:"TH001",
+                listId: "LIST001",
+                setName: "Set 1",
+                bloomLevel: "understand",
+                difficultyLevel: "easy",
+                status: "active",
                 category: "main",
                 contentId: "WJV1",
+                contentType: "word",
+                questionId: "0001",
 
+        
                 question:
                 "The company plans to ______ new employees next month.",
 
@@ -21,10 +26,20 @@ const assessmentQuestions = {
 
                 correctAnswer: "hire"
             },  
+
             
             {
+
+                courseId: "C001",
+                themeId:"TH001",
+                listId: "LIST001",
+                setName: "Set 1",
+                bloomLevel: "understand",
+                difficultyLevel: "medium",
+                status: "active",
                 questionId: "0002",
                 category: "main",
+                contentType: "word",
                 contentId: "WJV2",
 
                 question:
@@ -41,8 +56,17 @@ const assessmentQuestions = {
             },
 
             {
+
+                courseId: "C001",
+                themeId:"TH001",        
+                listId: "LIST001",
+                setName: "Set 1",
+                bloomLevel: "understand",
+                difficultyLevel: "easy",
+                status: "active",
                 questionId: "0003",
                 category: "main",
+                contentType: "word",
                 contentId: "WJV3",
 
                 question:
@@ -57,15 +81,22 @@ const assessmentQuestions = {
 
                 correctAnswer: "coped"
 
-            }
+            },
 
-        ],
+       
 
-        "Set 2": [
 
-            {
+            {   
+                courseId: "C001",
+                themeId:"TH001",
+                listId: "LIST001",
+                setName: "Set 2",
+                bloomLevel: "understand",
+                difficultyLevel: "medium",
+                status: "active",
                 questionId: "0004",
                 category: "main",
+                contentType: "word",
                 contentId: "WJV1",
 
                 question:
@@ -79,17 +110,20 @@ const assessmentQuestions = {
                 ],
 
                 correctAnswer: "hire"
-            }
-
-        ],
-
-        "Day 3": [
+            },
 
             {
+                courseId: "C001",
+                themeId:"TH001",
+                listId: "LIST002",
+                setName: "Day 3",
+                bloomLevel: "recognize",
+                difficultyLevel: "easy",
+                status: "active",
                 questionId: "M005",
 
                 category: "mastered",
-
+                contentType: "word",
                 contentId: "WJV1",
 
                 question:
@@ -106,9 +140,16 @@ const assessmentQuestions = {
             },
 
             {
-
+                courseId: "C001",
+                themeId:"TH001",
+                listId: "LIST002",
+                setName: "Day 3",
+                bloomLevel: "apply",
+                difficultyLevel: "tough",
+                status: "active",
                 questionId: "M006",
                 category: "mastered",
+                contentType: "word",
                 contentId: "WJV2",
 
                 question: 
@@ -126,16 +167,22 @@ const assessmentQuestions = {
                 correctAnswer: "hire"
 
             
-            }
+            },
 
-        ],
 
-        "Day 7": [
 
             {
+                courseId: "C001",
+                themeId:"TH001",
+                listId: "LIST001",
+                setName: "Day 7",
+                bloomLevel: "recognize",
+                difficultyLevel: "easy",
+                status: "active",
                 questionId: "M007",
 
                 category: "mastered",
+                contentType: "word",
 
                 contentId: "WJV3",
 
@@ -153,10 +200,18 @@ const assessmentQuestions = {
             },
 
             {
-
+                courseId: "C001",
+                themeId:"TH001",
+               listId: "LIST001",
+                setName: "Day 7",
+                bloomLevel: "apply",
+                difficultyLevel: "easy",
+                status: "active",
                 questionId: "M008",
                 category: "mastered",
+                contentType: "word",
                 contentId: "WJV4",
+
 
                 question: 
 
@@ -175,10 +230,10 @@ const assessmentQuestions = {
             
             }
 
-        ]
+        ];
 
-    }
 
-};
+
+
 
 
