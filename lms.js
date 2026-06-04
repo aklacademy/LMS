@@ -86,7 +86,19 @@ function showPage(pageId) {
 
     // SAVE HISTORY
 
-    
+    // SAVE HISTORY
+
+if (
+    pageHistory[
+        pageHistory.length - 1
+    ] !== pageId
+) {
+
+    pageHistory.push(
+        pageId
+    );
+
+}
 
     // NAVBAR VISIBILITY
 
@@ -116,19 +128,34 @@ function showPage(pageId) {
 
 function goBack() {
 
-    goHome();
+    if (
+        pageHistory.length <= 1
+    ) {
+
+        goHome();
+
+        return;
+
+    }
+
+    pageHistory.pop();
+
+    const previousPage =
+        pageHistory[
+            pageHistory.length - 1
+        ];
+
+    showPage(
+        previousPage
+    );
 
 }
 
 function goHome() {
 
-    // RESET HISTORY
-
     pageHistory = [
         "course-page"
     ];
-
-    // SHOW COURSE PAGE
 
     document.getElementById(
         "cover-page"
@@ -142,8 +169,6 @@ function goHome() {
         "hidden"
     );
 
-    // HIDE ALL INNER PAGES
-
     const pages =
         document.querySelectorAll(
             "#course-page .app-page"
@@ -156,6 +181,12 @@ function goHome() {
         );
 
     });
+
+    document.getElementById(
+        "course-home-page"
+    ).classList.remove(
+        "hidden"
+    );
 
 }
 
@@ -172,6 +203,7 @@ let masteredAssessmentQuestions = {};
 let learnerProgress = {
 
     lists: {}
+    
 
 };
 
@@ -252,15 +284,10 @@ function openAdminPage() {
     selectedCourse.learningAreas
         .forEach(function(area) {
 
-            const areaThemes =
-                themes.filter(function(theme) {
-
-                    return (
-                        theme.learningArea
-                        === area
-                    );
-
-                });
+             const areaThemes =
+    getThemesByLearningArea(
+        area
+    );
 
             themeCount +=
                 areaThemes.length;
@@ -268,65 +295,52 @@ function openAdminPage() {
             areaThemes.forEach(function(theme) {
 
                 const themeLists =
-                    lists.filter(function(list) {
-
-                        return (
-                            list.themeTitle
-                            === theme.title
-                        );
-
-                    });
+    getListsByThemeId(
+        theme.themeId
+    );
 
                 listCount +=
                     themeLists.length;
 
-                themeLists.forEach(function(list) {
+                areaThemes.forEach(function(theme) {
 
-                    if (
-                        learningItems[
-                            list.title
-                        ]
-                    ) {
+    const themeLists =
+        getListsByThemeId(
+            theme.themeId
+        );
 
-                        itemCount +=
-                            learningItems[
-                                list.title
-                            ].length;
+    listCount +=
+        themeLists.length;
 
-                    }
+    themeLists.forEach(function(list) {
 
-                    if (
-                        assessmentQuestions[
-                            list.title
-                        ]
-                    ) {
+        itemCount +=
+            getItemsByListId(
+                list.listId
+            ).length;
 
-                        Object.keys(
-                            assessmentQuestions[
-                                list.title
-                            ]
-                        ).forEach(function(key) {
+        const assessmentSets =
+            getAssessmentSetsByListId(
+                list.listId
+            );
 
-                            if (
-                                key.startsWith(
-                                    "Set"
-                                )
-                            ) {
+        setCount +=
+            assessmentSets.length;
 
-                                setCount++;
+        questionCount +=
+            getQuestionsByListId(
+                list.listId
+            ).filter(function(question) {
 
-                                questionCount +=
-                                    assessmentQuestions[
-                                        list.title
-                                    ][key].length;
+                return question.setName.startsWith(
+                    "Set"
+                );
 
-                            }
+            }).length;
 
-                        });
+    });
 
-                    }
-
-                });
+});
 
             });
 
@@ -480,12 +494,8 @@ function searchContent() {
 
     }
 
-    Object.keys(
-    learningItems
-).forEach(function(listName) {
-
-    learningItems[listName]
-        .forEach(function(item) {
+    learningItems.forEach(
+    function(item) {
 
             const matchesArea =
 
@@ -537,10 +547,10 @@ else {
                     <div class="search-result-card"
 
     onclick="
-        openSearchResult(
-            '${listName}',
-            '${item.contentId}'
-        )
+    openSearchResult(
+    '${item.listId}',
+    '${item.contentId}'
+)
     ">
 
                         <h3>
@@ -562,7 +572,7 @@ else {
 
 });
 
-});
+
 
 
 if (!resultsFound) {
@@ -593,17 +603,17 @@ if (!resultsFound) {
 
 function openSearchResult(
 
-    listName,
+    listId,
     contentId
 ) {
 
     currentList =
-        listName;
+        listId;
 
     currentItems =
-        learningItems[
-            listName
-        ];
+        getItemsByListId(
+            listId
+        );
 
     currentItemIndex =
         currentItems.findIndex(
@@ -621,26 +631,25 @@ function openSearchResult(
         "items-page"
     );
 
-    document.querySelector(
-    ".card-navigation"
-).innerHTML = `
+    /* document.querySelector(
+        ".card-navigation"
+    ).innerHTML = `
 
-    <button
-        class="nav-btn"
-        onclick="openSearch()">
+        <button
+            class="nav-btn"
+            onclick="openSearch()">
 
-        ← Back to Search
+            ← Back to Search
 
-    </button>
+        </button>
 
-`;
-
-currentMode = "search";
+    `;
+*/
+    currentMode = "search";
 
     showItemCard();
 
 }
-
 
 function openCourse(courseName) {
 
@@ -749,36 +758,26 @@ function openAssessmentDashboard() {
     // CHECK IF AREA HAS
     // ELIGIBLE LEARNED LISTS
 
-    const areaThemes =
-        themes.filter(function(theme) {
-
-            return (
-                theme.learningArea
-                === area
-            );
-
-        });
+   const areaThemes =
+    getThemesByLearningArea(
+        area
+    );
 
     let hasEligibleLists = false;
 
     areaThemes.forEach(function(theme) {
 
-        const themeLists =
-            lists.filter(function(list) {
-
-                return (
-                    list.themeTitle
-                    === theme.title
-                );
-
-            });
+    const themeLists =
+    getListsByThemeId(
+        theme.themeId
+    );
 
         themeLists.forEach(function(list) {
 
             const progress =
-                learnerProgress.lists[
-                    list.title
-                ];
+    learnerProgress.lists[
+        list.listId
+    ];
 
             if (
                 progress
@@ -861,35 +860,25 @@ function openRevisionDashboard() {
     learningAreas.forEach(function(area) {
 
         const areaThemes =
-            themes.filter(function(theme) {
-
-                return (
-                    theme.learningArea
-                    === area
-                );
-
-            });
+    getThemesByLearningArea(
+        area
+    );
 
         let hasRevisionLists = false;
 
         areaThemes.forEach(function(theme) {
 
             const themeLists =
-                lists.filter(function(list) {
-
-                    return (
-                        list.themeTitle
-                        === theme.title
-                    );
-
-                });
+    getListsByThemeId(
+        theme.themeId
+    );
 
             themeLists.forEach(function(list) {
 
                 const progress =
-                    learnerProgress.lists[
-                        list.title
-                    ];
+    learnerProgress.lists[
+        list.listId
+    ];
 
                 if (
                     progress
@@ -969,35 +958,25 @@ function openAssessmentReviewDashboard() {
     learningAreas.forEach(function(area) {
 
         const areaThemes =
-            themes.filter(function(theme) {
-
-                return (
-                    theme.learningArea
-                    === area
-                );
-
-            });
+    getThemesByLearningArea(
+        area
+    );
 
         let hasReviewLists = false;
 
         areaThemes.forEach(function(theme) {
 
             const themeLists =
-                lists.filter(function(list) {
-
-                    return (
-                        list.themeTitle
-                        === theme.title
-                    );
-
-                });
+    getListsByThemeId(
+        theme.themeId
+    );
 
             themeLists.forEach(function(list) {
 
-                const progress =
-                    learnerProgress.lists[
-                        list.title
-                    ];
+const progress =
+    learnerProgress.lists[
+        list.listId
+    ];
 
                 if (
                     progress
@@ -1080,40 +1059,30 @@ function openMasteredAssessmentDashboard() {
     learningAreas.forEach(function(area) {
 
     const areaThemes =
-        themes.filter(function(theme) {
-
-            return (
-                theme.learningArea
-                === area
-            );
-
-        });
+    getThemesByLearningArea(
+        area
+    );
 
     let hasMasteredLists = false;
 
     areaThemes.forEach(function(theme) {
 
-        const themeLists =
-            lists.filter(function(list) {
-
-                return (
-                    list.themeTitle
-                    === theme.title
-                );
-
-            });
+       const themeLists =
+    getListsByThemeId(
+        theme.themeId
+    );
 
         themeLists.forEach(function(list) {
 
-            const progress =
-                learnerProgress.lists[
-                    list.title
-                ];
+const progress =
+    learnerProgress.lists[
+        list.listId
+    ];
 
             const daySets =
-    assessmentQuestions[
-        list.title
-    ];
+    getMasteredSetsByListId(
+        list.listId
+    );
 
 if (!daySets) {
 
@@ -1123,8 +1092,7 @@ if (!daySets) {
 
 const hasPendingMasteredSet =
 
-    Object.keys(daySets)
-        .some(function(setName) {
+   daySets.some(function(setName) {
 
             if (
                 !setName.startsWith(
@@ -1208,6 +1176,11 @@ function openMasteredReviewDashboard() {
 
     showPage("learn-page");
 
+    document.querySelector(
+    "#learn-page h2"
+).innerText =
+    "Mastered Review";
+
     const learningAreasContainer =
         document.getElementById(
             "learning-areas-container"
@@ -1231,35 +1204,25 @@ learningAreasContainer.innerHTML = "";
     learningAreas.forEach(function(area) {
 
     const areaThemes =
-        themes.filter(function(theme) {
-
-            return (
-                theme.learningArea
-                === area
-            );
-
-        });
+    getThemesByLearningArea(
+        area
+    );
 
     let hasMasteredLists = false;
 
     areaThemes.forEach(function(theme) {
 
         const themeLists =
-            lists.filter(function(list) {
-
-                return (
-                    list.themeTitle
-                    === theme.title
-                );
-
-            });
+    getListsByThemeId(
+        theme.themeId
+    );
 
         themeLists.forEach(function(list) {
 
-            const progress =
-                learnerProgress.lists[
-                    list.title
-                ];
+          const progress =
+    learnerProgress.lists[
+        list.listId
+    ];
 
             if (
                 progress
@@ -1333,38 +1296,29 @@ function openLearn() {
 
         let hasEligibleContent = false;
 
-        const areaThemes =
-            themes.filter(function(theme) {
-
-                return (
-                    theme.learningArea
-                    === area
-                );
-
-            });
+       const areaThemes =
+    getThemesByLearningArea(
+        area
+    );
 
         areaThemes.forEach(function(theme) {
 
-            const themeLists =
-                lists.filter(function(list) {
-
-                    return (
-                        list.themeTitle
-                        === theme.title
-                    );
-
-                });
+           const themeLists =
+    getListsByThemeId(
+        theme.themeId
+    );
 
             themeLists.forEach(function(list) {
 
                 if (
-                    learningItems[list.title]
-                ) {
+    getItemsByListId(
+        list.listId
+    ).length > 0
+) {
 
-                    hasEligibleContent = true;
+    hasEligibleContent = true;
 
-                }
-
+}
             });
 
         });
@@ -1422,39 +1376,31 @@ function openThemes(areaName) {
 
     themesContainer.innerHTML = "";
 
-    const filteredThemes =
-        themes.filter(function(theme) {
-
-            return (
-                theme.learningArea
-                === areaName
-            );
-
-        });
+   const filteredThemes =
+    getThemesByLearningArea(
+        areaName
+    );
 
     filteredThemes.forEach(function(theme) {
 
         let hasEligibleContent = false;
 
         const themeLists =
-            lists.filter(function(list) {
-
-                return (
-                    list.themeId
-                    === theme.themeId
-                );
-
-            });
+    getListsByThemeId(
+        theme.themeId
+    );
 
         themeLists.forEach(function(list) {
 
-            if (
-                learningItems[list.title]
-            ) {
+           if (
+    getItemsByListId(
+        list.listId
+    ).length > 0
+) {
 
-                hasEligibleContent = true;
+    hasEligibleContent = true;
 
-            }
+}
 
         });
 
@@ -1469,11 +1415,11 @@ function openThemes(areaName) {
             <button class="theme-card"
                 onclick="
                     openLists(
-                        '${theme.title}'
+                        '${theme.themeId}'
                     )
                 ">
 
-                ${theme.title}
+                ${theme.themeTitle}
 
             </button>
 
@@ -1489,15 +1435,28 @@ function openThemes(areaName) {
 
 }
 
-function openLists(themeName) {
+function openLists(themeId) {
 
-    currentTheme = themeName;
+    currentTheme = themeId;
 
     showPage("lists-page");
 
+    const theme =
+    getThemes().find(
+        function(theme) {
+
+            return (
+                theme.themeId
+                === themeId
+            );
+
+        }
+    );
+
     document.getElementById(
-        "lists-title"
-    ).innerText = themeName;
+    "lists-title"
+).innerText =
+    theme.themeTitle;
 
     const listsContainer =
         document.getElementById(
@@ -1506,23 +1465,21 @@ function openLists(themeName) {
 
     listsContainer.innerHTML = "";
 
-    const filteredLists =
-        lists.filter(function(list) {
+   const filteredLists =
+    getListsByThemeId(
+        themeId
+    );
 
-            return (
-                list.themeTitle
-                === themeName
-            );
-
-        });
 
     filteredLists.forEach(function(list) {
 
     // SHOW ONLY IF CONTENT EXISTS
 
     if (
-        learningItems[list.title]
-    ) { 
+    getItemsByListId(
+        list.listId
+    ).length > 0
+) { 
 
          // MASTERED REVIEW FILTER
 
@@ -1534,9 +1491,9 @@ function openLists(themeName) {
     {
 
         const progress =
-            learnerProgress.lists[
-                list.title
-            ];
+    learnerProgress.lists[
+        list.listId
+    ];
 
         if (
     !progress
@@ -1552,11 +1509,11 @@ function openLists(themeName) {
     }
 
     let displayTitle =
-    list.title;
+    list.listTitle;
 
 const progress =
     learnerProgress.lists[
-        list.title
+        list.listId
     ];
 
 if (
@@ -1566,7 +1523,7 @@ if (
 ) {
 
     displayTitle =
-        "✅ " + list.title;
+        "✅ " + list.listTitle;
 
 }
 
@@ -1578,31 +1535,31 @@ if (
                 ${
     currentMode === "learn"
 
-    ? `openItems('${list.title}')`
+    ? `openItems('${list.listId}')`
 
     : currentMode === "assessment"
 
-    ? `openAssessment('${list.title}')`
+    ? `openAssessment('${list.listId}')`
 
     : currentMode === "revision"
 
-    ? `openRevision('${list.title}')`
+    ? `openRevision('${list.listId}')`
 
     : currentMode === "assessment-review"
 
-    ? `openAssessmentReviewSets('${list.title}')`
+    ? `openAssessmentReviewSets('${list.listId}')`
 
     : currentMode === "mastered-review"
 
-    ? `openItems('${list.title}')`
+    ? `openItems('${list.listId}')`
 
     : currentMode === "mastered-assessment"
 
-    ? `openMasteredAssessment('${list.title}')`
+    ? `openMasteredAssessment('${list.listId}')`
 
     : currentMode === "mastered-revision"
 
-    ? `openMasteredRevision('${list.title}')`
+    ? `openMasteredRevision('${list.listId}')`
 
     : ""
 }
@@ -1623,11 +1580,15 @@ if (
 // open item
 
 
-function openItems(listName) {
+function openItems(listId) {
 
-    currentList = listName;
+    currentList = listId;
+
+    currentMode = "learn";
 
     showPage("items-page");
+
+    restoreLearningNavigation();
 
     const completeBtn =
         document.getElementById(
@@ -1645,13 +1606,27 @@ function openItems(listName) {
 
     }
 
+    const list =
+    getLists().find(
+        function(list) {
+
+            return (
+                list.listId
+                === listId
+            );
+
+        }
+    );
+
     document.getElementById(
-        "items-title"
-    ).innerText =
-        listName;
+    "items-title"
+).innerText =
+    list.listTitle;
 
     currentItems =
-        learningItems[listName] || [];
+    getItemsByListId(
+        listId
+    );
 
     if (
         currentItems.length === 0
@@ -2111,9 +2086,9 @@ function completeLearning() {
 //OPEN ASSESSMENT
 
 
-function openAssessment(listName) {
+function openAssessment(listId) {
 
-    currentList = listName;
+    currentList = listId;
 
     initializeListProgress(currentList);
 
@@ -2139,25 +2114,12 @@ function openAssessment(listName) {
 
     setsContainer.innerHTML = "";
 
-    const sets =
-        assessmentQuestions[currentList];
-
-        console.log(currentList);
-
-console.log(
-    assessmentQuestions[currentList]
-);
-
     const setNames =
-    Object.keys(sets).filter(
-        function(setName) {
-
-            return setName.startsWith(
-                "Set"
-            );
-
-        }
+    getAssessmentSetsByListId(
+        currentList
     );
+
+   
 
 const completedSets =
     learnerProgress.lists[currentList]
@@ -2280,16 +2242,35 @@ function openQuestionSet(setName) {
 
     currentSet = setName;
 
-    showPage("assessment-page");
+    showPage(
+        "assessment-page"
+    );
+
+    const list =
+        getLists().find(
+            function(list) {
+
+                return (
+                    list.listId
+                    === currentList
+                );
+
+            }
+        );
 
     currentQuestions =
-        assessmentQuestions[currentList][currentSet];
+        getQuestionsBySet(
+            currentList,
+            currentSet
+        );
 
     currentQuestionIndex = 0;
 
     showQuestion();
 
 }
+
+
 
 function showQuestion() {
 
@@ -2398,10 +2379,6 @@ const questionRecord = {
         currentQuestion.correctAnswer
 
 };
-
-console.log(
-    learnerProgress
-);
 
 const attemptRecord = {
 
@@ -2619,18 +2596,10 @@ console.log(currentQuestions.length);
 
     revisionMode = false;
 
-    const totalSets =
-    Object.keys(
-        assessmentQuestions[currentList]
-    ).filter(function(setName) {
-
-        return (
-            setName === "Set 1"
-            ||
-            setName === "Set 2"
-        );
-
-    }).length;
+   const totalSets =
+    getAssessmentSetsByListId(
+        currentList
+    ).length;
 
 const completedSetsCount =
     currentListProgress.completedSets
@@ -2749,6 +2718,16 @@ function openRevision() {
     const currentListProgress =
         learnerProgress.lists[currentList];
 
+        console.log(
+    "Current List:",
+    currentList
+);
+
+console.log(
+    "Revision Questions:",
+    currentListProgress.revisionQuestions
+);
+
     showPage("revision-page");
 
     const revisionContainer =
@@ -2793,15 +2772,16 @@ Object.keys(groupedRevision)
     .forEach(function(contentId) {
 
         const matchedItem =
-    learningItems[currentList]
-        .find(function(item) {
+    getItemsByListId(
+        currentList
+    ).find(function(item) {
 
-            return (
-                item.contentId
-                === contentId
-            );
+        return (
+            item.contentId
+            === contentId
+        );
 
-        });
+    });
 
         revisionContainer.innerHTML += `
     
@@ -2829,11 +2809,12 @@ Object.keys(groupedRevision)
 
 }
 
-
 function loadRevisionCard(contentId) {
 
     const currentItems =
-        learningItems[currentList];
+    getItemsByListId(
+        currentList
+    );
 
     const matchedItem =
         currentItems.find(function(item) {
@@ -3083,14 +3064,15 @@ function openRevisionSet(setName) {
 
     // Pull matching learning cards
 
-    revisionItems =
-        learningItems[currentList]
-            .filter(function(item) {
+   revisionItems =
+    getItemsByListId(
+        currentList
+    ).filter(function(item) {
 
-                return unresolvedContent
-                    .includes(item.contentId);
+        return unresolvedContent
+            .includes(item.contentId);
 
-            });
+    });
 
     revisionItemIndex = 0;
 
@@ -3099,6 +3081,7 @@ function openRevisionSet(setName) {
     showRevisionCard();
 
 }
+
 
 function showRevisionCard() {
 
@@ -3779,10 +3762,10 @@ function showMasteredReviewCard() {
 }
 
 function openAssessmentReviewSets(
-    listName
+    listId
 ) {
 
-    currentList = listName;
+    currentList = listId;
 
     showPage(
         "assessment-sets-page"
@@ -3824,10 +3807,10 @@ function openAssessmentReviewSets(
 }
 
 function openMasteredAssessment(
-    listName
+    listId
 ) {
 
-    currentList = listName;
+    currentList = listId;
 
     initializeListProgress(
         currentList
@@ -3844,34 +3827,39 @@ function openMasteredAssessment(
 
     setsContainer.innerHTML = "";
 
-    const sets =
-        assessmentQuestions[currentList];
+    const list =
+        getLists().find(
+            function(list) {
 
-    if (!sets) {
+                return (
+                    list.listId
+                    === currentList
+                );
 
-        return;
-
-    }
-
-    const progress =
-        learnerProgress.lists[
-            currentList
-        ];
-
-    const completedMasteredSets =
-        progress
-            .completedMasteredSets
-        || [];
+            }
+        );
 
     const masteredSets =
-    Object.keys(sets)
-        .filter(function(setName) {
+    getMasteredSetsByListId(
+        currentList
+    );
 
-            return setName.startsWith(
-                "Day"
-            );
+if (
+    masteredSets.length === 0
+) {
 
-        });
+    return;
+
+}
+
+const progress =
+    learnerProgress.lists[
+        currentList
+    ];
+
+const completedMasteredSets =
+    progress.completedMasteredSets
+    || [];
 
 const activeDayIndex =
     masteredSets.findIndex(function(setName) {
@@ -3994,9 +3982,23 @@ function openMasteredQuestionSet(
         "assessment-page"
     );
 
+    const list =
+    getLists().find(
+        function(list) {
+
+            return (
+                list.listId
+                === currentList
+            );
+
+        }
+    );
+
     currentQuestions =
-        assessmentQuestions[currentList]
-            [currentSet];
+        getQuestionsBySet(
+            currentList,
+            currentSet
+        );
 
     currentQuestionIndex = 0;
 
@@ -4005,6 +4007,7 @@ function openMasteredQuestionSet(
     showQuestion();
 
 }
+
 
 
 function checkMasteredAnswer(
@@ -4178,19 +4181,22 @@ function checkMasteredAnswer(
 
         // FINAL MASTERED STATE
 
+        const list =
+    getLists().find(
+        function(list) {
+
+            return (
+                list.listId
+                === currentList
+            );
+
+        }
+    );
+
         const allDaySets =
-
-            Object.keys(
-                assessmentQuestions[
-                    currentList
-                ]
-            ).filter(function(setName) {
-
-                return setName.startsWith(
-                    "Day"
-                );
-
-            });
+    getMasteredSetsByListId(
+        currentList
+    );
 
         const completedDaySets =
 
@@ -4236,6 +4242,7 @@ function checkMasteredAnswer(
     }
 
 }
+
 function openMasteredRevisionDashboard() {
 
     currentMode =
@@ -4275,35 +4282,25 @@ function openMasteredRevisionDashboard() {
     learningAreas.forEach(function(area) {
 
         const areaThemes =
-            themes.filter(function(theme) {
-
-                return (
-                    theme.learningArea
-                    === area
-                );
-
-            });
+    getThemesByLearningArea(
+        area
+    );
 
         let hasRevisionLists = false;
 
         areaThemes.forEach(function(theme) {
 
             const themeLists =
-                lists.filter(function(list) {
-
-                    return (
-                        list.themeTitle
-                        === theme.title
-                    );
-
-                });
+    getListsByThemeId(
+        theme.themeId
+    );
 
             themeLists.forEach(function(list) {
 
                 const progress =
-                    learnerProgress.lists[
-                        list.title
-                    ];
+    learnerProgress.lists[
+        list.listId
+    ];
 
                 if (
 
@@ -4347,6 +4344,7 @@ function openMasteredRevisionDashboard() {
     });
 
 }
+
 
 function openMasteredRevision() {
 
@@ -4409,15 +4407,17 @@ function openMasteredRevision() {
         .forEach(function(contentId) {
 
             const matchedItem =
-    learningItems[currentList]
-        .find(function(item) {
+    getItemsByListId(
+        currentList
+    ).find(function(item) {
 
-            return (
-                item.contentId
-                === contentId
-            );
+        return (
+            item.contentId
+            === contentId
+        );
 
-        });
+    });
+
 
             revisionContainer.innerHTML += `
     
@@ -4428,6 +4428,7 @@ function openMasteredRevision() {
             ${matchedItem.title}
 
         </h2>
+        
 
         <button class="nav-btn"
             onclick="
@@ -4448,12 +4449,16 @@ function openMasteredRevision() {
 
 }
 
+
+
 function loadMasteredRevisionCard(
     contentId
 ) {
 
-    const currentItems =
-        learningItems[currentList];
+     const currentItems =
+    getItemsByListId(
+        currentList
+    );
 
     const currentListProgress =
         learnerProgress.lists[
@@ -4564,6 +4569,8 @@ function completeMasteredRevision() {
     showQuestion();
 
 }
+
+
 
 function resetCardNavigation() {
 
@@ -4753,7 +4760,8 @@ function openProgressDashboard() {
             "progress-dashboard-container"
         );
 
-    let totalLists = 0;
+    const totalLists =
+    getLists().length;
 
     let learnedLists = 0;
 
@@ -4763,7 +4771,7 @@ function openProgressDashboard() {
         learnerProgress.lists
     ).forEach(function(listName) {
 
-        totalLists++;
+
 
         const progress =
             learnerProgress.lists[
@@ -4839,6 +4847,294 @@ function toggleMenu() {
 
 }
 
+
+
+
+function getThemes() {
+
+    const themes = [];
+
+    learningItems.forEach(function(item) {
+
+        const exists = themes.find(
+            function(theme) {
+
+                return (
+                    theme.themeId
+                    === item.themeId
+                );
+
+            }
+        );
+
+        if (!exists) {
+
+            themes.push({
+
+                themeId:
+                    item.themeId,
+
+                themeTitle:
+                    item.themeTitle,
+
+                learningArea:
+                    item.learningArea
+
+            });
+
+        }
+
+    });
+
+    return themes;
+
+}
+
+
+function getLists() {
+
+    const lists = [];
+
+    learningItems.forEach(function(item) {
+
+        const exists = lists.find(
+            function(list) {
+
+                return (
+                    list.listId
+                    === item.listId
+                );
+
+            }
+        );
+
+        if (!exists) {
+
+            lists.push({
+
+                listId:
+                    item.listId,
+
+                listTitle:
+                    item.listTitle,
+
+                themeId:
+                    item.themeId,
+
+                themeTitle:
+                    item.themeTitle
+
+            });
+
+        }
+
+    });
+
+    return lists;
+
+}
+
+function getItemsByListId(
+    listId
+) {
+
+    return learningItems.filter(
+        function(item) {
+
+            return (
+                item.listId
+                === listId
+            );
+
+        }
+    );
+
+}
+
+function getThemesByLearningArea(
+    learningArea
+) {
+
+    return getThemes().filter(
+        function(theme) {
+
+            return (
+                theme.learningArea
+                === learningArea
+            );
+
+        }
+    );
+
+}
+
+
+function getListsByThemeId(
+    themeId
+) {
+
+    return getLists().filter(
+        function(list) {
+
+            return (
+                list.themeId
+                === themeId
+            );
+
+        }
+    );
+
+}
+
+// GET ALL  QUESTIONS  FOR  A LIST
+
+
+function getQuestionsByListId(
+    listId
+) {
+
+    return assessmentQuestions.filter(
+        function(question) {
+
+            return (
+                question.listId
+                === listId
+            );
+
+        }
+    );
+
+}
+
+
+function getQuestionsBySet(
+    listId,
+    setName
+) {
+
+    return assessmentQuestions.filter(
+        function(question) {
+
+            return (
+
+                question.listId
+                === listId
+
+                &&
+
+                question.setName
+                === setName
+
+            );
+
+        }
+    );
+
+}
+
+
+
+// GET ALL SETS FOR A LIST 
+
+function getSetsByListId(
+    listId
+) {
+
+    return [
+        ...new Set(
+
+            getQuestionsByListId(
+                listId
+            ).map(function(question) {
+
+                return question.setName;
+
+            })
+
+        )
+    ];
+
+}
+
+
+function getAssessmentSetsByListId(
+    listId
+) {
+
+    return getSetsByListId(
+        listId
+    ).filter(function(setName) {
+
+        return setName.startsWith(
+            "Set"
+        );
+
+    });
+
+}
+
+
+
+// GET ONE SET
+
+function getQuestionsBySet(
+    listId,
+    setName
+) {
+
+    return assessmentQuestions.filter(
+        function(question) {
+
+            return (
+
+                question.listId
+                === listId
+
+                &&
+
+                question.setName
+                === setName
+
+            );
+
+        }
+    );
+
+}
+
+
+// GET ONLY DAY SETS
+
+function getMasteredSetsByListId(
+    listId
+) {
+
+    return [
+        ...new Set(
+
+            getQuestionsByListId(
+                listId
+            )
+
+            .filter(function(question) {
+
+                return question.setName.startsWith(
+                    "Day"
+                );
+
+            })
+
+            .map(function(question) {
+
+                return question.setName;
+
+            })
+
+        )
+    ];
+
+}
+
 function closeSidebar() {
 
     document
@@ -4852,6 +5148,49 @@ function closeSidebar() {
         .remove("active");
 
 }
+
+function goToCourses() {
+
+    pageHistory = [];
+
+    showPage(
+        "cover-page"
+    );
+
+}
+
+function restoreLearningNavigation() {
+
+    document.querySelector(
+        ".card-navigation"
+    ).innerHTML = `
+    
+        <button class="nav-btn"
+            onclick="previousItem()">
+
+            ← Previous
+
+        </button>
+
+        <button
+            id="complete-learning-btn"
+            onclick="completeLearning()">
+
+            Complete Learning
+
+        </button>
+
+        <button class="nav-btn"
+            onclick="nextItem()">
+
+            Next →
+
+        </button>
+
+    `;
+
+}
+
 
 loadProgress();
 
