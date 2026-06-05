@@ -2,7 +2,7 @@ window.courses = [
 
     {
 
-        courseId: "COURSE001",
+        courseId: "C001",
 
         title: "Spoken English",
 
@@ -24,7 +24,7 @@ window.courses = [
 
     {
 
-        courseId: "COURSE002",
+        courseId: "C002",
 
         title: "Phonics",
 
