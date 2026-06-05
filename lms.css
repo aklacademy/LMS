@@ -569,7 +569,7 @@ body {
 
     background: var(--card-bg);
 
-    padding: 35px;
+    padding: 20px;
 
     border-radius: 20px;
 
@@ -593,19 +593,6 @@ body {
 
 }
 
-
-.item-card p:first-child {
-
-    color: #64748B;
-
-    font-size: 14px;
-
-    font-weight: 700;
-
-    text-transform: uppercase;
-
-    letter-spacing: 1px;
-}
 
 .item-card strong {
 
@@ -799,6 +786,129 @@ body {
 
 }
 
+
+/* =========================
+   LESSON CARD
+========================= */
+
+.lesson-section {
+
+    margin-top: 30px;
+
+}
+
+.lesson-content {
+
+    line-height: 1.2;
+
+}
+
+.lesson-paragraph {
+
+    margin-bottom: 18px;
+
+    line-height: 1.6;
+
+}
+
+.lesson-section:last-child {
+
+    background: #f7f7ff;
+
+    padding: 15px;
+
+    border-left: 4px solid #220070;
+
+    border-radius: 8px;
+
+}
+
+.lesson-objectives {
+
+    background: #F0F8FF;
+
+    border-left: 5px solid var(--accent);
+
+    padding: 20px;
+
+    border-radius: 10px;
+
+    margin-top: 25px;
+
+}
+
+
+.lesson-outcome {
+
+   background: #F0FFF8;
+
+    border-left: 5px solid var(--accent);
+
+    padding: 20px;
+
+    border-radius: 10px;
+
+    margin-top: 25px;
+
+}
+
+.lesson-example {
+
+    background: #F7F3FF;
+
+    border-left: 5px solid var(--primary);
+
+    padding: 10px;
+
+    border-radius: 10px;
+
+    margin-top: 25px;
+
+}
+
+.inline-example {
+
+    background: #F7F3FF;
+
+    border-left: 5px solid var(--primary);
+
+    padding: 18px;
+
+    margin: 5px 0;
+
+    border-radius: 10px;
+
+    font-weight: 600;
+
+    color: var(--primary);
+
+}
+
+.section-header {
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    color: var(--primary);
+
+    margin-bottom: 15px;
+
+    cursor: pointer;
+
+}
+
+.section-header:hover {
+
+    opacity: 0.85;
+
+}
+
+.section-header {
+
+    padding: 15px;
+
+}
 
 
 /* =========================
@@ -1230,6 +1340,15 @@ body {
 
     }
 
+
+    .section-header span {
+
+    display: inline-block;
+
+    width: 24px;
+
+}
+
     #home-btn {
 
         font-size: 0;
@@ -1267,6 +1386,12 @@ body {
         width: 100%;
 
         padding: 20px;
+
+    }
+
+    .item-card h2 {
+
+        font-size: 2rem;
 
     }
 
