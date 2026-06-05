@@ -1079,10 +1079,18 @@ const progress =
         list.listId
     ];
 
+    if (!progress) {
+
+    return;
+
+}
+
             const daySets =
     getMasteredSetsByListId(
         list.listId
     );
+
+    
 
 if (!daySets) {
 
@@ -1271,6 +1279,11 @@ function openLearn() {
     masteredMode = false;
 
     showPage("learn-page");
+
+    document.querySelector(
+    "#learn-page h2"
+).innerText =
+    "Learning Areas";
 
     const learningAreasContainer =
         document.getElementById(
@@ -1517,13 +1530,41 @@ const progress =
     ];
 
 if (
+    currentMode === "learn"
+) {
+
+    if (
+        progress
+        &&
+        progress.mastered
+    ) {
+
+        displayTitle =
+            "🏆 " + list.listTitle;
+
+    }
+
+    else if (
+        progress
+        &&
+        progress.learned
+    ) {
+
+        displayTitle =
+            "📖 " + list.listTitle;
+
+    }
+
+}
+
+else if (
     progress
     &&
     progress.learned
 ) {
 
     displayTitle =
-        "✅ " + list.listTitle;
+        "📖 " + list.listTitle;
 
 }
 
@@ -1816,93 +1857,164 @@ function showLessonCard(item) {
             "items-container"
         );
 
-    // NORMAL LEARNING MODE
+    let sectionsHtml = "";
+
+    item.content.sections.forEach(
+        function(section) {
+
+            let sectionClass =
+    "lesson-section";
+
+    if (
+    section.sectionType
+    === "objectives"
+) {
+
+    sectionClass =
+        "lesson-objectives";
+
+}
+
+else if (
+    section.sectionType
+    === "outcome"
+)
+{
+
+    sectionClass =
+        "lesson-outcome";
+
+}
+
+else if (
+    section.sectionType
+    === "example"
+) {
+
+    sectionClass =
+        "lesson-example";
+
+}
+        let isOpen =
+
+    section.sectionOrder <= 2;
+
+let symbol =
+
+    isOpen
+    ? "-"
+    : "+";
+
+let displayStyle =
+
+    isOpen
+    ? "block"
+    : "none";
+
+    let formattedContent =
+
+    section.sectionContent;
+
+    formattedContent =
+
+    formattedContent.replaceAll(
+
+        "[EXAMPLE]",
+
+        `<div class="inline-example">`
+
+    );
+
+formattedContent =
+
+    formattedContent.replaceAll(
+
+        "[/EXAMPLE]",
+
+        `</div>`
+
+    );
+
+    formattedContent =
+
+    formattedContent.replaceAll(
+
+        "[PARAGRAPH]",
+
+        `<p class="lesson-paragraph">`
+
+    );
+
+formattedContent =
+
+    formattedContent.replaceAll(
+
+        "[/PARAGRAPH]",
+
+        `</p>`
+
+    );
+
+           sectionsHtml += `
+
+    <div class="${sectionClass}">
+
+        <div
+    class="section-header"
+    onclick="
+        toggleSection(
+            ${section.sectionOrder}
+        )
+    ">
+
+           <span
+    id="arrow-${section.sectionOrder}">
+
+    ${symbol}
+
+</span>
+
+${section.sectionTitle}
+
+        </div>
+
+<div
+    class="lesson-content"
+    id="section-${section.sectionOrder}"
+    style="
+        display:
+        ${displayStyle};
+    ">
+    ${formattedContent}
+
+        </div>
+
+    </div>
+
+`;
+
+        }
+    );
 
     itemsContainer.innerHTML = `
-    
+
         <div class="item-card">
 
-            <p>
-                Lesson ${currentItemIndex + 1}
-                of
-                ${currentItems.length}
-            </p>
+           <p class="lesson-counter">
+
+    Lesson ${currentItemIndex + 1}
+    of
+    ${currentItems.length}
+
+</p>
 
             <h2>
+
                 ${item.title}
+
             </h2>
 
-            <div>
-
-                <strong>
-                    Learning Objectives:
-                </strong>
-
-                <ul>
-
-                    ${item.content.learningObjectives.map(
-                        function(objective) {
-
-                            return `
-                            
-                                <li>
-                                    ${objective}
-                                </li>
-
-                            `;
-
-                        }
-                    ).join("")}
-
-                </ul>
-
-            </div>
-
-            <p>
-
-                <strong>
-                    Introduction:
-                </strong>
-
-                ${item.content.introduction}
-
-            </p>
-
-            <p>
-
-                <strong>
-                    Explanation:
-                </strong>
-
-                ${item.content.explanation}
-
-            </p>
-
-            <div>
-
-                <strong>
-                    Examples:
-                </strong>
-
-                <ul>
-
-                    ${item.content.examples.map(
-                        function(example) {
-
-                            return `
-                            
-                                <li>
-                                    ${example}
-                                </li>
-
-                            `;
-
-                        }
-                    ).join("")}
-
-                </ul>
-
-            </div>
+            ${sectionsHtml}
 
         </div>
 
@@ -2559,10 +2671,6 @@ console.log(currentQuestions.length);
 
    else {
 
-    console.log(
-        "Completion block running"
-    );
-
     if (
     !currentListProgress.completedSets
         .includes(currentSet)
@@ -2717,16 +2825,6 @@ function openRevision() {
 
     const currentListProgress =
         learnerProgress.lists[currentList];
-
-        console.log(
-    "Current List:",
-    currentList
-);
-
-console.log(
-    "Revision Questions:",
-    currentListProgress.revisionQuestions
-);
 
     showPage("revision-page");
 
@@ -3611,8 +3709,6 @@ function showMasteredReviewCard() {
 
     const item =
         currentItems[currentItemIndex];
-
-        console.log(item);
 
     // VOCABULARY REVIEW
 
@@ -5188,6 +5284,45 @@ function restoreLearningNavigation() {
         </button>
 
     `;
+
+}
+
+function toggleSection(
+    sectionOrder
+) {
+
+    const content =
+        document.getElementById(
+            `section-${sectionOrder}`
+        );
+
+    const arrow =
+        document.getElementById(
+            `arrow-${sectionOrder}`
+        );
+
+    if (
+        content.style.display
+        === "none"
+    ) {
+
+        content.style.display =
+            "block";
+
+        arrow.innerText =
+            "-";
+
+    }
+
+    else {
+
+        content.style.display =
+            "none";
+
+        arrow.innerText =
+            "+";
+
+    }
 
 }
 
