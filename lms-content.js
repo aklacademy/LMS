@@ -1,286 +1,172 @@
-window.learningItems = [
+window.learningItems = {
 
-    {
+    "Forest Words": [
 
-        courseId: "C001",
+        {
+            learningArea: "Vocabulary",
 
-        courseTitle: "Spoken English",
+            contentType: "word",
 
-        learningArea: "Vocabulary",
+            contentId: "WJV1",
 
-        themeId: "TH001",
+            title: "hire",
 
-        themeTitle: "Workplace Vocabulary",
+            content: {
 
-        listId: "LIST001",
+                partOfSpeech: "verb",
 
-        listTitle: "Forest Words",
+                pronunciation: "HIRE",
 
-        contentType: "word",
+                definition:
+                    "To give someone a job.",
 
-        contentId: "WJV1",
+                synonyms:
+                    "employ, appoint",
 
-        title: "hire",
+                antonyms:
+                    "fire, dismiss",
 
-        content: {
+                examples: [
 
-            partOfSpeech: "verb",
+                    "The company plans to hire new staff.",
 
-            pronunciation: "HIRE",
+                    "They hired him as a manager.",
 
-            definition: "To give someone a job.",
+                    "She was hired after the interview."
 
-            synonyms: "employ, appoint",
+                ]
 
-            antonyms: "fire, dismiss",
+            }
 
-            examples: [
+        },
 
-                "The company plans to hire new staff.",
+        {
+            learningArea: "Vocabulary",
 
-                "They hired him as a manager.",
+            contentType: "word",
 
-                "She was hired after the interview."
+            contentId: "WJV2",
 
-            ]
+            title: "recruit",
+
+            content: {
+
+                partOfSpeech: "verb",
+
+                pronunciation: "re-KROOT",
+
+                definition:
+                    "To find and bring in new people for jobs.",
+
+                synonyms:
+                    "enlist, sign up",
+
+                antonyms:
+                    "reject",
+
+                examples: [
+
+                    "The firm recruits graduates every year.",
+
+                    "They recruited five engineers.",
+
+                    "The army is recruiting soldiers."
+
+                ]
+
+            }
+
+        },
+
+        {
+            learningArea: "Vocabulary",
+
+            contentType: "word",
+
+            contentId: "WJV3",
+
+            title: "Cope",
+
+            content: {
+
+                partOfSpeech: "verb",
+
+                pronunciation: "re-KROOT",
+
+                definition:
+                    "To deal with a difficult situation.",
+
+                synonyms:
+                    "manage, handle",
+
+                antonyms:
+                    "fail",
+
+                examples: [
+
+                    "She coped with pressure well.",
+
+                    "He learned to cope with stress.",
+
+                    "They coped during tough times."
+
+                ]
+
+            }
 
         }
 
-    },
+    ],
 
-    {
+    "Conditional Statements": [
 
-        courseId: "C001",
+        {
 
-        courseTitle: "Spoken English",
+            learningArea: "Grammar",
 
-        learningArea: "Vocabulary",
+            contentType: "lesson",
 
-        themeId: "TH001",
+            contentId: "GR001",
 
-        themeTitle: "Workplace Vocabulary",
+            title:
+                "Introduction to Conditional Statements",
 
-        listId: "LIST001",
+            content: {
 
-        listTitle: "Forest Words",
+                learningObjectives: [
 
-        contentType: "word",
+                    "Understand what a conditional statement is.",
 
-        contentId: "WJV2",
+                    "Recognise the idea of a condition and a result."
 
-        title: "recruit",
+                ],
 
-        content: {
+                introduction:
+                    "In daily life, we often talk about situations and their results.",
 
-            partOfSpeech: "verb",
+                explanation:
+                    "A conditional statement is a sentence that talks about a condition and its result.",
 
-            pronunciation: "re-KROOT",
+                examples: [
 
-            definition: "To find and bring in new people for jobs.",
+                    "If you work hard, you succeed.",
 
-            synonyms: "enlist, sign up",
+                    "If it rains, we stay indoors."
 
-            antonyms: "reject",
+                ],
 
-            examples: [
+                lessonOutcome: [
 
-                "The firm recruits graduates every year.",
+                    "Understood what conditional statements are.",
 
-                "They recruited five engineers.",
+                    "Learned the ideas of condition and result."
 
-                "The army is recruiting soldiers."
+                ]
 
-            ]
-
-        }
-
-    },
-
-    {
-
-        courseId: "C001",
-
-        courseTitle: "Spoken English",
-
-        learningArea: "Vocabulary",
-
-        themeId: "TH001",
-
-        themeTitle: "Workplace Vocabulary",
-
-        listId: "LIST001",
-
-        listTitle: "Forest Words",
-
-        contentType: "word",
-
-        contentId: "WJV3",
-
-        title: "cope",
-
-        content: {
-
-            partOfSpeech: "verb",
-
-            pronunciation: "COPE",
-
-            definition: "To deal with a difficult situation.",
-
-            synonyms: "manage, handle",
-
-            antonyms: "fail",
-
-            examples: [
-
-                "She coped with pressure well.",
-
-                "He learned to cope with stress.",
-
-                "They coped during tough times."
-
-            ]
+            }
 
         }
 
-    },
+    ]
 
-    {
-
-      courseId: "C001",
-
-        courseTitle: "Spoken English",
-
-        learningArea: "Vocabulary",
-
-        themeId: "TH001",
-
-        themeTitle: "Workplace Vocabulary",
-
-        listId: "LIST001",
-
-        listTitle: "Water Words",
-
-        contentType: "word",
-
-        contentId: "WJV4",
-
-        title: "express",
-
-        content: {
-
-            partOfSpeech: "verb",
-
-            pronunciation: "ex-PRESS",
-
-            definition: "To show thoughts or feelings.",
-
-            synonyms: "state, communicate",
-
-            antonyms: "hide",
-
-            examples: [
-
-                "She expressed her concern.",
-
-                "He expressed gratitude.",
-
-                "They expressed opinions openly."
-
-            ]
-        }   
-    },
-
-     {
-      
-      courseId: "C001",
-
-        courseTitle: "Spoken English",
-
-        learningArea: "Vocabulary",
-
-        themeId: "TH001",
-
-        themeTitle: "Workplace Vocabulary",
-
-        listId: "LIST001",
-
-        listTitle: "Water Words",
-
-        contentType: "word",
-
-        contentId: "WJV5",
-
-        title: "suppress",
-
-        content: {
-
-            partOfSpeech: "verb",
-
-            pronunciation: "sup-PRESS",
-
-            definition: "To stop feelings from showing.",
-
-            synonyms: "control, restrain",
-
-            antonyms: "release",
-
-            examples: [
-
-                "He suppressed anger.",
-
-                "She suppressed emotions.",
-
-                "They suppressed fear."
-
-            ]
-        }   
-    },
-
-    {
-      
-      courseId: "C001",
-
-        courseTitle: "Spoken English",
-
-        learningArea: "Vocabulary",
-
-        themeId: "TH001",
-
-        themeTitle: "Workplace Vocabulary",
-
-        listId: "LIST002",
-
-        listTitle: "Water Words",
-
-        contentType: "word",
-
-        contentId: "WJV6",
-
-        title: "handle",
-
-        content: {
-
-            partOfSpeech: "verb",
-
-            pronunciation: "HAN-dle",
-
-            definition: "To deal with a situation.",
-
-            synonyms: "manage, cope",
-
-            antonyms: "mismanage",
-
-            examples: [
-
-                "She handled feedback well.",
-
-                "He handles stress.",
-
-                "They handled conflict maturely."
-
-            ]
-        }   
-    }
-
-
-];
+};
