@@ -1293,11 +1293,11 @@ body {
 
         position: fixed;
 
-        top: 0;
+        top: 70px;
 
         left: 0;
 
-        height: 100vh;
+        height: calc(100vh - 70px);
 
         z-index: 2000;
 
