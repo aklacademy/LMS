@@ -1324,19 +1324,21 @@ body {
 
     margin-left: auto;
 
-    top: 12px;
+    top: 20px;
 
-    right: 12px;
+    right: -18px;
 
-    width: 40px;
+    width: 36px;
 
-    height: 40px;
+    height: 36px;
 
     border: none;
 
-    background: transparent;
+    background: var(--primary);
 
-    font-size: 24px;
+    color: white;
+
+    font-size: 20px;
 
     cursor: pointer;
 
