@@ -1344,7 +1344,9 @@ body {
 
     color: var(--primary);
 
-    border-radius: 8px;
+    border-radius: 50%;
+
+    z-index: 5000;
 
 
 }
