@@ -1293,11 +1293,11 @@ body {
 
         position: fixed;
 
-        top: 70px;
+        top: 60px;
 
-        left: 0;
+        left: -240px;
 
-        height: calc(100vh - 70px);
+        height: calc(100vh - 60px);
 
         z-index: 2000;
 
@@ -1474,7 +1474,6 @@ body {
     }
 
 }
-
 
 
 
