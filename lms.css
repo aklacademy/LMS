@@ -1334,7 +1334,7 @@ body {
 
     border: none;
 
-    background: var(--primary);
+    background: transparent;
 
     color: white;
 
