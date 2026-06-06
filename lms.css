@@ -1293,9 +1293,9 @@ body {
 
         position: fixed;
 
-        top: 60px;
+        top: 0;
 
-        left: -240px;
+        left: 0;
 
         height: 100vh;
 
@@ -1310,6 +1310,8 @@ body {
         -webkit-overflow-scrolling: touch;
 
         box-sizing: border-box;
+
+        overflow: hidden;
 
     }
 
