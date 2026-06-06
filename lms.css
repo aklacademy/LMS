@@ -1316,25 +1316,17 @@ body {
     }
 
 
-    #sidebar-close-btn {
+   #sidebar-close-btn {
 
     display: block;
-    
-    position: absolute;
 
     margin-left: auto;
 
-    top: 70px;
-
-    right: -12px;
-
-    width: 40px;
-
-    height: 40px;
+    margin-bottom: 10px;
 
     border: none;
 
-    background: var(--accent);
+    background: transparent;
 
     color: var(--primary);
 
@@ -1343,13 +1335,6 @@ body {
     font-weight: bold;
 
     cursor: pointer;
-
-    color: var(--primary);
-
-    border-radius: 50%;
-
-    z-index: 5000;
-
 
 }
     #top-navbar {
