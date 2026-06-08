@@ -256,10 +256,15 @@ function openAdminPage() {
         "admin-page"
     );
 
-    const container =
-        document.getElementById(
-            "admin-container"
-        );
+    const statsContainer =
+    document.getElementById(
+        "admin-stats-container"
+    );
+
+const courseContainer =
+    document.getElementById(
+        "course-management-container"
+    );
 
     const selectedCourse =
         courses.find(function(course) {
@@ -346,61 +351,156 @@ function openAdminPage() {
 
         });
 
-    container.innerHTML = `
-    
-        <div class="item-card">
+    statsContainer.innerHTML = `
 
-            <h3>
+    <div class="item-card">
 
-                ${selectedCourse.title}
+        <h3>
 
-            </h3>
+            ${selectedCourse.title}
 
-            <p>
+        </h3>
 
-                Learning Areas:
-                ${selectedCourse.learningAreas.length}
+        <p>
 
-            </p>
+            Learning Areas:
+            ${selectedCourse.learningAreas.length}
 
-            <p>
+        </p>
 
-                Themes:
-                ${themeCount}
+        <p>
 
-            </p>
+            Themes:
+            ${themeCount}
 
-            <p>
+        </p>
 
-                Lists:
-                ${listCount}
+        <p>
 
-            </p>
+            Lists:
+            ${listCount}
 
-            <p>
+        </p>
 
-                Items:
-                ${itemCount}
+        <p>
 
-            </p>
+            Items:
+            ${itemCount}
 
-            <p>
+        </p>
 
-                Assessment Sets:
-                ${setCount}
+        <p>
 
-            </p>
+            Assessment Sets:
+            ${setCount}
 
-            <p>
+        </p>
 
-                Assessment Questions:
-                ${questionCount}
+        <p>
 
-            </p>
+            Assessment Questions:
+            ${questionCount}
+
+        </p>
+
+    </div>
+
+    <div class="item-card">
+
+        <h3>
+
+            Append Content
+
+        </h3>
+
+        <select
+    id="content-type"
+    class="admin-input">
+
+            <option value="word">
+
+                Word
+
+            </option>
+
+            <option value="lesson">
+
+                Lesson
+
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <input
+    type="file"
+    id="excel-file"
+    class="admin-input">
+
+        <br><br>
+
+       <button
+    class="theme-card"
+    onclick="previewContent()">
+
+    Preview
+
+</button>
+
+        <button
+    class="theme-card">
+
+    Append
+
+</button>
+
+        <div
+            id="preview-container">
 
         </div>
 
-    `;
+    </div>
+
+`;
+
+
+
+}
+
+function renderExistingCourses() {
+
+    const container =
+        document.getElementById(
+            "existing-courses-container"
+        );
+
+    let html = "";
+
+    courses.forEach(function(course) {
+
+        html += `
+
+            <div class="item-card">
+
+                <strong>
+
+                    ${course.courseId}
+
+                </strong>
+
+                -
+
+                ${course.title}
+
+            </div>
+
+        `;
+
+    });
+
+    container.innerHTML =
+        html;
 
 }
 
@@ -5324,6 +5424,258 @@ function toggleSection(
 
     }
 
+}
+
+function previewContent() {
+
+    const fileInput =
+        document.getElementById(
+            "excel-file"
+        );
+
+    const file =
+        fileInput.files[0];
+
+    if (!file) {
+
+        alert(
+            "Please select an Excel file."
+        );
+
+        return;
+
+    }
+
+    const reader =
+        new FileReader();
+
+    reader.onload =
+        function(event) {
+
+            const data =
+                new Uint8Array(
+                    event.target.result
+                );
+
+            const workbook =
+                XLSX.read(
+                    data,
+                    { type: "array" }
+                );
+
+            const sheetName =
+                workbook.SheetNames[0];
+
+            const worksheet =
+                workbook.Sheets[sheetName];
+
+            const rows =
+                XLSX.utils.sheet_to_json(
+                    worksheet
+                );
+
+            console.log(rows);
+
+        };
+
+    reader.readAsArrayBuffer(
+        file
+    );
+
+}
+
+function showCreateCourseForm() {
+
+    const container =
+        document.getElementById(
+            "course-form-container"
+        );
+
+    container.innerHTML = `
+
+        <div class="item-card">
+
+            <h3>
+
+                Create Course
+
+            </h3>
+
+<input
+    type="text"
+    id="course-id"
+    placeholder="Course ID">
+
+            <br><br>
+
+<input
+    type="text"
+    id="course-title"
+    placeholder="Course Title">
+
+            <br><br>
+
+            <input
+    type="text"
+    id="welcome-title"
+    placeholder="Welcome Title">
+
+<br><br>
+
+<textarea
+    id="welcome-message"
+    class="admin-input"
+    rows="5"
+    placeholder="Welcome Message">
+
+</textarea>
+
+<br><br>
+
+<button
+    class="theme-card"
+    onclick="saveCourse()">
+
+    Save Course
+
+</button>
+
+<br><br>
+
+<div id="course-preview">
+
+</div>
+
+    `;
+
+}
+
+
+function saveCourse() {
+
+    const course = {
+
+        courseId:
+            document.getElementById(
+                "course-id"
+            ).value,
+
+        title:
+            document.getElementById(
+                "course-title"
+            ).value,
+
+        welcomeTitle:
+            document.getElementById(
+                "welcome-title"
+            ).value,
+
+        welcomeMessage:
+            document.getElementById(
+                "welcome-message"
+            ).value,
+
+        learningAreas: []
+
+    };
+
+    console.log(course);
+
+    alert(
+    JSON.stringify(
+        course,
+        null,
+        4
+    )
+);
+
+    document.getElementById(
+        "course-preview"
+    ).innerHTML = `
+
+<pre>
+
+
+
+${JSON.stringify(
+    course,
+    null,
+    4
+)}
+
+</pre>
+
+`;
+
+}
+
+function toggleAdminMenu() {
+
+    document
+        .getElementById(
+            "admin-submenu"
+        )
+        .classList
+        .toggle(
+            "hidden"
+        );
+
+}
+
+function openCourseManagementPage() {
+
+    showPage(
+        "course-management-page"
+    );
+
+    loadCourseManagement();
+
+}
+
+function loadCourseManagement() {
+
+    
+
+    const container =
+        document.getElementById(
+            "course-management-content"
+        );
+
+    let html = `
+
+        <div class="item-card">
+
+            <h3>
+
+                Course Management
+
+            </h3>
+
+            <button
+    class="theme-card"
+    onclick="showCreateCourseForm()">
+
+    Create Course
+
+</button>
+
+        <div
+    id="course-form-container">
+
+</div>
+
+<hr>
+
+<h4>
+
+    Existing Courses
+
+</h4>
+    `;
+
+    container.innerHTML = html;
+
+renderExistingCourses();
 }
 
 
