@@ -298,6 +298,26 @@ body {
 
 
 /* =========================
+   ADMIN PAGE
+========================= */
+
+.admin-input {
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin-bottom: 12px;
+
+    border-radius: 8px;
+
+    border: 1px solid #ddd;
+
+    box-sizing: border-box;
+
+}
+
+/* =========================
    WELCOME PAGE
 ========================= */
 
