@@ -103,12 +103,38 @@
 </h2>
 
 
-<button class="sidebar-btn"
-    onclick="openAdminPage()">
+<div>
 
-    Admin
+    <button class="sidebar-btn"
+        onclick="toggleAdminMenu()">
 
-</button>
+        Admin
+
+    </button>
+
+    <div id="admin-submenu"
+        class="hidden">
+
+        <button class="sidebar-sub-btn"
+            onclick="openAdminPage()">
+
+            Dashboard
+
+        </button>
+
+        <button class="sidebar-sub-btn"
+            onclick="openCourseManagementPage()">
+
+            Courses
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
 
 
 <button class="sidebar-btn"
@@ -291,12 +317,30 @@
 
     </h2>
 
-    <div id="admin-container">
+    <div id="admin-stats-container">
+
+    </div>
+
+    <div id="course-management-container">
 
     </div>
 
 </div>
 
+<div id="course-management-page"
+    class="app-page hidden">
+
+    <h2>
+
+        Course Management
+
+    </h2>
+
+    <div id="course-management-content">
+
+    </div>
+
+</div>
 
 
             <!-- PROGRESS DASHBOARD PAGE -->
@@ -523,7 +567,7 @@
 
     <!-- SCRIPTS -->
 
-   
+   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <script src="lms-content.js"></script>
     <script src="lms-questions.js"></script>
     <script src="lms-courses.js"></script>
