@@ -30,6 +30,28 @@ let isMasteredRevision = false;
 
 let currentRevisionQuestion = null;
 
+window.uploadRows = [];
+
+
+
+function loadCoursesFromStorage() {
+
+    const savedCourses =
+        localStorage.getItem(
+            "courses"
+        );
+
+    if (savedCourses) {
+
+        window.courses =
+            JSON.parse(
+                savedCourses
+            );
+
+    }
+
+}
+
 
 function showPage(pageId) {
 
@@ -63,11 +85,10 @@ function showPage(pageId) {
     // INNER COURSE WORKSPACE SWITCHING
 
     else {
-
-        const pages =
-            document.querySelectorAll(
-                "#course-page .app-page"
-            );
+const pages =
+    document.querySelectorAll(
+        ".app-page"
+    );
 
         pages.forEach(function(page) {
 
@@ -270,7 +291,7 @@ const courseContainer =
         courses.find(function(course) {
 
             return (
-                course.title
+                course.courseId
                 === currentCourse
             );
 
@@ -405,62 +426,6 @@ const courseContainer =
 
     </div>
 
-    <div class="item-card">
-
-        <h3>
-
-            Append Content
-
-        </h3>
-
-        <select
-    id="content-type"
-    class="admin-input">
-
-            <option value="word">
-
-                Word
-
-            </option>
-
-            <option value="lesson">
-
-                Lesson
-
-            </option>
-
-        </select>
-
-        <br><br>
-
-        <input
-    type="file"
-    id="excel-file"
-    class="admin-input">
-
-        <br><br>
-
-       <button
-    class="theme-card"
-    onclick="previewContent()">
-
-    Preview
-
-</button>
-
-        <button
-    class="theme-card">
-
-    Append
-
-</button>
-
-        <div
-            id="preview-container">
-
-        </div>
-
-    </div>
 
 `;
 
@@ -532,7 +497,7 @@ function openSearch() {
         courses.find(function(course) {
 
             return (
-                course.title
+                course.courseId
                 === currentCourse
             );
 
@@ -751,19 +716,19 @@ function openSearchResult(
 
 }
 
-function openCourse(courseName) {
+function openCourse(courseId) {
 
-    currentCourse = courseName;
+    currentCourse = courseId;
 
     const selectedCourse =
-        courses.find(function(course) {
+    courses.find(function(course) {
 
-            return (
-                course.title
-                === courseName
-            );
+        return (
+            course.courseId
+            === courseId
+        );
 
-        });
+    });
 
     document.querySelector(
         ".course-title"
@@ -771,14 +736,14 @@ function openCourse(courseName) {
         selectedCourse.title;
 
     document.getElementById(
-        "welcome-title"
-    ).textContent =
-        selectedCourse.welcomeTitle;
+    "course-welcome-title"
+).textContent =
+    selectedCourse.welcomeTitle;
 
-    document.getElementById(
-        "welcome-message"
-    ).textContent =
-        selectedCourse.welcomeMessage;
+document.getElementById(
+    "course-welcome-message"
+).textContent =
+    selectedCourse.welcomeMessage;
 
     showPage("course-page");
 
@@ -804,7 +769,7 @@ function renderCourses() {
                 class="course-card"
                 onclick="
                     openCourse(
-                        '${course.title}'
+                        '${course.courseId}'
                     )
                 ">
 
@@ -820,6 +785,7 @@ function renderCourses() {
 
 
 function openAssessmentDashboard() {
+
 
     currentMode = "assessment";
 
@@ -844,7 +810,7 @@ function openAssessmentDashboard() {
         courses.find(function(course) {
 
             return (
-                course.title
+                course.courseId
                 === currentCourse
             );
 
@@ -948,7 +914,7 @@ function openRevisionDashboard() {
         courses.find(function(course) {
 
             return (
-                course.title
+                course.courseId
                 === currentCourse
             );
 
@@ -1046,7 +1012,7 @@ function openAssessmentReviewDashboard() {
         courses.find(function(course) {
 
             return (
-                course.title
+                course.courseId
                 === currentCourse
             );
 
@@ -1147,7 +1113,7 @@ function openMasteredAssessmentDashboard() {
         courses.find(function(course) {
 
             return (
-                course.title
+                course.courseId
                 === currentCourse
             );
 
@@ -1300,7 +1266,7 @@ learningAreasContainer.innerHTML = "";
         courses.find(function(course) {
 
             return (
-                course.title
+                course.courseId
                 === currentCourse
             );
 
@@ -1396,7 +1362,7 @@ function openLearn() {
         courses.find(function(course) {
 
             return (
-                course.title
+                course.courseId
                 === currentCourse
             );
 
@@ -2015,7 +1981,7 @@ let displayStyle =
 
     section.sectionContent;
 
-    formattedContent =
+formattedContent =
 
     formattedContent.replaceAll(
 
@@ -2035,7 +2001,7 @@ formattedContent =
 
     );
 
-    formattedContent =
+formattedContent =
 
     formattedContent.replaceAll(
 
@@ -2054,6 +2020,190 @@ formattedContent =
         `</p>`
 
     );
+
+formattedContent =
+
+    formattedContent.replaceAll(
+
+        "[BOLD]",
+
+        `<strong>`
+
+    );
+
+formattedContent =
+
+    formattedContent.replaceAll(
+
+        "[/BOLD]",
+
+        `</strong>`
+
+    );
+
+
+    formattedContent =
+
+    formattedContent.replaceAll(
+
+        "[ITALIC]",
+
+        "<em>"
+
+    );
+
+formattedContent =
+
+    formattedContent.replaceAll(
+
+        "[/ITALIC]",
+
+        "</em>"
+
+    );
+
+formattedContent =
+
+    formattedContent.replaceAll(
+
+        "[UNDERLINE]",
+
+        "<u>"
+
+    );
+
+formattedContent =
+
+    formattedContent.replaceAll(
+
+        "[/UNDERLINE]",
+
+        "</u>"
+
+    );
+
+    if (
+
+    formattedContent.includes(
+        "[LIST]"
+    )
+
+) {
+
+    const listContent =
+
+        formattedContent
+            .split("[LIST]")[1]
+            .split("[/LIST]")[0];
+
+    const items =
+
+        listContent
+            .split("[*]")
+            .filter(
+                item =>
+                    item.trim()
+            );
+
+    let listHtml =
+    "<ul>";
+
+items.forEach(
+    function(item) {
+
+        listHtml +=
+
+`<li>${item.trim()}</li>`;
+
+    }
+);
+
+listHtml +=
+    "</ul>";
+
+    formattedContent =
+
+        formattedContent.replace(
+
+            `[LIST]${listContent}[/LIST]`,
+
+            listHtml
+
+        );
+
+}
+
+if (
+
+    formattedContent.includes(
+        "[NUMBERED]"
+    )
+
+) {
+
+    const listContent =
+
+        formattedContent
+            .split("[NUMBERED]")[1]
+            .split("[/NUMBERED]")[0];
+
+    const items =
+
+        listContent
+            .split("[*]")
+            .filter(
+                item =>
+                    item.trim()
+            );
+
+   let listHtml =
+    "<ol>";
+
+items.forEach(
+    function(item) {
+
+        listHtml +=
+
+`<li>${item.trim()}</li>`;
+
+    }
+);
+
+listHtml +=
+    "</ol>";
+
+    formattedContent =
+
+        formattedContent.replace(
+
+            `[NUMBERED]${listContent}[/NUMBERED]`,
+
+            listHtml
+
+        );
+
+}
+
+  /*  if (
+
+    section.sectionType ===
+        "objectives"
+
+    ||
+
+    section.sectionType ===
+        "outcome"
+
+)  {
+
+   formattedContent =
+
+        formattedContent.replaceAll(
+            "\n",
+            "<br>"
+        );
+
+}*/
 
            sectionsHtml += `
 
@@ -3786,6 +3936,7 @@ function toggleMasteredMenu() {
 
 function toggleAssessmentMenu() {
 
+
     document.getElementById(
         "assessment-submenu"
     ).classList.toggle(
@@ -4466,7 +4617,7 @@ function openMasteredRevisionDashboard() {
         courses.find(function(course) {
 
             return (
-                course.title
+                course.courseId
                 === currentCourse
             );
 
@@ -5546,7 +5697,9 @@ function showCreateCourseForm() {
 
 </div>
 
-    `;
+</div>
+
+`;
 
 }
 
@@ -5579,15 +5732,38 @@ function saveCourse() {
 
     };
 
-    console.log(course);
+    const existingCourse =
+    courses.find(
+        c =>
+        c.courseId === course.courseId
+    );
 
-    alert(
-    JSON.stringify(
-        course,
-        null,
-        4
-    )
+    if (existingCourse) {
+
+    existingCourse.title =
+        course.title;
+
+    existingCourse.welcomeTitle =
+        course.welcomeTitle;
+
+    existingCourse.welcomeMessage =
+        course.welcomeMessage;
+
+}
+
+else {
+
+    courses.push(course);
+
+}
+    localStorage.setItem(
+    "courses",
+    JSON.stringify(courses)
 );
+
+
+
+
 
     document.getElementById(
         "course-preview"
@@ -5678,9 +5854,2830 @@ function loadCourseManagement() {
 renderExistingCourses();
 }
 
+function toggleCoursesMenu() {
+
+    document
+        .getElementById(
+            "courses-submenu"
+        )
+        .classList
+        .toggle(
+            "hidden"
+        );
+
+}
+
+function toggleLearningAreasMenu() {
+
+    document
+        .getElementById(
+            "learning-areas-submenu"
+        )
+        .classList
+        .toggle(
+            "hidden"
+        );
+
+}
+
+function toggleThemesMenu() {
+
+    document
+        .getElementById(
+            "themes-submenu"
+        )
+        .classList
+        .toggle(
+            "hidden"
+        );
+
+}
+
+
+function toggleListsMenu() {
+
+    document
+        .getElementById(
+            "lists-submenu"
+        )
+        .classList
+        .toggle(
+            "hidden"
+        );
+
+}
+
+
+function toggleContentMenu() {
+
+    document
+        .getElementById(
+            "content-submenu"
+        )
+        .classList
+        .toggle(
+            "hidden"
+        );
+
+}
+
+function toggleAdminAssessmentMenu() {
+
+    document
+        .getElementById(
+            "admin-assessment-submenu"
+        )
+        .classList
+        .toggle(
+            "hidden"
+        );
+
+}
+
+function openCreateCoursePage() {
+
+    showPage(
+        "create-course-page"
+    );
+
+    showCreateCourseForm();
+
+}
+
+function openManageCoursesPage() {
+
+    showPage(
+        "manage-courses-page"
+    );
+
+    loadManageCourses();
+
+}
+
+function openLearningAreasPage() {
+
+    showPage(
+        "learning-areas-page"
+    );
+
+}
+
+function openCreateAreaPage() {
+
+    showPage(
+        "create-area-page"
+    );
+
+    showCreateAreaForm();
+
+}
+
+function openManageAreasPage() {
+
+    showPage(
+        "manage-areas-page"
+    );
+
+    showManageAreas();
+
+}
+
+function openCreateThemePage() {
+
+    showPage(
+        "create-theme-page"
+    );
+
+    showCreateThemeForm();
+
+}
+
+function openManageThemesPage() {
+
+    showPage(
+        "manage-themes-page"
+    );
+
+    showManageThemes();
+
+}
+
+function openCreateListPage() {
+
+    showPage(
+        "create-list-page"
+    );
+
+    showCreateListForm();
+
+}
+
+function openManageListsPage() {
+
+    showPage(
+        "manage-lists-page"
+    );
+
+    showManageLists();
+
+}
+
+
+function openUploadWordsPage() {
+
+    showPage(
+        "upload-words-page"
+    );
+
+}
+
+function openUploadLessonsPage() {
+
+    showPage(
+        "upload-lessons-page"
+    );
+
+}
+
+function openAppendContentPage() {
+
+    showPage(
+        "append-content-page"
+    );
+
+    document.getElementById(
+        "append-content-content"
+    ).innerHTML = `
+
+<h3>
+
+    Content Type
+
+</h3>
+
+<select
+    id="content-type"
+    class="admin-input"
+    onchange="showContentUploadForm()">
+
+    <option value="">
+
+        Select Content Type
+
+    </option>
+
+    <option value="word">
+
+        Vocabulary
+
+    </option>
+
+    <option value="lesson">
+
+        Lesson
+
+    </option>
+
+</select>
+
+<div id="append-content-container">
+
+</div>
+
+`;
+
+}
+
+function showContentUploadForm() {
+
+    const contentType =
+        document.getElementById(
+            "content-type"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "append-content-container"
+        );
+
+    if (
+        contentType === "word"
+    ) {
+
+        container.innerHTML = `
+
+<h3>
+
+    Vocabulary Upload
+
+</h3>
+
+<select
+    id="upload-learning-area"
+    class="admin-input"
+    onchange="
+        loadUploadThemes()
+    ">
+
+    <option value="">
+
+        Select Learning Area
+
+    </option>
+
+    ${
+        learningAreas
+        .filter(
+            area =>
+            area.isActive !== false
+        )
+        .map(
+            area => `
+                <option
+                    value="${area.areaId}">
+                    ${area.title}
+                </option>
+            `
+        )
+        .join("")
+    }
+
+</select>
+
+<select
+    id="upload-theme"
+    class="admin-input"
+     onchange="
+        loadUploadLists()
+    ">
+
+    <option value="">
+
+        Select Theme
+
+    </option>
+
+</select>
+
+<select
+    id="upload-list"
+    class="admin-input">
+
+    <option value="">
+
+        Select List
+
+    </option>
+
+</select>
+
+<input
+    type="file"
+    id="vocabulary-file"
+    class="admin-input"
+    accept=".xlsx,.xls"
+    onchange="
+        previewVocabularyFile(
+            event
+        )
+    ">
+
+<div
+    id="vocabulary-preview">
+
+</div>
+
+`;
+
+    }
+
+    else if (
+        contentType === "lesson"
+    ) {
+
+        container.innerHTML = `
+
+<h3>
+
+    Lesson Upload
+
+</h3>
+
+<p>
+
+    Lesson template
+    will appear here.
+
+</p>
+
+`;
+
+    }
+
+    else {
+
+        container.innerHTML = "";
+
+    }
+
+}
+
+function loadUploadThemes() {
+
+    const areaId =
+        document.getElementById(
+            "upload-learning-area"
+        ).value;
+
+    const themeDropdown =
+        document.getElementById(
+            "upload-theme"
+        );
+
+    themeDropdown.innerHTML = `
+
+<option value="">
+
+    Select Theme
+
+</option>
+
+`;
+
+    themes
+        .filter(
+            theme =>
+                theme.learningAreaId
+                === areaId
+                &&
+                theme.isActive !== false
+        )
+        .forEach(
+            function(theme) {
+
+                themeDropdown.innerHTML += `
+
+<option
+    value="${theme.themeId}">
+
+    ${theme.title}
+
+</option>
+
+`;
+
+            }
+        );
+
+}
+
+function previewVocabularyFile(
+    event
+) {
+
+    const file =
+        event.target.files[0];
+
+    const reader =
+        new FileReader();
+
+    reader.onload =
+        function(e) {
+
+            const data =
+                new Uint8Array(
+                    e.target.result
+                );
+
+            const workbook =
+                XLSX.read(
+                    data,
+                    {
+                        type: "array"
+                    }
+                );
+
+            const sheetName =
+                workbook
+                .SheetNames[0];
+
+            const worksheet =
+                workbook.Sheets[
+                    sheetName
+                ];
+
+            const rows =
+                XLSX.utils
+                .sheet_to_json(
+                    worksheet,
+                    {
+                        defval: ""
+                    }
+                );
+
+                window.uploadRows =
+    rows;
+
+                const invalidRows = [];
+
+rows.forEach(
+    function(
+        row,
+        index
+    ) {
+
+        if (
+
+            !row.Word ||
+            !row.Definition
+
+        ) {
+
+            invalidRows.push(
+                index + 2
+            );
+
+        }
+
+    }
+);
+
+
+
+            let html = `
+
+<h3>
+
+    Preview
+
+</h3>
+
+<div
+    style="
+        overflow-x:auto;
+    ">
+
+<table
+    class="admin-table">
+
+`;
+
+
+html += "<tr>";
+
+Object.keys(
+    rows[0]
+).forEach(
+    function(key) {
+
+        html += `
+            <th>
+                ${key}
+            </th>
+        `;
+
+    }
+);
+
+
+html += "</tr>";
+
+rows.forEach(
+    function(row) {
+
+        html += "<tr>";
+
+        Object.values(
+            row
+        ).forEach(
+            function(value) {
+
+                html += `
+                    <td>
+                        ${value}
+                    </td>
+                `;
+
+            }
+        );
+
+        html += "</tr>";
+
+    }
+);
+
+html += `
+</table>
+</div>
+`;
+
+html += `
+
+<div
+    class="validation-summary">
+
+    <strong>
+
+        Rows Found:
+
+    </strong>
+
+    ${rows.length}
+
+    &nbsp; | &nbsp;
+
+    <strong>
+
+        Invalid Rows:
+
+    </strong>
+
+    ${invalidRows.length}
+
+</div>
+
+`;
+
+html += `
+
+<button
+    class="admin-btn"
+    onclick="
+        appendVocabularyContent()
+    ">
+
+    Append Content
+
+</button>
+
+`;
+
+document.getElementById(
+    "vocabulary-preview"
+).innerHTML = html;
+
+        };
+
+    reader.readAsArrayBuffer(
+        file
+    );
+
+}
+
+function loadUploadLists() {
+
+    const themeId =
+        document.getElementById(
+            "upload-theme"
+        ).value;
+
+    const listDropdown =
+        document.getElementById(
+            "upload-list"
+        );
+
+    listDropdown.innerHTML = `
+
+<option value="">
+
+    Select List
+
+</option>
+
+`;
+
+    lists
+        .filter(
+            list =>
+                list.themeId
+                === themeId
+                &&
+                list.isActive !== false
+        )
+        .forEach(
+            function(list) {
+
+                listDropdown.innerHTML += `
+
+<option
+    value="${list.listId}">
+
+    ${list.title}
+
+</option>
+
+`;
+
+            }
+        );
+
+}
+
+function appendVocabularyContent() {
+
+    const areaId =
+        document.getElementById(
+            "upload-learning-area"
+        ).value;
+
+    const themeId =
+        document.getElementById(
+            "upload-theme"
+        ).value;
+
+    const listId =
+        document.getElementById(
+            "upload-list"
+        ).value;
+
+    const area =
+        learningAreas.find(
+            a =>
+            a.areaId === areaId
+        );
+
+    const theme =
+        themes.find(
+            t =>
+            t.themeId === themeId
+        );
+
+    const list =
+        lists.find(
+            l =>
+            l.listId === listId
+        );
+
+    uploadRows.forEach(
+    function(row) {
+
+    const item = {
+
+        courseId: "",
+
+        courseTitle: "",
+
+        learningArea:
+            area.title,
+
+        themeId:
+            theme.themeId,
+
+        themeTitle:
+            theme.title,
+
+        listId:
+            list.listId,
+
+        listTitle:
+            list.title,
+
+        contentType:
+            "word",
+
+        contentId:
+            getNextContentId(),
+
+        title:
+            row.Word,
+
+        image:
+            row.Image || "",
+
+
+        content: {
+
+            partOfSpeech:
+                row.PartOfSpeech,
+
+            pronunciation:
+                row.Pronunciation,
+
+            definition:
+                row.Definition,
+
+            synonyms:
+                row.Synonyms,
+
+            antonyms:
+                row.Antonyms,
+
+            examples: [
+
+                row.Example1,
+
+                row.Example2,
+
+                row.Example3
+
+            ]
+
+        }
+
+    };
+
+learningItems.push(
+    item
+);
+
+    }
+
+);
+
+localStorage.setItem(
+    "learningItems",
+    JSON.stringify(
+        learningItems
+    )
+);
+
+document.getElementById(
+    "vocabulary-preview"
+).insertAdjacentHTML(
+    "beforeend",
+    `
+
+<p
+    style="
+        color:green;
+        font-weight:bold;
+    ">
+
+    Vocabulary item appended.
+
+</p>
+
+`
+);
+
+console.log(
+    learningItems
+);
+
+}
+
+function openUploadQuestionsPage() {
+
+    showPage(
+        "upload-questions-page"
+    );
+
+}
+
+function openManageSetsPage() {
+
+    showPage(
+        "manage-sets-page"
+    );
+
+}
+
+function openReviewQuestionsPage() {
+
+    showPage(
+        "review-questions-page"
+    );
+
+}
+
+
+function loadManageCourses() {
+
+    const container =
+        document.getElementById(
+            "courses-list-container"
+        );
+
+    container.innerHTML = "";
+
+    courses.forEach(function(course) {
+
+        container.innerHTML += `
+
+    <div class="item-card">
+
+        <h3>
+
+            ${course.title}
+
+        </h3>
+
+        <button
+    class="theme-card"
+    onclick="editCourse(
+        '${course.courseId}'
+    )">
+
+    Edit
+
+</button>
+
+    </div>
+
+`;
+
+    });
+
+}
+
+
+
+function editCourse(courseId) {
+
+    const course =
+        courses.find(
+            c =>
+            c.courseId === courseId
+        );
+
+    showPage(
+        "create-course-page"
+    );
+
+    showCreateCourseForm();
+
+    document.getElementById(
+        "course-id"
+    ).value = course.courseId;
+
+    document.getElementById(
+        "course-title"
+    ).value = course.title;
+
+    document.getElementById(
+        "welcome-title"
+    ).value = course.welcomeTitle;
+
+const messageBox =
+    document.getElementById(
+        "welcome-message"
+    );
+
+console.log(
+    messageBox
+);
+
+messageBox.value =
+    course.welcomeMessage;
+
+}
+
+function showCreateAreaForm() {
+
+    document.getElementById(
+        "create-area-content"
+    ).innerHTML = `
+
+<input
+    id="area-id"
+    class="admin-input"
+    placeholder="Learning Area ID">
+
+<input
+    id="area-title"
+    class="admin-input"
+    placeholder="Learning Area Title">
+
+<textarea
+    id="area-description"
+    class="admin-input"
+    rows="4"
+    placeholder="Description">
+
+</textarea>
+
+<button
+    class="admin-btn"
+    onclick="saveLearningArea()">
+
+    Save Learning Area
+
+</button>
+
+<div id="area-preview">
+
+</div>
+
+`;
+
+}
+
+
+function saveLearningArea() {
+
+    const learningArea = {
+
+        areaId:
+            document.getElementById(
+                "area-id"
+            ).value,
+
+        title:
+            document.getElementById(
+                "area-title"
+            ).value,
+
+        description:
+            document.getElementById(
+                "area-description"
+            ).value.trim(),
+        
+         isActive: true
+
+    };
+
+    const existingArea =
+    learningAreas.find(
+        a =>
+        a.areaId === learningArea.areaId
+    );
+
+if (existingArea) {
+
+    existingArea.title =
+        learningArea.title;
+
+    existingArea.description =
+        learningArea.description;
+
+} else {
+
+    learningAreas.push(
+        learningArea
+    );
+
+}
+
+localStorage.setItem(
+    "learningAreas",
+    JSON.stringify(
+        learningAreas
+    )
+);
+
+    console.log(
+        learningArea
+    );
+
+    document.getElementById(
+        "area-preview"
+    ).innerHTML = `
+
+<pre>
+
+${JSON.stringify(
+    learningArea,
+    null,
+    4
+)}
+
+</pre>
+
+`;
+
+}
+
+
+function loadLearningAreasFromStorage() {
+
+    const savedLearningAreas =
+        localStorage.getItem(
+            "learningAreas"
+        );
+
+    if (savedLearningAreas) {
+
+        window.learningAreas =
+            JSON.parse(
+                savedLearningAreas
+            );
+
+        learningAreas.forEach(
+            function(area) {
+
+                if (
+                    area.isActive ===
+                    undefined
+                ) {
+
+                    area.isActive =
+                        true;
+
+                }
+
+            }
+        );
+
+    }
+
+}
+
+function showManageAreas() {
+
+    const container =
+        document.getElementById(
+            "manage-areas-content"
+        );
+
+    container.innerHTML = "";
+
+    learningAreas.forEach(
+        function(area) {
+
+            container.innerHTML += `
+
+<div class="admin-card">
+
+    <h3>
+        ${area.title}
+    </h3>
+
+    <p>
+        ${area.areaId}
+    </p>
+
+    <p>
+
+    Status:
+    ${
+        area.isActive
+        ? "Active"
+        : "Inactive"
+    }
+
+</p>
+
+    <button
+        onclick="
+            editLearningArea(
+                '${area.areaId}'
+            )
+        ">
+
+        Edit
+
+    </button>
+
+    <button
+    onclick="
+        toggleAreaStatus(
+            '${area.areaId}'
+        )
+    ">
+
+    ${
+        area.isActive
+        ? "Deactivate"
+        : "Activate"
+    }
+
+</button>
+
+</div>
+
+`;
+
+        }
+    );
+
+}
+
+function editLearningArea(areaId) {
+
+    const area =
+        learningAreas.find(
+            a =>
+            a.areaId === areaId
+        );
+
+    showPage(
+        "create-area-page"
+    );
+
+    showCreateAreaForm();
+
+    document.getElementById(
+        "area-id"
+    ).value =
+        area.areaId;
+
+    document.getElementById(
+        "area-title"
+    ).value =
+        area.title;
+
+    document.getElementById(
+        "area-description"
+    ).value =
+        area.description;
+
+}
+
+
+function toggleAreaStatus(areaId) {
+
+    const area =
+        learningAreas.find(
+            a =>
+            a.areaId === areaId
+        );
+
+    area.isActive =
+        !area.isActive;
+
+    localStorage.setItem(
+        "learningAreas",
+        JSON.stringify(
+            learningAreas
+        )
+    );
+
+    showManageAreas();
+
+}
+
+function showCreateThemeForm() {
+
+    loadLearningAreasFromStorage();
+
+console.log(
+    "Learning Areas:",
+    learningAreas
+);
+
+    document.getElementById(
+        "create-theme-content"
+    ).innerHTML = `
+
+<input
+    id="theme-id"
+    class="admin-input"
+    placeholder="Theme ID">
+
+<input
+    id="theme-title"
+    class="admin-input"
+    placeholder="Theme Title">
+
+    <select
+    id="theme-learning-area"
+    class="admin-input">
+
+    <option value="">
+        Select Learning Area
+    </option>
+
+    ${
+        learningAreas
+        .filter(
+            area =>
+            area.isActive !== false
+        )
+        .map(
+            area => `
+                <option
+                    value="${area.areaId}">
+                    ${area.title}
+                </option>
+            `
+        )
+        .join("")
+    }
+
+</select>
+
+<textarea
+    id="theme-description"
+    class="admin-input"
+    rows="4"
+    placeholder="Description">
+
+</textarea>
+
+<button
+    class="admin-btn"
+    onclick="saveTheme()">
+
+    Save Theme
+
+</button>
+
+<div id="theme-preview">
+
+</div>
+
+`;
+
+}
+
+function saveTheme() {
+
+    const theme = {
+
+        themeId:
+            document.getElementById(
+                "theme-id"
+            ).value.trim(),
+
+        title:
+            document.getElementById(
+                "theme-title"
+            ).value.trim(),
+
+            learningAreaId:
+    document.getElementById(
+        "theme-learning-area"
+    ).value,
+
+        description:
+            document.getElementById(
+                "theme-description"
+            ).value.trim(),
+
+        isActive: true
+
+    };
+
+    const existingTheme =
+    themes.find(
+        t =>
+        t.themeId === theme.themeId
+    );
+
+    console.log(
+    "Searching:",
+    theme.themeId
+);
+
+console.log(
+    "Found:",
+    existingTheme
+);
+
+if (existingTheme) {
+
+    existingTheme.title =
+        theme.title;
+
+    existingTheme.learningAreaId =
+        theme.learningAreaId;
+
+    existingTheme.description =
+        theme.description;
+
+} else {
+
+    themes.push(
+        theme
+    );
+
+}
+
+localStorage.setItem(
+    "themes",
+    JSON.stringify(
+        themes
+    )
+);
+
+    console.log(
+        theme
+    );
+
+    document.getElementById(
+        "theme-preview"
+    ).innerHTML = `
+
+<pre>
+
+${JSON.stringify(
+    theme,
+    null,
+    4
+)}
+
+</pre>
+
+`;
+
+}
+
+function loadThemesFromStorage() {
+
+    const savedThemes =
+        localStorage.getItem(
+            "themes"
+        );
+
+    if (savedThemes) {
+
+        window.themes =
+            JSON.parse(
+                savedThemes
+            );
+
+        themes.forEach(
+            function(theme) {
+
+                if (
+                    theme.isActive ===
+                    undefined
+                ) {
+
+                    theme.isActive =
+                        true;
+
+                }
+
+            }
+        );
+
+    }
+
+}
+
+function showManageThemes() {
+
+    const container =
+        document.getElementById(
+            "manage-themes-content"
+        );
+
+    container.innerHTML = "";
+
+    themes.forEach(
+        function(theme) {
+
+            container.innerHTML += `
+
+<div class="admin-card">
+
+    <h3>
+
+        ${theme.title}
+
+    </h3>
+
+    <p>
+
+        ${theme.themeId}
+
+    </p>
+
+    <p>
+
+        Status:
+        ${
+            theme.isActive
+            ? "Active"
+            : "Inactive"
+        }
+
+    </p>
+
+    <button
+    onclick="
+        editTheme(
+            '${theme.themeId}'
+        )
+    ">
+
+    Edit
+
+</button>
+
+<button
+    onclick="
+        toggleThemeStatus(
+            '${theme.themeId}'
+        )
+    ">
+
+    ${
+        theme.isActive
+        ? "Deactivate"
+        : "Activate"
+    }
+
+</button>
+
+</div>
+
+`;
+
+        }
+    );
+
+}
+
+
+function toggleThemeStatus(themeId) {
+
+    const theme =
+        themes.find(
+            t =>
+            t.themeId === themeId
+        );
+
+    theme.isActive =
+        !theme.isActive;
+
+    localStorage.setItem(
+        "themes",
+        JSON.stringify(
+            themes
+        )
+    );
+
+    showManageThemes();
+
+}
+
+function editTheme(themeId) {
+
+    const theme =
+        themes.find(
+            t =>
+            t.themeId === themeId
+        );
+
+    showPage(
+        "create-theme-page"
+    );
+
+    showCreateThemeForm();
+
+    document.getElementById(
+        "theme-id"
+    ).value =
+        theme.themeId;
+
+    document.getElementById(
+        "theme-title"
+    ).value =
+        theme.title;
+
+    document.getElementById(
+    "theme-learning-area"
+).value =
+    theme.learningAreaId;
+
+    document.getElementById(
+        "theme-description"
+    ).value =
+        theme.description;
+
+}
+
+
+
+function showCreateListForm() {
+
+    loadThemesFromStorage();
+
+    document.getElementById(
+        "create-list-content"
+    ).innerHTML = `
+
+<input
+    id="list-id"
+    class="admin-input"
+    placeholder="List ID">
+
+<input
+    id="list-title"
+    class="admin-input"
+    placeholder="List Title">
+
+<select
+    id="list-theme"
+    class="admin-input">
+
+    <option value="">
+        Select Theme
+    </option>
+
+    ${
+        themes
+        .filter(
+            theme =>
+            theme.isActive !== false
+        )
+        .map(
+            theme => `
+                <option
+                    value="${theme.themeId}">
+                    ${theme.title}
+                </option>
+            `
+        )
+        .join("")
+    }
+
+</select>
+
+<textarea
+    id="list-description"
+    class="admin-input"
+    rows="4"
+    placeholder="Description">
+
+</textarea>
+
+<button
+    class="admin-btn"
+    onclick="saveList()">
+
+    Save List
+
+</button>
+
+<div id="list-preview">
+
+</div>
+
+`;
+
+}
+
+function saveList() {
+
+    const list = {
+
+        listId:
+            document.getElementById(
+                "list-id"
+            ).value.trim(),
+
+        title:
+            document.getElementById(
+                "list-title"
+            ).value.trim(),
+
+        themeId:
+    document.getElementById(
+        "list-theme"
+    ).value,
+
+        description:
+            document.getElementById(
+                "list-description"
+            ).value.trim(),
+
+        isActive: true
+
+    };
+
+    
+
+    const existingList =
+    lists.find(
+        l =>
+        l.listId === list.listId
+    );
+
+if (existingList) {
+
+    existingList.title =
+        list.title;
+
+    existingList.themeId =
+        list.themeId;
+
+    existingList.description =
+        list.description;
+
+} else {
+
+    lists.push(
+        list
+    );
+
+}
+
+localStorage.setItem(
+    "lists",
+    JSON.stringify(
+        lists
+    )
+);
+
+    console.log(
+        list
+    );
+
+    document.getElementById(
+        "list-preview"
+    ).innerHTML = `
+
+<pre>
+
+${JSON.stringify(
+    list,
+    null,
+    4
+)}
+
+</pre>
+
+`;
+
+}
+
+
+function loadListsFromStorage() {
+
+    const savedLists =
+        localStorage.getItem(
+            "lists"
+        );
+
+    if (savedLists) {
+
+        window.lists =
+            JSON.parse(
+                savedLists
+            );
+
+        lists.forEach(
+            function(list) {
+
+                if (
+                    list.isActive ===
+                    undefined
+                ) {
+
+                    list.isActive =
+                        true;
+
+                }
+
+            }
+        );
+
+    }
+
+}
+
+function showManageLists() {
+
+    const container =
+        document.getElementById(
+            "manage-lists-content"
+        );
+
+    container.innerHTML = "";
+
+    lists.forEach(
+        function(list) {
+
+            container.innerHTML += `
+
+<div class="admin-card">
+
+    <h3>
+
+        ${list.title}
+
+    </h3>
+
+    <p>
+
+        ${list.listId}
+
+    </p>
+
+    <p>
+
+        Status:
+        ${
+            list.isActive
+            ? "Active"
+            : "Inactive"
+        }
+
+    </p>
+
+    <button
+    onclick="
+        editList(
+            '${list.listId}'
+        )
+    ">
+
+    Edit
+
+</button>
+
+<button
+    onclick="
+        toggleListStatus(
+            '${list.listId}'
+        )
+    ">
+
+    ${
+        list.isActive
+        ? "Deactivate"
+        : "Activate"
+    }
+
+</button>
+
+</div>
+
+`;
+
+        }
+    );
+
+}
+
+function editList(listId) {
+
+    const list =
+        lists.find(
+            l =>
+            l.listId === listId
+        );
+
+    showPage(
+        "create-list-page"
+    );
+
+    showCreateListForm();
+
+    document.getElementById(
+        "list-id"
+    ).value =
+        list.listId;
+
+    document.getElementById(
+        "list-title"
+    ).value =
+        list.title;
+
+    document.getElementById(
+    "list-theme"
+).value =
+    list.themeId;
+
+    document.getElementById(
+        "list-description"
+    ).value =
+        list.description;
+
+}
+
+function toggleListStatus(listId) {
+
+    const list =
+        lists.find(
+            l =>
+            l.listId === listId
+        );
+
+    list.isActive =
+        !list.isActive;
+
+    localStorage.setItem(
+        "lists",
+        JSON.stringify(
+            lists
+        )
+    );
+
+    showManageLists();
+
+}
+
+function loadLearningItemsFromStorage() {
+
+    const savedItems =
+        localStorage.getItem(
+            "learningItems"
+        );
+
+    if (
+        savedItems
+    ) {
+
+        window.learningItems =
+            JSON.parse(
+                savedItems
+            );
+
+    }
+
+    if (
+    !localStorage.getItem(
+        "learningItems"
+    )
+) {
+
+    localStorage.setItem(
+        "learningItems",
+        JSON.stringify(
+            learningItems
+        )
+    );
+
+}
+
+}
+
+function getNextContentId() {
+
+    if (
+        learningItems.length === 0
+    ) {
+
+        return 1;
+
+    }
+
+    const numericIds =
+        learningItems
+        .map(
+            function(item) {
+
+                const id =
+                    parseInt(
+                        item.contentId
+                    );
+
+                return isNaN(id)
+                    ? 0
+                    : id;
+
+            }
+        );
+
+    return (
+        Math.max(
+            ...numericIds
+        ) + 1
+    );
+
+}
+
+function openLessonManagementPage() {
+
+    showPage(
+        "lesson-management-page"
+    );
+
+    showLessonManagementForm();
+
+}
+
+function showLessonManagementForm() {
+
+    document.getElementById(
+        "lesson-management-content"
+    ).innerHTML = `
+
+    <div class="lesson-actions">
+
+    <button
+        class="nav-btn"
+        onclick="showCreateContent()">
+
+        Create Content
+
+    </button>
+
+    <button
+        class="nav-btn"
+        onclick="showEditContent()">
+
+        Edit Content
+
+    </button>
+
+</div>
+
+
+
+<div
+    id="lesson-results">
+
+</div>
+
+`;
+
+}
+
+
+function loadLessonThemes() {
+
+    const areaId =
+        document.getElementById(
+            "lesson-learning-area"
+        ).value;
+
+    const themeDropdown =
+        document.getElementById(
+            "lesson-theme"
+        );
+
+    themeDropdown.innerHTML = `
+
+<option value="">
+
+    Select Theme
+
+</option>
+
+`;
+
+    themes
+        .filter(
+            theme =>
+                theme.learningAreaId
+                === areaId
+                &&
+                theme.isActive !== false
+        )
+        .forEach(
+            function(theme) {
+
+                themeDropdown.innerHTML += `
+
+<option
+    value="${theme.themeId}">
+
+    ${theme.title}
+
+</option>
+
+`;
+
+            }
+        );
+
+}
+
+function loadLessonLists() {
+
+    const themeId =
+        document.getElementById(
+            "lesson-theme"
+        ).value;
+
+    const listDropdown =
+        document.getElementById(
+            "lesson-list"
+        );
+
+    listDropdown.innerHTML = `
+
+<option value="">
+
+    Select List
+
+</option>
+
+`;
+
+    lists
+        .filter(
+            list =>
+                list.themeId
+                === themeId
+                &&
+                list.isActive !== false
+        )
+        .forEach(
+            function(list) {
+
+                listDropdown.innerHTML += `
+
+<option
+    value="${list.listId}">
+
+    ${list.title}
+
+</option>
+
+`;
+
+            }
+        );
+
+}
+
+function showCreateContent() {
+
+    document.getElementById(
+        "lesson-results"
+    ).innerHTML = `
+
+<h3>
+
+    Create Content
+
+</h3>
+
+<select
+    id="lesson-learning-area"
+    class="admin-input"
+    onchange="loadLessonThemes()">
+
+    <option value="">
+
+        Select Learning Area
+
+    </option>
+
+    ${
+        learningAreas
+        .filter(
+            area =>
+                area.isActive !== false
+        )
+        .map(
+            area => `
+
+<option
+    value="${area.areaId}">
+
+    ${area.title}
+
+</option>
+
+`
+        )
+        .join("")
+    }
+
+</select>
+
+<select
+    id="lesson-theme"
+    class="admin-input"
+    onchange="loadLessonLists()">
+
+    <option value="">
+
+        Select Theme
+
+    </option>
+
+</select>
+
+<select
+    id="lesson-list"
+    class="admin-input">
+
+    <option value="">
+
+        Select List
+
+    </option>
+
+</select>
+
+<input
+    type="text"
+    id="lesson-title"
+    class="admin-input"
+    placeholder="Lesson Title">
+
+    <button
+    class="nav-btn"
+    onclick="createLesson()">
+
+    Create Lesson
+
+</button>
+
+<div
+    id="lesson-editor">
+
+</div>
+
+`;
+
+}
+
+function createLesson() {
+
+   
+
+    const areaId =
+        document.getElementById(
+            "lesson-learning-area"
+        ).value;
+
+    const themeId =
+        document.getElementById(
+            "lesson-theme"
+        ).value;
+
+    const listId =
+        document.getElementById(
+            "lesson-list"
+        ).value;
+
+        
+
+    const lessonTitle =
+        document.getElementById(
+            "lesson-title"
+        ).value;
+
+        const area =
+    learningAreas.find(
+        area =>
+            area.areaId === areaId
+    );
+
+const theme =
+    themes.find(
+        theme =>
+            theme.themeId === themeId
+    );
+
+const list =
+    lists.find(
+        list =>
+            list.listId === listId
+    );
+
+const lesson = {
+
+    courseId: "",
+
+    courseTitle: "",
+
+    learningArea:
+        area.title,
+
+    themeId:
+        theme.themeId,
+
+    themeTitle:
+        theme.title,
+
+    listId:
+        list.listId,
+
+    listTitle:
+        list.title,
+
+    contentType:
+        "lesson",
+
+    contentId:
+        getNextContentId(),
+
+    title:
+        lessonTitle,
+
+    content: {
+
+        sections: []
+
+    }
+
+};
+
+ currentLessonId =
+    lesson.contentId;
+
+console.log(
+    currentLessonId
+);
+
+learningItems.push(
+    lesson
+);
+
+window.currentLessonId =
+    lesson.contentId;
+
+    console.log(
+    window.currentLessonId
+);
+
+localStorage.setItem(
+    "learningItems",
+    JSON.stringify(
+        learningItems
+    )
+);
+
+console.log(
+    learningItems
+);
+
+document.getElementById(
+    "lesson-editor"
+).innerHTML = `
+
+<h3>
+
+    Lesson Editor
+
+</h3>
+
+<select
+    id="section-type"
+    class="admin-input">
+
+    <option value="">
+
+        Select Section Type
+
+    </option>
+
+    <option value="objectives">
+
+        Objectives
+
+    </option>
+
+    <option value="normal">
+
+        Normal
+
+    </option>
+
+    <option value="image">
+
+        Image
+
+    </option>
+
+    <option value="outcome">
+
+        Outcome
+
+    </option>
+
+</select>
+
+
+
+<input
+    type="text"
+    id="section-title"
+    class="admin-input"
+    placeholder="Section Title">
+
+    <div class="editor-toolbar">
+
+    <div class="toolbar-group">
+
+<select
+    id="block-selector"
+    class="admin-input"
+    onchange="insertBlock(this.value)">
+
+    <option value="">
+
+        Insert Block
+
+    </option>
+
+    <option value="PARAGRAPH">
+
+        Paragraph
+
+    </option>
+
+    <option value="EXAMPLE">
+
+        Example
+
+    </option>
+
+    <option value="LIST">
+
+        List
+
+    </option>
+
+    <option value="NUMBERED">
+
+        Numbered List
+
+    </option>
+
+</select>
+
+</div>
+
+    <div class="toolbar-group">
+
+        <button
+            type="button"
+            class="nav-btn"
+            onclick="makeBold()">
+
+            Bold
+
+        </button>
+
+        <button
+            type="button"
+            class="nav-btn"
+            onclick="makeItalic()">
+
+            Italic
+
+        </button>
+
+        <button
+            type="button"
+            class="nav-btn"
+            onclick="makeUnderline()">
+
+            Underline
+
+        </button>
+
+    </div>
+
+</div>
+
+
+    <textarea
+    id="section-content"
+    class="admin-input"
+    rows="12"
+    placeholder="Section Content">
+</textarea>
+
+<div class="editor-actions">
+<button
+    class="nav-btn"
+    onclick="saveSection()">
+
+    Save Section
+
+</button>
+
+<div
+    id="sections-list">
+
+</div>
+
+<button
+    class="nav-btn"
+    onclick="saveLessonContent()">
+
+    Save Lesson
+
+</button>
+
+</div>
+
+`;
+
+
+
+}
+
+
+
+function insertBlock(
+    blockType
+) {
+
+    if (!blockType) {
+
+        return;
+
+    }
+
+    insertTag(
+        blockType
+    );
+
+    document.getElementById(
+        "block-selector"
+    ).value = "";
+
+}
+
+
+function makeItalic() {
+
+    const textarea =
+        document.getElementById(
+            "section-content"
+        );
+
+    const start =
+        textarea.selectionStart;
+
+    const end =
+        textarea.selectionEnd;
+
+    const selectedText =
+        textarea.value.substring(
+            start,
+            end
+        );
+
+    if (!selectedText) {
+
+        alert(
+            "Please select text first."
+        );
+
+        return;
+
+        
+
+    }
+
+    const replacement =
+
+`[ITALIC]${selectedText}[/ITALIC]`;
+
+    textarea.value =
+
+        textarea.value.substring(
+            0,
+            start
+        ) +
+
+        replacement +
+
+        textarea.value.substring(
+            end
+        );
+
+        textarea.focus();
+
+}
+
+function makeUnderline() {
+
+    const textarea =
+        document.getElementById(
+            "section-content"
+        );
+
+    const start =
+        textarea.selectionStart;
+
+    const end =
+        textarea.selectionEnd;
+
+    const selectedText =
+        textarea.value.substring(
+            start,
+            end
+        );
+
+    if (!selectedText) {
+
+        alert(
+            "Please select text first."
+        );
+
+        return;
+
+    }
+
+    const replacement =
+
+`[UNDERLINE]${selectedText}[/UNDERLINE]`;
+
+    textarea.value =
+
+        textarea.value.substring(
+            0,
+            start
+        ) +
+
+        replacement +
+
+        textarea.value.substring(
+            end
+        );
+
+        textarea.focus();
+
+}
+
+function saveSection() {
+
+
+
+    const sectionType =
+        document.getElementById(
+            "section-type"
+        ).value;
+
+    const sectionTitle =
+        document.getElementById(
+            "section-title"
+        ).value;
+
+    const sectionContent =
+        document.getElementById(
+            "section-content"
+        ).value;
+
+    
+
+if (!sectionType) {
+
+    alert(
+        "Please select a section type."
+    );
+
+    return;
+
+}
+
+    if (!sectionTitle.trim()) {
+
+    alert(
+        "Please enter a section title."
+    );
+
+    return;
+
+}
+
+if (!sectionContent.trim()) {
+
+    alert(
+        "Please enter section content."
+    );
+
+    return;
+
+}
+
+        const section = {
+
+    sectionOrder:
+    currentSections.length + 1,
+
+    sectionType:
+        sectionType,
+
+    sectionTitle:
+        sectionTitle,
+
+    sectionContent:
+        sectionContent
+
+};
+
+currentSections.push(
+    section
+);
+
+console.log(
+    currentSections
+);
+
+
+    document.getElementById(
+    "sections-list"
+).innerHTML += `
+
+<p>
+
+    ${section.sectionTitle}
+
+</p>
+
+`;
+
+document.getElementById(
+    "section-type"
+).value = "";
+
+document.getElementById(
+    "section-title"
+).value = "";
+
+document.getElementById(
+    "section-content"
+).value = "";
+
+}
+
+function insertTag(tag) {
+
+    const textarea =
+        document.getElementById(
+            "section-content"
+        );
+
+    let template = "";
+
+    if (
+        tag === "LIST"
+    ) {
+
+        template =
+
+`[LIST]
+
+[*]
+
+[/LIST]`;
+
+    }
+
+    else if (
+        tag === "NUMBERED"
+    ) {
+
+        template =
+
+`[NUMBERED]
+
+[*]
+
+[/NUMBERED]`;
+
+    }
+
+    else {
+
+        template =
+
+`[${tag}]
+
+[/${tag}]`;
+
+    }
+
+    textarea.value +=
+
+`\n\n${template}\n`;
+
+}
+
+function makeBold() {
+
+    const textarea =
+        document.getElementById(
+            "section-content"
+        );
+
+    const start =
+        textarea.selectionStart;
+
+    const end =
+        textarea.selectionEnd;
+
+    const selectedText =
+        textarea.value.substring(
+            start,
+            end
+        );
+
+    if (!selectedText) {
+
+        alert(
+            "Please select text first."
+        );
+
+        return;
+
+    }
+
+    const replacement =
+
+`[BOLD]${selectedText}[/BOLD]`;
+
+    textarea.value =
+
+        textarea.value.substring(
+            0,
+            start
+        ) +
+
+        replacement +
+
+        textarea.value.substring(
+            end
+        );
+
+        textarea.focus();
+
+}
+
+function saveLessonContent() {
+
+    if (
+    currentSections.length === 0
+) {
+
+    alert(
+        "Please add at least one section."
+    );
+
+    return;
+
+}
+
+const lesson =
+    learningItems.find(
+        item =>
+            item.contentId ===
+            currentLessonId
+    );
+
+lesson.content.sections =
+    currentSections;
+
+    console.log(
+    "LESSON READY TO SAVE:",
+    lesson
+);
+
+    localStorage.setItem(
+    "learningItems",
+    JSON.stringify(
+        learningItems
+    )
+);
+
+alert(
+    "Lesson saved successfully."
+);
+
+}
+
+
+function showEditContent() {
+
+    alert("Edit Content");
+
+}
+
 
 loadProgress();
 
-showPage("cover-page"); 
+loadCoursesFromStorage();
+
+loadLearningAreasFromStorage();
+
+loadThemesFromStorage();
+
+loadListsFromStorage();
+
+loadLearningItemsFromStorage();
+
+showPage("cover-page");
 
 renderCourses();
+
+function testFunction() {
+
+    alert("Test");
+
+}
