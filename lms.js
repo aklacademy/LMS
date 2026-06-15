@@ -1,5 +1,7 @@
 let currentSection = "";
 
+let currentSections = [];
+
 let currentTheme = "";
 
 let currentList = "";
@@ -29,6 +31,9 @@ let currentReviewIndex = 0;
 let isMasteredRevision = false;
 
 let currentRevisionQuestion = null;
+
+let currentEditingSection =
+    null;
 
 window.uploadRows = [];
 
@@ -7809,6 +7814,63 @@ function showLessonManagementForm() {
 }
 
 
+function showEditContent() {
+
+    document.getElementById(
+        "lesson-results"
+    ).innerHTML = `
+
+<h3>
+
+    Edit Content
+
+</h3>
+
+<input
+    type="text"
+    id="content-id-search"
+    class="admin-input"
+    placeholder="Enter Content ID">
+
+<button
+    class="nav-btn"
+    onclick="loadContentById()">
+
+    Load Lesson
+
+</button>
+
+<div
+    id="edit-content-results">
+
+</div>
+
+`;
+
+}
+
+function loadContentById() {
+
+    const contentId =
+
+        document.getElementById(
+            "content-id-search"
+        ).value;
+
+    const lesson =
+
+        learningItems.find(
+            item =>
+                item.contentId ==
+                contentId
+        );
+
+    editLesson(
+        lesson.contentId
+    );
+
+}
+
 function loadLessonThemes() {
 
     const areaId =
@@ -7978,6 +8040,24 @@ function showCreateContent() {
 
 </select>
 
+<label>
+
+    Content ID
+
+</label>
+
+<input
+    type="text"
+    id="lesson-content-id"
+    class="admin-input"
+    readonly>
+
+<label>
+
+    Lesson Title
+
+</label>
+
 <input
     type="text"
     id="lesson-title"
@@ -8112,9 +8192,15 @@ console.log(
     learningItems
 );
 
-document.getElementById(
-    "lesson-editor"
-).innerHTML = `
+renderLessonEditor();
+
+}
+
+function renderLessonEditor() {
+
+    document.getElementById(
+        "lesson-editor"
+    ).innerHTML = `
 
 <h3>
 
@@ -8209,6 +8295,7 @@ document.getElementById(
 
 </div>
 
+
     <div class="toolbar-group">
 
         <button
@@ -8250,6 +8337,11 @@ document.getElementById(
     placeholder="Section Content">
 </textarea>
 
+<div
+    id="sections-list">
+
+</div>
+
 <div class="editor-actions">
 <button
     class="nav-btn"
@@ -8258,11 +8350,6 @@ document.getElementById(
     Save Section
 
 </button>
-
-<div
-    id="sections-list">
-
-</div>
 
 <button
     class="nav-btn"
@@ -8277,6 +8364,208 @@ document.getElementById(
 `;
 
 
+}
+
+
+function editLesson(contentId) {
+
+    const lesson =
+
+        learningItems.find(
+            item =>
+                item.contentId ==
+                contentId
+        );
+
+        console.log(
+    lesson
+);
+
+console.log(
+    lesson.content
+);
+
+console.log(
+    lesson.content.sections
+);
+
+        currentLessonId =
+    lesson.contentId;
+
+console.log(
+    "Current Lesson:",
+    currentLessonId
+);
+
+    showCreateContent();
+
+    console.log(
+    "Title:",
+    lesson.title
+);
+
+console.log(
+    "Content ID:",
+    lesson.contentId
+);
+
+    const area =
+
+    learningAreas.find(
+        area =>
+            area.title ===
+            lesson.learningArea
+    );
+
+document.getElementById(
+    "lesson-learning-area"
+).value =
+    area.areaId;
+
+    loadLessonThemes();
+
+    renderLessonEditor();
+
+    document.getElementById(
+    "lesson-theme"
+).value =
+    lesson.themeId;
+
+    loadLessonLists();
+
+    document.getElementById(
+    "lesson-list"
+).value =
+    lesson.listId;
+
+    currentSections =
+    lesson.content.sections;
+
+   renderSectionsList();
+
+    document.getElementById(
+        "lesson-content-id"
+    ).value =
+        lesson.contentId;
+
+    document.getElementById(
+        "lesson-title"
+    ).value =
+        lesson.title;
+
+        document.getElementById(
+    "lesson-title"
+).readOnly =
+    true;
+
+        console.log(
+    document.getElementById(
+        "lesson-content-id"
+    ).value
+);
+
+console.log(
+    document.getElementById(
+        "lesson-title"
+    ).value
+);
+
+}
+
+function editSection(
+    sectionOrder
+) {
+
+    document
+    .querySelectorAll(
+        ".section-row"
+    )
+    .forEach(
+        row =>
+            row.classList.remove(
+                "active"
+            )
+    );
+
+document.getElementById(
+    `section-${sectionOrder}`
+).classList.add(
+    "active"
+);
+
+    currentEditingSection =
+        sectionOrder;
+
+    const section =
+
+        currentSections.find(
+            s =>
+                s.sectionOrder ===
+                sectionOrder
+        );
+
+    document.getElementById(
+        "section-type"
+    ).value =
+        section.sectionType;
+
+    document.getElementById(
+        "section-title"
+    ).value =
+        section.sectionTitle;
+
+    document.getElementById(
+        "section-content"
+    ).value =
+        section.sectionContent;
+
+}
+
+
+function renderSectionsList() {
+
+    console.log(
+    "renderSectionsList called"
+);
+
+console.log(
+    currentSections
+);
+
+    document.getElementById(
+        "sections-list"
+    ).innerHTML = "";
+
+    currentSections.forEach(
+        function(section) {
+
+           document.getElementById(
+    "sections-list"
+).innerHTML += `
+
+<div class="section-row"
+id="section-${section.sectionOrder}">
+
+    <span>
+
+        ${section.sectionTitle}
+
+    </span>
+
+    <button
+        class="nav-btn"
+        onclick="editSection(${section.sectionOrder})">
+
+        Edit
+
+    </button>
+
+</div>
+
+`;
+
+        }
+    );
 
 }
 
@@ -8408,7 +8697,6 @@ function makeUnderline() {
 function saveSection() {
 
 
-
     const sectionType =
         document.getElementById(
             "section-type"
@@ -8456,6 +8744,10 @@ if (!sectionContent.trim()) {
 
 }
 
+console.log(
+    currentEditingSection
+);
+
         const section = {
 
     sectionOrder:
@@ -8472,9 +8764,35 @@ if (!sectionContent.trim()) {
 
 };
 
-currentSections.push(
-    section
-);
+if (
+    currentEditingSection ===
+    null
+) {
+
+    currentSections.push(
+        section
+    );
+
+} else {
+
+    const existingSection =
+
+        currentSections.find(
+            s =>
+                s.sectionOrder ===
+                currentEditingSection
+        );
+
+    existingSection.sectionType =
+        sectionType;
+
+    existingSection.sectionTitle =
+        sectionTitle;
+
+    existingSection.sectionContent =
+        sectionContent;
+
+}
 
 console.log(
     currentSections
@@ -8504,6 +8822,9 @@ document.getElementById(
 document.getElementById(
     "section-content"
 ).value = "";
+
+currentEditingSection =
+    null;
 
 }
 
@@ -8639,6 +8960,11 @@ lesson.content.sections =
     lesson
 );
 
+console.log(
+    "Saving Lesson:",
+    currentLessonId
+);
+
     localStorage.setItem(
     "learningItems",
     JSON.stringify(
@@ -8653,9 +8979,9 @@ alert(
 }
 
 
-function showEditContent() {
+function testFunction() {
 
-    alert("Edit Content");
+    alert("Test");
 
 }
 
@@ -8676,8 +9002,3 @@ showPage("cover-page");
 
 renderCourses();
 
-function testFunction() {
-
-    alert("Test");
-
-}
