@@ -690,9 +690,9 @@ function openSearchResult(
             function(item) {
 
                 return (
-                    item.contentId
-                    === contentId
-                );
+    Number(item.contentId)
+        === Number(contentId)
+);
 
             }
         );
@@ -1766,6 +1766,8 @@ function showItemCard() {
     const item =
         currentItems[currentItemIndex];
 
+        console.log(item);
+
     if (masteredMode) {
 
         showMasteredReviewCard();
@@ -1787,6 +1789,8 @@ function showItemCard() {
         showLessonCard(item);
 
     }
+
+    
 
     updateNavigationButtons();
 
@@ -3130,9 +3134,11 @@ Object.keys(groupedRevision)
     ).find(function(item) {
 
         return (
-            item.contentId
-            === contentId
-        );
+    item.contentId
+    === Number(
+        contentId
+    )
+);
 
     });
 
@@ -3149,6 +3155,8 @@ Object.keys(groupedRevision)
         ${matchedItem.title}
 
     </button>
+
+    
 
 `;
 
@@ -3172,10 +3180,10 @@ function loadRevisionCard(contentId) {
     const matchedItem =
         currentItems.find(function(item) {
 
-            return (
-                item.contentId
-                === contentId
-            );
+           return (
+    Number(item.contentId)
+    === Number(contentId)
+);
 
         });
 
@@ -3186,10 +3194,10 @@ function loadRevisionCard(contentId) {
         currentListProgress.revisionQuestions
             .find(function(question) {
 
-                return (
-                    question.contentId
-                    === contentId
-                );
+               return (
+    Number(question.contentId)
+    === Number(contentId)
+);
 
             });
 
@@ -3215,13 +3223,26 @@ revisionItemIndex =
 
         return (
             item.contentId
-            === contentId
+            === Number(
+                contentId
+            )
         );
 
     });
 
     currentRevisionQuestion =
         revisionQuestion;
+
+        if (!currentRevisionQuestion) {
+
+    console.error(
+        "Revision question not found",
+        contentId
+    );
+
+    return;
+
+}
 
         isMasteredRevision = false;
 
@@ -3944,6 +3965,16 @@ function toggleAssessmentMenu() {
 
     document.getElementById(
         "assessment-submenu"
+    ).classList.toggle(
+        "hidden"
+    );
+
+}
+
+function toggleAdminAssessmentMenu() {
+
+    document.getElementById(
+        "admin-assessment-submenu"
     ).classList.toggle(
         "hidden"
     );
@@ -4755,6 +4786,8 @@ function openMasteredRevision() {
 
         );
 
+
+
     Object.keys(groupedRevision)
         .forEach(function(contentId) {
 
@@ -4764,9 +4797,11 @@ function openMasteredRevision() {
     ).find(function(item) {
 
         return (
-            item.contentId
-            === contentId
-        );
+    item.contentId
+    === Number(
+        contentId
+    )
+);
 
     });
 
@@ -4818,16 +4853,36 @@ function loadMasteredRevisionCard(
         ];
 
     const revisionQuestion =
-        currentListProgress
-            .masteredRevisionQuestions
-            .find(function(question) {
+    currentListProgress
+        .masteredRevisionQuestions
+        .find(function(question) {
 
-                return (
+            return (
+                String(
                     question.contentId
-                    === contentId
-                );
+                )
+                ===
+                String(
+                    contentId
+                )
+            );
 
-            });
+        });
+
+            console.log(
+    "contentId:",
+    contentId,
+    typeof contentId
+);
+
+console.log(
+    currentListProgress
+        .masteredRevisionQuestions[0]
+        .contentId,
+    typeof currentListProgress
+        .masteredRevisionQuestions[0]
+        .contentId
+);
 
     const revisionContentIds =
         currentListProgress
@@ -4849,14 +4904,19 @@ function loadMasteredRevisionCard(
         });
 
     revisionItemIndex =
-        revisionItems.findIndex(function(item) {
+    revisionItems.findIndex(function(item) {
 
-            return (
+        return (
+            String(
                 item.contentId
-                === contentId
-            );
+            )
+            ===
+            String(
+                contentId
+            )
+        );
 
-        });
+    });
 
     currentRevisionQuestion =
         revisionQuestion;
@@ -6469,6 +6529,149 @@ document.getElementById(
 
 }
 
+function previewAssessmentFile(
+    event
+) {
+
+    const file =
+        event.target.files[0];
+
+    const reader =
+        new FileReader();
+
+    reader.onload =
+        function(e) {
+
+            const data =
+                new Uint8Array(
+                    e.target.result
+                );
+
+            const workbook =
+                XLSX.read(
+                    data,
+                    {
+                        type: "array"
+                    }
+                );
+
+            const sheetName =
+                workbook
+                .SheetNames[0];
+
+            const worksheet =
+                workbook.Sheets[
+                    sheetName
+                ];
+
+            const rows =
+                XLSX.utils
+                .sheet_to_json(
+                    worksheet,
+                    {
+                        defval: ""
+                    }
+                );
+
+                window.uploadQuestionRows  =
+    rows;
+
+                
+
+            let html = `
+
+<h3>
+
+    Preview
+
+</h3>
+
+<div
+    style="
+        overflow-x:auto;
+    ">
+
+<table
+    class="admin-table">
+
+`;
+
+
+html += "<tr>";
+
+Object.keys(
+    rows[0]
+).forEach(
+    function(key) {
+
+        html += `
+            <th>
+                ${key}
+            </th>
+        `;
+
+    }
+);
+
+
+html += "</tr>";
+
+rows.forEach(
+    function(row) {
+
+        html += "<tr>";
+
+        Object.values(
+            row
+        ).forEach(
+            function(value) {
+
+                html += `
+                    <td>
+                        ${value}
+                    </td>
+                `;
+
+            }
+        );
+
+        html += "</tr>";
+
+    }
+);
+
+html += `
+</table>
+</div>
+`;
+
+
+html += `
+
+<button
+    class="admin-btn"
+    onclick="
+        appendAssessmentQuestions()
+    ">
+
+    Append Questions
+
+</button>
+
+`;
+
+document.getElementById(
+    "assessment-preview"
+).innerHTML = html;
+
+        };
+
+    reader.readAsArrayBuffer(
+        file
+    );
+
+}
+
 function loadUploadLists() {
 
     const themeId =
@@ -6655,9 +6858,7 @@ document.getElementById(
 `
 );
 
-console.log(
-    learningItems
-);
+
 
 }
 
@@ -6666,6 +6867,212 @@ function openUploadQuestionsPage() {
     showPage(
         "upload-questions-page"
     );
+
+    document.getElementById(
+    "upload-questions-content"
+).innerHTML = `
+
+<h3>
+Upload Assessment Questions
+</h3>
+
+<label>
+
+Learning Area
+
+</label>
+
+<br>
+
+<select
+    id="assessment-learning-area"
+    onchange="
+        loadAssessmentThemes()
+    ">
+
+</select>
+
+<br><br>
+
+<label>
+
+Theme
+
+</label>
+
+<br>
+
+<select
+    id="assessment-theme"
+    onchange="
+        loadAssessmentLists()
+    ">
+
+</select>
+
+<br><br>
+
+<label>
+
+List
+
+</label>
+
+<br>
+
+<select
+    id="assessment-list">
+
+</select>
+
+<br><br>
+
+<input
+    type="file"
+    id="assessment-file"
+    accept=".xlsx,.xls"
+    onchange="
+        previewAssessmentFile(
+            event
+        )
+    ">
+
+<br><br>
+
+<div
+    id="assessment-preview">
+
+</div>
+
+`;
+
+const areaDropdown =
+    document.getElementById(
+        "assessment-learning-area"
+    );
+
+areaDropdown.innerHTML =
+    "<option value=''>Select</option>";
+
+learningAreas.forEach(
+    function(area) {
+
+        areaDropdown.innerHTML += `
+
+<option
+value="${area.areaId}">
+
+${area.title}
+
+</option>
+
+`;
+
+    }
+
+    
+);
+
+
+
+}
+
+
+function loadAssessmentThemes() {
+
+    const areaId =
+        document.getElementById(
+            "assessment-learning-area"
+        ).value;
+
+    const themeDropdown =
+        document.getElementById(
+            "assessment-theme"
+        );
+
+    themeDropdown.innerHTML = `
+
+<option value="">
+
+    Select Theme
+
+</option>
+
+`;
+
+    themes
+        .filter(
+            theme =>
+                theme.learningAreaId
+                === areaId
+                &&
+                theme.isActive !== false
+        )
+        .forEach(
+            function(theme) {
+
+                themeDropdown.innerHTML += `
+
+<option
+    value="${theme.themeId}">
+
+    ${theme.title}
+
+</option>
+
+`;
+
+            }
+        );
+
+}
+
+function loadAssessmentLists() {
+
+    const themeId =
+        document.getElementById(
+            "assessment-theme"
+        ).value;
+
+    const listDropdown =
+        document.getElementById(
+            "assessment-list"
+        );
+
+    listDropdown.innerHTML = `
+
+<option value="">
+
+    Select List
+
+</option>
+
+`;
+
+    lists
+        .filter(
+            list =>
+                list.themeId
+                === themeId
+                &&
+                list.isActive !== false
+        )
+        .forEach(
+            function(list) {
+
+                listDropdown.innerHTML += `
+
+<option
+    value="${list.listId}">
+
+    ${list.title}
+
+</option>
+
+`;
+
+            }
+        );
 
 }
 
@@ -6682,6 +7089,864 @@ function openReviewQuestionsPage() {
     showPage(
         "review-questions-page"
     );
+
+    document.getElementById(
+        "review-questions-content"
+    ).innerHTML = `
+
+<h3>
+
+Review Assessment Questions
+
+</h3>
+
+<h3>
+
+Find Question by ID
+
+</h3>
+
+<label>
+
+Question ID
+
+</label>
+
+<br>
+
+<input
+    type="number"
+    id="search-question-id">
+
+<br><br>
+
+<button
+    class="admin-btn"
+    onclick="
+        findQuestionById()
+    ">
+
+    Find Question
+
+</button>
+
+<br><br>
+
+<div
+    id="question-search-result">
+
+</div>
+
+<div
+    id="question-edit-container">
+
+</div>
+
+<hr>
+
+<label>
+
+Learning Area
+
+</label>
+
+<br>
+
+<select
+    id="review-learning-area"
+    onchange="
+        loadReviewThemes()
+    ">
+
+</select>
+
+<br><br>
+
+<label>
+
+Theme
+
+</label>
+
+<br>
+
+<select
+    id="review-theme"
+    onchange="
+        loadReviewLists()
+    ">
+
+</select>
+
+<br><br>
+
+<label>
+
+List
+
+</label>
+
+<br>
+
+<select
+    id="review-list">
+
+</select>
+
+<br><br>
+
+<button
+    class="admin-btn"
+    onclick="
+        showReviewQuestions()
+    ">
+
+    Load Questions
+
+</button>
+
+<br><br>
+
+<div
+    id="review-question-results">
+
+</div>
+
+`;
+
+    const areaDropdown =
+        document.getElementById(
+            "review-learning-area"
+        );
+
+    areaDropdown.innerHTML =
+        "<option value=''>Select</option>";
+
+    learningAreas.forEach(
+        function(area) {
+
+            areaDropdown.innerHTML += `
+
+<option
+value="${area.areaId}">
+
+${area.title}
+
+</option>
+
+`;
+
+        }
+    );
+
+}
+
+function findQuestionById() {
+
+    const questionId =
+        parseInt(
+            document.getElementById(
+                "search-question-id"
+            ).value
+        );
+
+    const question =
+        assessmentQuestions.find(
+            q =>
+                q.questionId === questionId
+        );
+
+    if (!question) {
+
+        document.getElementById(
+            "question-search-result"
+        ).innerHTML = `
+
+<p
+    style="
+        color:red;
+        font-weight:bold;
+    ">
+
+    Question not found.
+
+</p>
+
+`;
+
+        return;
+
+    }
+
+    document.getElementById(
+        "question-search-result"
+    ).innerHTML = `
+
+<p>
+
+    <strong>
+
+        Question ID:
+
+    </strong>
+
+    ${question.questionId}
+
+</p>
+
+<p>
+
+    <strong>
+
+        Content ID:
+
+    </strong>
+
+    ${question.contentId}
+
+</p>
+
+<p>
+
+    <strong>
+
+        Question:
+
+    </strong>
+
+    ${question.question}
+
+</p>
+
+<button
+    class="admin-btn"
+    onclick="
+        editQuestion(
+            ${question.questionId}
+        )
+    ">
+
+    Edit Question
+
+</button>
+
+`;
+
+}
+
+
+function loadReviewThemes() {
+
+    const areaId =
+        document.getElementById(
+            "review-learning-area"
+        ).value;
+
+    const themeDropdown =
+        document.getElementById(
+            "review-theme"
+        );
+
+    themeDropdown.innerHTML = `
+
+<option value="">
+
+Select Theme
+
+</option>
+
+`;
+
+    themes
+        .filter(
+            theme =>
+                theme.learningAreaId
+                === areaId
+        )
+        .forEach(
+            function(theme) {
+
+                themeDropdown.innerHTML += `
+
+<option
+value="${theme.themeId}">
+
+${theme.title}
+
+</option>
+
+`;
+
+            }
+        );
+
+}
+
+function loadReviewLists() {
+
+    const themeId =
+        document.getElementById(
+            "review-theme"
+        ).value;
+
+    const listDropdown =
+        document.getElementById(
+            "review-list"
+        );
+
+    listDropdown.innerHTML = `
+
+<option value="">
+
+Select List
+
+</option>
+
+`;
+
+    lists
+        .filter(
+            list =>
+                list.themeId
+                === themeId
+        )
+        .forEach(
+            function(list) {
+
+                listDropdown.innerHTML += `
+
+<option
+value="${list.listId}">
+
+${list.title}
+
+</option>
+
+`;
+
+            }
+        );
+
+}
+
+function showReviewQuestions() {
+
+    const listId =
+        document.getElementById(
+            "review-list"
+        ).value;
+
+    const questions =
+        assessmentQuestions.filter(
+            question =>
+                question.listId === listId
+        );
+
+    let html = `
+
+<h3>
+
+Questions Found:
+${questions.length}
+
+</h3>
+
+`;
+
+    questions.forEach(
+        function(question) {
+
+            html += `
+
+<div
+    class="admin-card">
+
+    <p>
+
+        <strong>
+
+            Question ID:
+
+        </strong>
+
+        ${question.questionId}
+
+    </p>
+
+    <p>
+
+        <strong>
+
+            Content ID:
+
+        </strong>
+
+        ${question.contentId}
+
+    </p>
+
+    <p>
+
+    <strong>
+
+        Question:
+
+    </strong>
+
+    ${question.question}
+
+</p>
+
+<button
+    class="admin-btn"
+    onclick="
+        editQuestion(
+            ${question.questionId}
+        )
+    ">
+
+    Edit
+
+</button>
+
+<hr>
+
+</div>
+
+`;
+
+        }
+    );
+
+    document.getElementById(
+        "review-question-results"
+    ).innerHTML = html;
+
+    console.log(
+    document.getElementById(
+        "review-list"
+    ).value
+);
+
+}
+
+
+function editQuestion(
+    questionId
+) {
+
+    const question =
+        assessmentQuestions.find(
+            q =>
+                q.questionId ===
+                questionId
+        );
+
+    document.getElementById(
+        "question-edit-container"
+    ).innerHTML = `
+
+<h3>
+
+Edit Question
+
+</h3>
+
+<label>
+
+Question ID
+
+</label>
+
+<br>
+
+<input
+    type="text"
+    value="${question.questionId}"
+    readonly>
+
+<br><br>
+
+<label>
+
+Question
+
+</label>
+
+<br>
+
+<textarea
+    id="edit-question-text"
+    rows="4"
+    cols="80">
+
+${question.question}
+
+</textarea>
+
+<br><br>
+
+<label>
+
+Option A
+
+</label>
+
+<br>
+
+<input
+    type="text"
+    id="edit-option-a"
+    value="${question.options[0]}">
+
+    <br><br>
+
+<label>
+
+Option B
+
+</label>
+
+<br>
+
+<input
+    type="text"
+    id="edit-option-b"
+    value="${question.options[1]}">
+
+<br><br>
+
+<label>
+
+Option C
+
+</label>
+
+<br>
+
+<input
+    type="text"
+    id="edit-option-c"
+    value="${question.options[2]}">
+
+<br><br>
+
+<label>
+
+Option D
+
+</label>
+
+<br>
+
+<input
+    type="text"
+    id="edit-option-d"
+    value="${question.options[3]}">
+
+    <br><br>
+
+<label>
+
+Correct Answer
+
+</label>
+
+<br>
+
+<input
+    type="text"
+    id="edit-correct-answer"
+    value="${question.correctAnswer}">
+
+    <br><br>
+
+<label>
+
+Status
+
+</label>
+
+<br>
+
+<select
+    id="edit-status">
+
+    <option
+        value="Active"
+        ${
+            question.status === "Active"
+            ? "selected"
+            : ""
+        }>
+
+        Active
+
+    </option>
+
+    <option
+        value="Inactive"
+        ${
+            question.status === "Inactive"
+            ? "selected"
+            : ""
+        }>
+
+        Inactive
+
+    </option>
+
+</select>
+
+<br><br>
+
+<label>
+
+Category
+
+</label>
+
+<br>
+
+<select
+    id="edit-category">
+
+    <option
+        value="Main"
+        ${
+            question.category === "Main"
+            ? "selected"
+            : ""
+        }>
+
+        Main
+
+    </option>
+
+    <option
+        value="Mastered"
+        ${
+            question.category === "Mastered"
+            ? "selected"
+            : ""
+        }>
+
+        Mastered
+
+    </option>
+
+</select>
+
+<br><br>
+
+<label>
+
+Set Name
+
+</label>
+
+<br>
+
+<input
+    type="text"
+    id="edit-set-name"
+    value="${question.setName}">
+
+    <br><br>
+
+<label>
+
+Bloom Level
+
+</label>
+
+<br>
+
+<input
+    type="text"
+    id="edit-bloom-level"
+    value="${question.bloomLevel}">
+
+    <br><br>
+
+<label>
+
+Difficulty Level
+
+</label>
+
+<br>
+
+<input
+    type="text"
+    id="edit-difficulty-level"
+    value="${question.difficultyLevel}">
+
+    <br><br>
+
+<label>
+
+Question Type
+
+</label>
+
+<br>
+
+<input
+    type="text"
+    id="edit-question-type"
+    value="${question.questionType}">
+
+    <br><br>
+
+<label>
+
+Explanation
+
+</label>
+
+<br>
+
+<textarea
+    id="edit-explanation"
+    rows="4"
+    cols="80">
+
+${question.explanation}
+
+</textarea>
+
+<br><br>
+
+<button
+    class="admin-btn"
+    onclick="
+        saveQuestionChanges(
+            ${question.questionId}
+        )
+    ">
+
+    Save Changes
+
+</button>
+
+`;
+
+
+
+}
+
+function saveQuestionChanges(
+    questionId
+) {
+
+    const question =
+        assessmentQuestions.find(
+            q =>
+                q.questionId ===
+                questionId
+        );
+
+    if (!question) {
+
+        return;
+
+    }
+
+    question.question =
+    document.getElementById(
+        "edit-question-text"
+    ).value.trim();
+
+    question.options[0] =
+        document.getElementById(
+            "edit-option-a"
+        ).value;
+
+    question.options[1] =
+        document.getElementById(
+            "edit-option-b"
+        ).value;
+
+    question.options[2] =
+        document.getElementById(
+            "edit-option-c"
+        ).value;
+
+    question.options[3] =
+        document.getElementById(
+            "edit-option-d"
+        ).value;
+
+    question.correctAnswer =
+        document.getElementById(
+            "edit-correct-answer"
+        ).value;
+
+    question.status =
+        document.getElementById(
+            "edit-status"
+        ).value;
+
+    question.category =
+        document.getElementById(
+            "edit-category"
+        ).value;
+
+    question.setName =
+        document.getElementById(
+            "edit-set-name"
+        ).value;
+
+    question.bloomLevel =
+        document.getElementById(
+            "edit-bloom-level"
+        ).value;
+
+    question.difficultyLevel =
+        document.getElementById(
+            "edit-difficulty-level"
+        ).value;
+
+    question.questionType =
+        document.getElementById(
+            "edit-question-type"
+        ).value;
+
+    question.explanation =
+    document.getElementById(
+        "edit-explanation"
+    ).value.trim();
+
+    localStorage.setItem(
+        "assessmentQuestions",
+        JSON.stringify(
+            assessmentQuestions
+        )
+    );
+
+    alert(
+        "Question updated successfully."
+    );
+
+}
+
+
+function loadAssessmentQuestions() {
+
+    const savedQuestions =
+        localStorage.getItem(
+            "assessmentQuestions"
+        );
+
+    if (savedQuestions) {
+
+        window.assessmentQuestions =
+            JSON.parse(
+                savedQuestions
+            );
+
+    }
 
 }
 
@@ -6761,6 +8026,7 @@ const messageBox =
 console.log(
     messageBox
 );
+
 
 messageBox.value =
     course.welcomeMessage;
@@ -6860,9 +8126,7 @@ localStorage.setItem(
     )
 );
 
-    console.log(
-        learningArea
-    );
+   
 
     document.getElementById(
         "area-preview"
@@ -7045,10 +8309,7 @@ function showCreateThemeForm() {
 
     loadLearningAreasFromStorage();
 
-console.log(
-    "Learning Areas:",
-    learningAreas
-);
+
 
     document.getElementById(
         "create-theme-content"
@@ -7762,6 +9023,182 @@ function getNextContentId() {
         Math.max(
             ...numericIds
         ) + 1
+    );
+
+}
+
+function getNextQuestionId() {
+
+    if (
+        assessmentQuestions.length === 0
+    ) {
+
+        return 1;
+
+    }
+
+    const numericIds =
+        assessmentQuestions
+        .map(
+            function(question) {
+
+                const id =
+                    parseInt(
+                        question.questionId
+                    );
+
+                return isNaN(id)
+                    ? 0
+                    : id;
+
+            }
+        );
+
+    return (
+        Math.max(
+            ...numericIds
+        ) + 1
+    );
+
+}
+
+function appendAssessmentQuestions() {
+
+    const areaId =
+        document.getElementById(
+            "assessment-learning-area"
+        ).value;
+
+    const themeId =
+        document.getElementById(
+            "assessment-theme"
+        ).value;
+
+    const listId =
+        document.getElementById(
+            "assessment-list"
+        ).value;
+
+    const area =
+        learningAreas.find(
+            a =>
+            a.areaId === areaId
+        );
+
+    const theme =
+        themes.find(
+            t =>
+            t.themeId === themeId
+        );
+
+    const list =
+        lists.find(
+            l =>
+            l.listId === listId
+        );
+
+    uploadQuestionRows.forEach(
+        function(row) {
+
+            const question = {
+
+                questionId:
+                    getNextQuestionId(),
+
+                learningArea:
+                    area.title,
+
+                themeId:
+                    theme.themeId,
+
+                themeTitle:
+                    theme.title,
+
+                listId:
+                    list.listId,
+
+                listTitle:
+                    list.title,
+
+                contentId:
+                    row.Content_ID,
+
+                questionType:
+                    row.Question_Type,
+
+                category:
+                    row.Category,
+
+                setName:
+                    row.Set_Name,
+
+                bloomLevel:
+                    row.Bloom_Level,
+
+                difficultyLevel:
+                    row.Difficulty_Level,
+
+                status:
+                    row.Status,
+
+                question:
+                    row.Question,
+
+                options: [
+
+                    row.Option_A,
+
+                    row.Option_B,
+
+                    row.Option_C,
+
+                    row.Option_D
+
+                ],
+
+                correctAnswer:
+                    row.Correct_Answer,
+
+                explanation:
+                    row.Explanation || ""
+
+            };
+
+            assessmentQuestions.push(
+                question
+            );
+
+        }
+    );
+
+    localStorage.setItem(
+        "assessmentQuestions",
+        JSON.stringify(
+            assessmentQuestions
+        )
+    );
+
+    document.getElementById(
+        "assessment-preview"
+    ).insertAdjacentHTML(
+        "beforeend",
+        `
+
+<p
+    style="
+        color:green;
+        font-weight:bold;
+    ">
+
+    Questions appended.
+
+</p>
+
+`
+    );
+
+    console.log(
+        assessmentQuestions
     );
 
 }
@@ -8998,7 +10435,13 @@ loadListsFromStorage();
 
 loadLearningItemsFromStorage();
 
+loadAssessmentQuestions();
+
 showPage("cover-page");
 
 renderCourses();
 
+document.querySelector(
+    '[onclick="toggleAdminMenu()"]'
+).parentElement.style.display =
+    "none";
