@@ -4,7 +4,7 @@ window.courses = [
 
         courseId: "C001",
 
-        title: "Spoken English",
+        title: "CSS",
 
         welcomeTitle:
             "Welcome to Spoken English",
@@ -26,7 +26,7 @@ window.courses = [
 
         courseId: "C002",
 
-        title: "Phonics",
+        title: "JavaScript",
 
         welcomeTitle:
             "Welcome to Phonics",
@@ -43,3 +43,4 @@ window.courses = [
     }
 
 ];
+
