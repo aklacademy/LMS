@@ -7,7 +7,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-    <title>LMS</title>
+    <title>HTML Practice</title>
 
     <link rel="stylesheet" href="lms.css">
 
@@ -69,7 +69,7 @@
 
     <h1>
 
-        LMS Practice
+        HTML Practice
 
     </h1>
 
@@ -105,226 +105,7 @@
 
 <div>
 
-    <button class="sidebar-btn"
-        onclick="toggleAdminMenu()">
-
-        Admin
-
-    </button>
-
-    <div id="admin-submenu"
-        class="hidden">
-
-        <button class="sidebar-sub-btn"
-            onclick="openAdminPage()">
-
-            Dashboard
-
-        </button>
-
-        <div>
-
-   <button
-    class="sidebar-sub-btn"
-    onclick="toggleCoursesMenu()">
-
-    Courses
-
-</button>
-
-    <div id="courses-submenu" class="hidden">
-
-        <button class="sidebar-sub-btn"
-                onclick="openCreateCoursePage()">
-
-            Create Course
-
-        </button>
-
-        <button class="sidebar-sub-btn"
-                onclick="openManageCoursesPage()">
-
-            Manage Courses
-
-        </button>
-
-    </div>
-
 </div>
-
-        <div>
-
-   <button
-    class="sidebar-sub-btn"
-    onclick="toggleLearningAreasMenu()">
-
-    Learning Areas
-
-</button>
-
-    <div
-        id="learning-areas-submenu"
-        class="hidden">
-
-        <button
-            class="sidebar-sub-btn"
-                onclick="openCreateAreaPage()">
-
-            Create Area
-
-        </button>
-
-        <button
-            class="sidebar-sub-btn"
-            onclick="openManageAreasPage()">
-
-            Manage Areas
-
-        </button>
-
-    </div>
-
-</div>
-
-<div>
-
-   <button
-    class="sidebar-sub-btn"
-    onclick="toggleThemesMenu()">
-
-    Themes
-
-</button>
-
-    <div id="themes-submenu" class="hidden">
-
-        <button class="sidebar-sub-btn"
-        onclick="openCreateThemePage()">
-
-            Create Themes
-
-        </button>
-
-        <button class="sidebar-sub-btn"
-        onclick="openManageThemesPage()">
-
-            Manage Themes
-
-        </button>
-
-    </div>
-
-</div>
-
-
-<div>
-
-   <button
-    class="sidebar-sub-btn"
-    onclick="toggleListsMenu()">
-
-    Lists
-
-</button>
-
-    <div id="lists-submenu" class="hidden">
-
-        <button class="sidebar-sub-btn"
-        onclick="openCreateListPage()">
-
-            Create Lists
-
-        </button>
-<button
-    class="sidebar-sub-btn"
-    onclick="openManageListsPage()">
-
-    Manage Lists
-
-</button>
-
-    </div>
-
-</div>
-
-<div>
-
-    <button
-        class="sidebar-sub-btn"
-        onclick="toggleContentMenu()">
-
-        Content
-
-    </button>
-
-
-    <div
-        id="content-submenu"
-        class="hidden">
-
-        <button class="sidebar-sub-btn"
-        onclick="openAppendContentPage()">
-
-            Append Content
-
-        </button>
-
-        <button class="sidebar-sub-btn"
-        onclick="openLessonManagementPage()">
-
-            Lesson Management
-
-        </button>
-
-    </div>
-
-</div>
-
-<div>
-
-    <button
-        class="sidebar-sub-btn"
-        onclick="toggleAssessmentMenu()">
-
-        Assessments
-
-    </button>
-
-    <div
-        id="admin-assessment-submenu"
-        class="hidden">
-
-        <button class="sidebar-sub-btn"
-        onclick="openUploadQuestionsPage()">
-
-            Upload Questions
-
-        </button>
-
-        <button class="sidebar-sub-btn"
-        onclick="openManageSetsPage()">
-
-            Manage Sets
-
-        </button>
-
-<button
-    class="sidebar-sub-btn"
-    onclick="openReviewQuestionsPage()">
-
-    Review Questions
-
-</button>
-
-    </div>
-
-</div>
-
-</div>
-
-</div>
-
-
 
 
 
@@ -492,288 +273,6 @@
     </div>
 
     <div id="search-results">
-
-    </div>
-
-</div>
-
-<!--ADMIN PAGE-->
-
-<div id="admin-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Admin Dashboard
-
-    </h2>
-
-    <div id="admin-stats-container">
-
-    </div>
-
-    <div id="course-management-container">
-
-    </div>
-
-</div>
-
-<div id="create-course-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Create Course
-
-    </h2>
-
-    <div id="create-course-content">
-
-        <div class="item-card">
-
-            <h3>
-
-                Create Course
-
-            </h3>
-
-            <div id="course-form-container">
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<div id="manage-courses-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Manage Courses
-
-    </h2>
-
-    <div id="manage-courses-content">
-
-    <div class="item-card">
-
-        <h3>
-
-            Existing Courses
-
-        </h3>
-
-        <div id="courses-list-container">
-
-        </div>
-
-    </div>
-
-</div>
-
-</div>
-
-<div id="create-area-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Create Learning Area
-
-    </h2>
-
-    <div id="create-area-content">
-
-    </div>
-
-</div>
-
-<div id="manage-areas-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Manage Learning Areas
-
-    </h2>
-
-    <div id="manage-areas-content">
-
-    </div>
-
-</div>
-
-<div id="create-theme-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Create Theme
-
-    </h2>
-
-    <div id="create-theme-content">
-
-    </div>
-
-</div>
-
-<div id="manage-themes-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Manage Themes
-
-    </h2>
-
-    <div id="manage-themes-content">
-
-    </div>
-
-</div>
-
-
-<div id="create-list-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Create List
-
-    </h2>
-
-    <div id="create-list-content">
-
-    </div>
-
-</div>
-
-<div id="manage-lists-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Manage Lists
-
-    </h2>
-
-    <div id="manage-lists-content">
-
-    </div>
-
-</div>
-
-
-<div id="upload-words-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Upload Words
-
-    </h2>
-
-    <div id="upload-words-content">
-
-    </div>
-
-</div>
-
-<div id="upload-lessons-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Upload Lessons
-
-    </h2>
-
-    <div id="upload-lessons-content">
-
-    </div>
-
-</div>
-
-
-<div id="append-content-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Append Content
-
-    </h2>
-
-    <div id="append-content-content">
-
-    </div>
-
-</div>
-
-<div
-    id="lesson-management-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Lesson Management
-
-    </h2>
-
-    <div
-        id="lesson-management-content">
-
-    </div>
-
-</div>
-
-
-
-<div id="upload-questions-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Upload Questions
-
-    </h2>
-
-    <div id="upload-questions-content">
-
-    </div>
-
-</div>
-
-
-<div id="manage-sets-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Manage Sets
-
-    </h2>
-
-    <div id="manage-sets-content">
-
-    </div>
-
-</div>
-
-<div id="review-questions-page"
-    class="app-page hidden">
-
-    <h2>
-
-        Review Questions
-
-    </h2>
-
-    <div id="review-questions-content">
 
     </div>
 
@@ -950,16 +449,18 @@
             <!-- REVISION PAGE -->
 
             <div id="revision-page"
-                class="app-page hidden">
+    class="app-page hidden">
 
-                <h2>
+    <h2>
 
-                    Revision
+        Revision
 
-                </h2>
+    </h2>
 
-                <div id="revision-container"
-     class="assessment-sets-grid">
+    <div id="revision-container"
+        class="assessment-sets-grid">
+
+    </div>
 
 </div>
 
@@ -998,11 +499,6 @@
 
 </div>
 
-
-
-
-
-
     <!-- SCRIPTS -->
 
    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -1010,10 +506,13 @@
     <script src="lms-learningAreas.js"></script>
     <script src="lms-themes.js"></script>
     <script src="lms-lists.js"></script>
-    <script src="content.js"></script>
+    <script src="learningItems.js"></script>
     <script src="lms-questions.js"></script>
-    <script src="lms-currentSection.js"></script>
-    <script src="lms.js"></script>
+    <script src="lms-learners.js"></script>
+    <script src="shared.js"></script>
+    <script src="globals.js"></script>
+    <script src="learner-core.js"></script>
+    
 
 </body>
 </html>
