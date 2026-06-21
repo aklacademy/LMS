@@ -155,6 +155,14 @@
 
             </button>
 
+            <button
+                class="sidebar-sub-btn"
+                onclick="openAssignCoursesPage()">
+
+                Assign Course
+
+            </button>
+
         </div>
 
     </div>
@@ -394,6 +402,90 @@
 
 <div
     id="learner-search-result">
+
+</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <div id="assign-course-learners-page" 
+    class="app-page hidden">
+
+    <h2>
+
+        Assign Courses 
+
+    </h2>
+
+    <div id="assign-course-learners-content"> 
+
+        <div class="item-card">
+
+            <h3>
+
+                Assign Courses 
+
+            </h3>
+
+            <div
+                id="assign-course-learners-container"> 
+
+                <label>
+
+    Search By
+
+</label>
+
+<select
+    id="assign-course-search-type"
+    class="admin-input">
+
+    <option value="learnerId">
+
+        Learner ID
+
+    </option>
+
+    <option value="fullName">
+
+        Full Name
+
+    </option>
+
+    <option value="mobile">
+
+        Mobile Number
+
+    </option>
+
+</select>
+
+<label>
+
+    Search Value
+
+</label>
+
+<input
+    type="text"
+    id="assign-course-search-value"
+    class="admin-input">
+
+<button
+    class="admin-btn"
+    onclick="searchAssignCourseLearner()">
+
+    Search
+
+</button>
+
+<div
+    id="assign-course-search-result">
 
 </div>
 
