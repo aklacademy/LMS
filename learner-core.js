@@ -41,6 +41,50 @@ function initializeListProgress(listName) {
 
 }
 
+function loginLearner() {
+
+    const mobile =
+
+        document.getElementById(
+            "login-mobile"
+        ).value.trim();
+
+    const learner =
+
+        learners.find(
+            l =>
+            l.mobile === mobile
+        );
+
+    if (!learner) {
+
+        alert(
+            "User not found."
+        );
+
+        return;
+
+    }
+
+    currentLearner =
+        learner;
+
+    renderCourses();
+
+    document.querySelector(
+        ".login-container"
+    ).classList.add(
+        "hidden"
+    );
+
+    document.getElementById(
+        "course-container"
+    ).classList.remove(
+        "hidden"
+    );
+
+}
+
 function openCourse(courseId) {
 
     currentCourse = courseId;
@@ -86,25 +130,70 @@ function renderCourses() {
 
     courseContainer.innerHTML = "";
 
-    courses.forEach(function(course) {
+    if (
+        !currentLearner
+    ) {
 
-        courseContainer.innerHTML += `
-        
-            <button
-                class="course-card"
-                onclick="
-                    openCourse(
-                        '${course.courseId}'
-                    )
-                ">
+        return;
 
-                ${course.title}
+    }
 
-            </button>
+    const learnerCourses =
+        courses.filter(
+            course =>
+                currentLearner
+                .assignedCourses
+                .includes(
+                    course.courseId
+                )
+        );
 
-        `;
+    if (
+        learnerCourses.length === 0
+    ) {
 
-    });
+        courseContainer.innerHTML = `
+
+<h2>
+
+    No Courses Assigned
+
+</h2>
+
+<p>
+
+    Please contact your teacher
+    for assistance.
+
+</p>
+
+`;
+
+        return;
+
+    }
+
+    learnerCourses.forEach(
+        function(course) {
+
+            courseContainer.innerHTML += `
+
+<button
+    class="course-card"
+    onclick="
+        openCourse(
+            '${course.courseId}'
+        )
+    ">
+
+    ${course.title}
+
+</button>
+
+`;
+
+        }
+    );
 
 }
 
@@ -141,10 +230,59 @@ function openLearn() {
 
         });
 
-    const learningAreas =
-        selectedCourse.learningAreas;
+    const courseLearningAreas = [];
 
-    learningAreas.forEach(function(area) {
+selectedCourse.assignedLists.forEach(
+    function(listId) {
+
+        const list =
+            lists.find(
+                l =>
+                l.listId === listId
+            );
+
+        if (!list) {
+
+            return;
+
+        }
+
+        const theme =
+            themes.find(
+                t =>
+                t.themeId ===
+                list.themeId
+            );
+
+        if (!theme) {
+
+            return;
+
+        }
+
+        const area =
+            learningAreas.find(
+                a =>
+                a.areaId ===
+                theme.learningAreaId
+            );
+
+        if (
+            area &&
+            !courseLearningAreas.includes(
+                area.title
+            )
+        ) {
+
+            courseLearningAreas.push(
+                area.title
+            );
+
+        }
+
+    });
+
+    courseLearningAreas.forEach(function(area) {
 
         let hasEligibleContent = false;
 
