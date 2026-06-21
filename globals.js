@@ -45,6 +45,8 @@ let currentItems = [];
 
 let currentItemIndex = 0;
 
+let currentLearner = null;
+
 let masteredAssessmentQuestions = {};
 
 let learnerProgress = {
