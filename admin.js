@@ -406,7 +406,8 @@ function showCreateCourseForm() {
 <input
     type="text"
     id="course-id"
-    placeholder="Course ID">
+    placeholder="Course ID"
+    readonly>
 
             <br><br>
 
@@ -434,6 +435,26 @@ function showCreateCourseForm() {
 
 <br><br>
 
+<hr>
+
+<div
+    id="course-lists-section">
+
+<h3>
+
+    Assigned Lists
+
+</h3>
+
+<div
+    id="course-lists-container">
+
+</div>
+
+</div>
+
+<br>
+
 <button
     class="theme-card"
     onclick="saveCourse()">
@@ -451,6 +472,11 @@ function showCreateCourseForm() {
 </div>
 
 `;
+
+document.getElementById(
+    "course-id"
+).value =
+    getNextCourseId();
 
 }
 
@@ -613,6 +639,48 @@ console.log(
 messageBox.value =
     course.welcomeMessage;
 
+currentCourseEditing =
+    courseId;
+
+    console.log(
+    course.assignedLists
+);
+
+document.getElementById(
+    "course-lists-container"
+).innerHTML =
+
+    lists.map(
+        list => `
+
+<label>
+
+    <input
+    type="checkbox"
+    value="${list.listId}"
+
+    ${
+        course.assignedLists &&
+        course.assignedLists.includes(
+            list.listId
+        )
+
+        ? "checked"
+
+        : ""
+    }>  
+
+    ${list.listId}
+    -
+    ${list.title}
+
+</label>
+
+<br>
+
+`
+    ).join("");
+
 }
 
 
@@ -646,6 +714,22 @@ function saveCourse() {
 
     };
 
+    const selectedLists =
+
+    Array.from(
+
+        document.querySelectorAll(
+            '#course-lists-container input[type="checkbox"]:checked'
+        )
+
+    ).map(
+        checkbox =>
+        checkbox.value
+    );
+
+course.assignedLists =
+    selectedLists;
+
     const existingCourse =
     courses.find(
         c =>
@@ -662,6 +746,15 @@ function saveCourse() {
 
     existingCourse.welcomeMessage =
         course.welcomeMessage;
+
+        existingCourse.assignedLists =
+    course.assignedLists;
+
+        if (!existingCourse.assignedLists) {
+
+    existingCourse.assignedLists = [];
+
+}
 
 }
 
@@ -754,6 +847,23 @@ function loadManageCourses() {
 
 
 /*===============================
+    COURSE ID AUTOMATION
+================================*/
+
+function getNextCourseId() {
+
+    return "C" +
+
+        String(
+            courses.length + 1
+        ).padStart(
+            3,
+            "0"
+        );
+
+}
+
+/*===============================
     Admin-Learning Areas
 ================================*/
 
@@ -776,7 +886,8 @@ function showCreateAreaForm() {
 <input
     id="area-id"
     class="admin-input"
-    placeholder="Learning Area ID">
+    placeholder="Learning Area ID"
+    readonly>
 
 <input
     id="area-title"
@@ -804,6 +915,11 @@ function showCreateAreaForm() {
 </div>
 
 `;
+
+document.getElementById(
+    "area-id"
+).value =
+    getNextAreaId();
 
 }
 
@@ -1040,7 +1156,8 @@ function showCreateThemeForm() {
 <input
     id="theme-id"
     class="admin-input"
-    placeholder="Theme ID">
+    placeholder="Theme ID"
+    readonly>
 
 <input
     id="theme-title"
@@ -1095,6 +1212,11 @@ function showCreateThemeForm() {
 </div>
 
 `;
+
+document.getElementById(
+    "theme-id"
+).value =
+    getNextThemeId();
 
 }
 
@@ -1332,6 +1454,19 @@ ${JSON.stringify(
 
 }
 
+function getNextThemeId() {
+
+    return "TH" +
+
+        String(
+            themes.length + 1
+        ).padStart(
+            3,
+            "0"
+        );
+
+}
+
 /*===============================
     Admin-Lists
 ================================*/
@@ -1357,7 +1492,8 @@ function showCreateListForm() {
 <input
     id="list-id"
     class="admin-input"
-    placeholder="List ID">
+    placeholder="List ID"
+    readonly>
 
 <input
     id="list-title"
@@ -1412,6 +1548,11 @@ function showCreateListForm() {
 </div>
 
 `;
+
+document.getElementById(
+    "list-id"
+).value =
+    getNextListId();
 
 }
 
@@ -1477,9 +1618,6 @@ localStorage.setItem(
     )
 );
 
-    console.log(
-        list
-    );
 
     document.getElementById(
         "list-preview"
@@ -1497,7 +1635,43 @@ ${JSON.stringify(
 
 `;
 
+document.getElementById(
+    "list-title"
+).value = "";
+
+document.getElementById(
+    "list-theme"
+).value = "";
+
+document.getElementById(
+    "list-description"
+).value = "";
+
+document.getElementById(
+    "list-id"
+).value =
+    getNextListId();
+
 }
+
+
+/*===================================
+        Automating List ID
+=====================================*/
+
+function getNextListId() {
+
+    return "LI" +
+
+        String(
+            lists.length + 1
+        ).padStart(
+            3,
+            "0"
+        );
+
+}
+
 
 function openManageListsPage() {
 
@@ -5803,6 +5977,26 @@ function showCreateLearnerForm() {
 
 <br><br>
 
+<hr>
+
+<div
+    id="learner-courses-section">
+
+    <h3>
+
+        Assigned Courses
+
+    </h3>
+
+    <div
+        id="learner-courses-container">
+
+    </div>
+
+</div>
+
+<br>
+
 <button class="admin-btn"
     onclick="createLearner()">
 
@@ -5862,6 +6056,30 @@ if (learnerBeingEdited) {
     "learner-status-container"
 ).style.display =
     "block";
+
+    document.getElementById(
+    "learner-courses-container"
+).innerHTML =
+
+    courses.map(
+        course => `
+
+<label>
+
+    <input
+        type="checkbox"
+        value="${course.courseId}">
+
+    ${course.courseId}
+    -
+    ${course.title}
+
+</label>
+
+<br>
+
+`
+    ).join("");
 
 }
 else {
@@ -6072,6 +6290,8 @@ document.getElementById(
     "learner-id"
 ).value =
     getNextLearnerId();
+
+    
 
 }
 
@@ -6338,3 +6558,210 @@ showPage(
 
 
 
+/*========================================
+    COURSE ASSIGNING
+========================================*/
+
+function openAssignCoursesPage() {
+
+    showPage(
+        "assign-course-learners-page"
+    );
+
+}
+
+
+function searchAssignCourseLearner() {
+
+        console.log(
+        "Assign Course Search"
+    );
+
+
+    const searchType =
+
+    document.getElementById(
+        "assign-course-search-type"
+    ).value;
+
+const searchValue =
+
+    document.getElementById(
+        "assign-course-search-value"
+    ).value
+    .trim()
+    .toLowerCase();
+
+const learner =
+
+    learners.find(
+        l =>
+        String(
+            l[searchType]
+        )
+        .toLowerCase()
+        .includes(
+            searchValue
+        )
+    );
+
+if (!learner) {
+
+    document.getElementById(
+        "assign-course-search-result"
+    ).innerHTML =
+
+        "<p>Learner not found.</p>";
+
+    return;
+
+}
+
+document.getElementById(
+    "assign-course-search-result"
+).innerHTML = `
+
+<div class="item-card">
+
+    <h3>
+
+        ${learner.fullName}
+
+    </h3>
+
+    <p>
+
+        ${learner.learnerId}
+
+    </p>
+
+    <hr>
+
+    <h4>
+
+        Available Courses
+
+    </h4>
+
+    ${
+
+        courses.map(
+            course => `
+
+<label>
+
+    <input
+        type="checkbox"
+        value="${course.courseId}"
+
+        ${
+            learner.assignedCourses &&
+            learner.assignedCourses.includes(
+                course.courseId
+            )
+
+            ? "checked"
+
+            : ""
+        }>
+
+    ${course.courseId}
+    -
+    ${course.title}
+
+</label>
+
+<br>
+
+`
+        ).join("")
+
+    }
+
+</div>
+
+<br><br>
+
+<button
+    class="admin-btn"
+    onclick="saveCourseAssignment(
+        '${learner.learnerId}'
+    )">
+
+    Save Assignment
+
+</button>
+
+`;
+
+
+}
+
+
+function saveCourseAssignment(
+    learnerId
+) {
+
+    const learner =
+
+        learners.find(
+            l =>
+            l.learnerId === learnerId
+        );
+
+    const selectedCourses =
+
+        Array.from(
+
+            document.querySelectorAll(
+                '#assign-course-search-result input[type="checkbox"]:checked'
+            )
+
+        ).map(
+            checkbox =>
+            checkbox.value
+        );
+
+    learner.assignedCourses =
+        selectedCourses;
+
+    localStorage.setItem(
+        "learners",
+        JSON.stringify(
+            learners
+        )
+    );
+
+    alert(
+        "✓ Course assignment saved successfully"
+    );
+
+    document.getElementById(
+    "assign-course-search-value"
+).value = "";
+
+document.getElementById(
+    "assign-course-search-result"
+).innerHTML = "";
+
+
+
+}
+
+
+/*==============================
+    LEARNING AREA ID AUTOMATION
+==============================*/
+
+function getNextAreaId() {
+
+    return "LA" +
+
+        String(
+            learningAreas.length + 1
+        ).padStart(
+            3,
+            "0"
+        );
+
+}
