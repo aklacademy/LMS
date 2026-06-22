@@ -25,11 +25,38 @@
         <div class="sidebar">
             <button id="sidebar-close-btn" onclick="toggleMenu()">✕</button>
             <h2 class="course-title"></h2>
-            <button class="sidebar-btn" onclick="openAdminPage()">Dashboard</button>
+    
+
+
 
             <!----CONTENT MANAGEMENT-->
 
+
             <div>
+
+    <button
+        class="sidebar-group-btn"
+        onclick="toggleMasterDataMenu()">
+
+        📊 Master Data
+
+    </button>
+
+    <div
+        id="master-data-submenu"
+        class="hidden">
+
+        <button class="admin-sidebar-btn" onclick="openAdminPage()">Dashboard</button>
+        <button class="admin-sidebar-btn" onclick="openMasterDataPage()">View Master Data</button>
+        
+
+    </div>
+
+</div>
+
+            <div>
+
+                
 
     <button
         class="sidebar-group-btn"
@@ -89,7 +116,9 @@
                 <div id="content-submenu" class="hidden">
                     <button class="sidebar-sub-btn" onclick="openAppendContentPage()">Append Content</button>
                     <button class="sidebar-sub-btn" onclick="openLessonManagementPage()">Lesson Management</button>
-                    <button class="sidebar-sub-btn" onclick="openEditVocabularyPage()">Edit Vocabulary</button>
+                    <button class="sidebar-sub-btn" onclick="openEditVocabularyPage()">Edit Vocabulary
+
+</button>
                     <button class="sidebar-sub-btn" onclick="openContentIdGrid()">View Content IDs</button>
                 </div>
             </div>
@@ -184,10 +213,27 @@
 
             <!-- ADMIN PAGE -->
             <div id="admin-page" class="app-page hidden">
-                <h2>Admin Dashboard</h2>
+                <h2>Dashboard</h2>
                 <div id="admin-stats-container"></div>
                 <div id="course-management-container"></div>
             </div>
+
+            <div
+    id="master-data-page"
+    class="app-page hidden">
+
+    <h2>
+
+        View Master Data
+
+    </h2>
+
+    <div
+        id="master-data-content">
+
+    </div>
+
+</div>
 
             <!-- CREATE COURSE -->
             <div id="create-course-page" class="app-page hidden">
