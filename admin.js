@@ -6765,3 +6765,1418 @@ function getNextAreaId() {
         );
 
 }
+
+/*==============================
+    VIEW CONTENT
+==============================*/
+
+
+function openContentIdGrid() {
+
+    showPage(
+        "content-id-grid-page"
+    );
+
+    const container =
+        document.getElementById(
+            "content-id-grid-container"
+        );
+
+    let html = `
+
+<h3>
+
+    Learning Area
+
+</h3>
+
+<select
+    id="content-grid-learning-area"
+    class="admin-input"
+    onchange="loadContentGridThemes()">
+
+    <option value="">
+
+        Select Learning Area
+
+    </option>
+
+`;
+
+    learningAreas.forEach(
+        function(area) {
+
+            html += `
+
+<option
+    value="${area.areaId}">
+
+    ${area.title}
+
+</option>
+
+`;
+
+        }
+    );
+
+    html += `
+
+</select>
+
+<div id="content-grid-theme-container">
+
+</div>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+function loadContentGridThemes() {
+
+    const learningAreaId =
+        document.getElementById(
+            "content-grid-learning-area"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "content-grid-theme-container"
+        );
+
+    let html = `
+
+<h3>
+
+    Theme
+
+</h3>
+
+<select
+    id="content-grid-theme"
+    class="admin-input"
+    onchange="loadContentGridLists()">
+
+    <option value="">
+
+        Select Theme
+
+    </option>
+
+`;
+
+    themes.forEach(function(theme) {
+
+        if (
+            theme.learningAreaId ===
+            learningAreaId
+        ) {
+
+            html += `
+
+<option
+    value="${theme.themeId}">
+
+    ${theme.title}
+
+</option>
+
+`;
+
+        }
+
+    });
+
+    html += `
+
+</select>
+
+<div id="content-grid-list-container">
+
+</div>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+
+function loadContentGridLists() {
+
+    const themeId =
+        document.getElementById(
+            "content-grid-theme"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "content-grid-list-container"
+        );
+
+    let html = `
+
+<h3>
+
+    List
+
+</h3>
+
+<select
+    id="content-grid-list"
+    class="admin-input"
+    onchange="loadContentGrid()">
+
+    <option value="">
+
+        Select List
+
+    </option>
+
+`;
+
+    lists.forEach(function(list) {
+
+        if (
+            list.themeId ===
+            themeId
+        ) {
+
+            html += `
+
+<option
+    value="${list.listId}">
+
+    ${list.title}
+
+</option>
+
+`;
+
+        }
+
+    });
+
+    html += `
+
+</select>
+
+<div id="content-grid-results-container">
+
+</div>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+function loadContentGrid() {
+
+    const listId =
+        document.getElementById(
+            "content-grid-list"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "content-grid-results-container"
+        );
+
+    const filteredItems =
+        learningItems.filter(
+            item =>
+                item.listId ===
+                listId
+        );
+
+    let html = `
+
+<h3>
+
+    Content IDs
+
+</h3>
+
+<div    class="grid-scroll">
+
+<table class="admin-table">
+
+<tr>
+
+<th>
+
+    Content ID
+
+</th>
+
+<th>
+
+    Title
+
+</th>
+
+<th>
+
+    Type
+
+</th>
+
+</tr>
+
+`;
+
+    filteredItems.forEach(
+        function(item) {
+
+            html += `
+
+<tr>
+
+<td>
+
+    ${item.contentId}
+
+</td>
+
+<td>
+
+    ${item.title}
+
+</td>
+
+<td>
+
+    ${item.contentType}
+
+</td>
+
+</tr>
+
+`;
+
+        }
+    );
+
+    html += `
+
+</table>
+
+</div>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+function openQuestionIdGrid() {
+
+    showPage(
+        "question-id-grid-page"
+    );
+
+    const container =
+        document.getElementById(
+            "question-id-grid-container"
+        );
+
+    let html = `
+
+<h3>
+
+    Learning Area
+
+</h3>
+
+<select
+    id="question-grid-learning-area"
+    class="admin-input"
+    onchange="loadQuestionGridThemes()">
+
+    <option value="">
+
+        Select Learning Area
+
+    </option>
+
+`;
+
+    learningAreas.forEach(
+        function(area) {
+
+            html += `
+
+<option
+    value="${area.areaId}">
+
+    ${area.title}
+
+</option>
+
+`;
+
+        }
+    );
+
+    html += `
+
+</select>
+
+<div id="question-grid-theme-container">
+
+</div>
+
+<div id="question-grid-list-container">
+
+</div>
+
+<div id="question-grid-content-grid-container">
+
+</div>
+
+<div id="question-grid-results-container">
+
+</div>
+
+<div id="question-grid-results-container">
+
+</div>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+function loadQuestionGridThemes() {
+
+    const learningAreaId =
+        document.getElementById(
+            "question-grid-learning-area"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "question-grid-theme-container"
+        );
+
+    let html = `
+
+<h3>
+
+    Theme
+
+</h3>
+
+<select
+    id="question-grid-theme"
+    class="admin-input"
+    onchange="loadQuestionGridLists()">
+
+    <option value="">
+
+        Select Theme
+
+    </option>
+
+`;
+
+    themes.forEach(function(theme) {
+
+        if (
+            theme.learningAreaId ===
+            learningAreaId
+        ) {
+
+            html += `
+
+<option
+    value="${theme.themeId}">
+
+    ${theme.title}
+
+</option>
+
+`;
+
+        }
+
+    });
+
+    html += `
+
+</select>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+function loadQuestionGridLists() {
+
+    const themeId =
+        document.getElementById(
+            "question-grid-theme"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "question-grid-list-container"
+        );
+
+    let html = `
+
+<h3>
+
+    List
+
+</h3>
+
+<select
+    id="question-grid-list"
+    class="admin-input"
+    onchange="loadQuestionContentGrid()">
+
+    <option value="">
+
+        Select List
+
+    </option>
+
+`;
+
+    lists.forEach(function(list) {
+
+        if (
+            list.themeId ===
+            themeId
+        ) {
+
+            html += `
+
+<option
+    value="${list.listId}">
+
+    ${list.title}
+
+</option>
+
+`;
+
+        }
+
+    });
+
+    html += `
+
+</select>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+function loadQuestionGridContents() {
+
+    const listId =
+        document.getElementById(
+            "question-grid-list"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "question-grid-content-container"
+        );
+
+    let html = `
+
+<h3>
+
+    Content
+
+</h3>
+
+<select
+    id="question-grid-content"
+    class="admin-input"
+    onchange="loadQuestionGrid()">
+
+    <option value="">
+
+        Select Content
+
+    </option>
+
+`;
+
+    learningItems.forEach(
+        function(item) {
+
+            if (
+                item.listId ===
+                listId
+            ) {
+
+                html += `
+
+<option
+    value="${item.contentId}">
+
+    ${item.contentId}
+    -
+    ${item.title}
+
+</option>
+
+`;
+
+            }
+
+        }
+    );
+
+    html += `
+
+</select>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+function loadQuestionContentGrid() {
+
+    const listId =
+        document.getElementById(
+            "question-grid-list"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "question-grid-content-grid-container"
+        );
+
+    const filteredItems =
+        learningItems.filter(
+            item =>
+                item.listId ===
+                listId
+        );
+
+    let html = `
+
+<h3>
+
+    Contents
+
+</h3>
+
+<div class="content-grid-scroll">
+
+<table class="admin-table">
+
+<tr>
+
+<th>
+
+    Content ID
+
+</th>
+
+<th>
+
+    Title
+
+</th>
+
+<th>
+
+    Question Count
+
+</th>
+
+</tr>
+
+`;
+
+    filteredItems.forEach(
+        function(item) {
+
+            const questionCount =
+                assessmentQuestions.filter(
+                    question =>
+                        question.contentId ===
+                        item.contentId
+                ).length;
+
+            html += `
+
+<tr>
+
+<td>
+
+<button
+    class="admin-btn"
+    onclick="
+        loadQuestionDetails(
+            ${item.contentId}
+        )
+    ">
+
+    ${item.contentId}
+
+</button>
+
+</td>
+
+<td>
+
+    ${item.title}
+
+</td>
+
+<td>
+
+    ${questionCount}
+
+</td>
+
+</tr>
+
+`;
+
+        }
+    );
+
+    html += `
+
+</table>
+
+</div>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+function loadQuestionDetails(
+    contentId
+) {
+
+    const container =
+        document.getElementById(
+            "question-grid-results-container"
+        );
+
+    const filteredQuestions =
+        assessmentQuestions.filter(
+            question =>
+                question.contentId ==
+                contentId
+        );
+
+    let html = `
+
+<h3>
+
+    Question IDs
+
+</h3>
+
+<div class="grid-scroll">
+
+<table class="admin-table">
+
+<tr>
+
+<th>
+
+    Question ID
+
+</th>
+
+<th>
+
+    Content ID
+
+</th>
+
+<th>
+
+    Set Name
+
+</th>
+
+<th>
+
+    Category
+
+</th>
+
+<th>
+
+    Question
+
+</th>
+
+</tr>
+
+`;
+
+    filteredQuestions.forEach(
+        function(question) {
+
+            html += `
+
+<tr>
+
+<td>
+
+    ${question.questionId}
+
+</td>
+
+<td>
+
+    ${question.contentId}
+
+</td>
+
+<td>
+
+    ${question.setName}
+
+</td>
+
+<td>
+
+    ${question.category}
+
+</td>
+
+<td>
+
+    ${question.question}
+
+</td>
+
+</tr>
+
+`;
+
+        }
+    );
+
+    html += `
+
+</table>
+
+</div>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+
+
+/*====================================
+        VOCABULARY EDITING
+=====================================*/
+
+function openEditVocabularyPage() {
+
+    showPage(
+        "edit-vocabulary-page"
+    );
+
+    document.getElementById(
+        "edit-vocabulary-content"
+    ).innerHTML = `
+
+<h3>
+
+    Edit Vocabulary
+
+</h3>
+
+<label>
+
+    Learning Area
+
+</label>
+
+<select
+    id="edit-vocabulary-area"
+    class="admin-input"
+    onchange="
+        loadEditVocabularyThemes()
+    ">
+
+    <option value="">
+
+        Select Learning Area
+
+    </option>
+
+    ${
+        learningAreas
+        .filter(
+            area =>
+                area.isActive !== false
+        )
+        .map(
+            area => `
+
+<option
+    value="${area.areaId}">
+
+    ${area.title}
+
+</option>
+
+`
+        )
+        .join("")
+    }
+
+</select>
+
+<div
+    id="edit-vocabulary-theme-container">
+
+</div>
+
+<div
+    id="edit-vocabulary-list-container">
+
+</div>
+
+<div
+    id="edit-vocabulary-results-container">
+
+</div>
+
+<div
+    id="edit-vocabulary-form-container">
+
+</div>
+
+`;
+
+}
+
+function loadEditVocabularyThemes() {
+
+    const areaId =
+        document.getElementById(
+            "edit-vocabulary-area"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "edit-vocabulary-theme-container"
+        );
+
+    let html = `
+
+<label>
+
+    Theme
+
+</label>
+
+<select
+    id="edit-vocabulary-theme"
+    class="admin-input"
+    onchange="
+        loadEditVocabularyLists()
+    ">
+
+    <option value="">
+
+        Select Theme
+
+    </option>
+
+`;
+
+    themes.forEach(
+        function(theme) {
+
+            if (
+                theme.learningAreaId ===
+                areaId
+            ) {
+
+                html += `
+
+<option
+    value="${theme.themeId}">
+
+    ${theme.title}
+
+</option>
+
+`;
+
+            }
+
+        }
+    );
+
+    html += `
+
+</select>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+
+function loadEditVocabularyLists() {
+
+    const themeId =
+        document.getElementById(
+            "edit-vocabulary-theme"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "edit-vocabulary-list-container"
+        );
+
+    let html = `
+
+<label>
+
+    List
+
+</label>
+
+<select
+    id="edit-vocabulary-list"
+    class="admin-input"
+    onchange="
+        loadVocabularyEditGrid()
+    ">
+
+    <option value="">
+
+        Select List
+
+    </option>
+
+`;
+
+    lists.forEach(
+        function(list) {
+
+            if (
+                list.themeId ===
+                themeId
+            ) {
+
+                html += `
+
+<option
+    value="${list.listId}">
+
+    ${list.title}
+
+</option>
+
+`;
+
+            }
+
+        }
+    );
+
+    html += `
+
+</select>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+
+function loadVocabularyEditGrid() {
+
+    const listId =
+        document.getElementById(
+            "edit-vocabulary-list"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "edit-vocabulary-results-container"
+        );
+
+    const words =
+
+        learningItems.filter(
+            item =>
+
+                item.contentType ===
+                "word"
+
+                &&
+
+                item.listId ===
+                listId
+        );
+
+    let html = `
+
+<h3>
+
+    Vocabulary
+
+</h3>
+
+<div class="grid-scroll">
+
+<table class="admin-table">
+
+<tr>
+
+<th>
+
+    Content ID
+
+</th>
+
+<th>
+
+    Word
+
+</th>
+
+<th>
+
+    Action
+
+</th>
+
+</tr>
+
+`;
+
+    words.forEach(
+        function(word) {
+
+            html += `
+
+<tr>
+
+<td>
+
+    ${word.contentId}
+
+</td>
+
+<td>
+
+    ${word.title}
+
+</td>
+
+<td>
+
+<button
+    class="admin-btn"
+    onclick="
+        loadVocabularyForEdit(
+            ${word.contentId}
+        )
+    ">
+
+    Edit
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+        }
+    );
+
+    html += `
+
+</table>
+
+</div>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+function loadVocabularyForEdit(
+    contentId
+) {
+
+    const word =
+
+        learningItems.find(
+            item =>
+
+                item.contentId ==
+                contentId
+
+                &&
+
+                item.contentType ===
+                "word"
+        );
+
+    console.log(
+        word
+    );
+
+    window.currentVocabularyId =
+    word.contentId;
+
+    console.log(
+    window.currentVocabularyId
+);
+
+    document.getElementById(
+    "edit-vocabulary-form-container"
+).innerHTML = `
+
+<h3>
+
+    Edit Vocabulary
+
+</h3>
+
+<label>
+
+    Content ID
+
+</label>
+
+<input
+    type="text"
+    class="admin-input"
+    value="${word.contentId}"
+    readonly>
+
+<label>
+
+    Word
+
+</label>
+
+<input
+    type="text"
+    id="edit-word"
+    class="admin-input"
+    value="${word.title}">
+
+<label>
+
+    Part Of Speech
+
+</label>
+
+<input
+    type="text"
+    id="edit-pos"
+    class="admin-input"
+    value="${word.content.partOfSpeech || ""}">
+
+<label>
+
+    Pronunciation
+
+</label>
+
+<input
+    type="text"
+    id="edit-pronunciation"
+    class="admin-input"
+    value="${word.content.pronunciation || ""}">
+
+<label>
+
+    Definition
+
+</label>
+
+<textarea
+    id="edit-definition"
+    class="admin-input">${word.content.definition || ""}</textarea>
+
+<label>
+
+    Synonyms
+
+</label>
+
+<input
+    type="text"
+    id="edit-synonyms"
+    class="admin-input"
+    value="${word.content.synonyms || ""}">
+
+<label>
+
+    Antonyms
+
+</label>
+
+<input
+    type="text"
+    id="edit-antonyms"
+    class="admin-input"
+    value="${word.content.antonyms || ""}">
+
+<label>
+
+    Example 1
+
+</label>
+
+<textarea
+    id="edit-example1"
+    class="admin-input">${word.content.examples?.[0] || ""}</textarea>
+
+<label>
+
+    Example 2
+
+</label>
+
+<textarea
+    id="edit-example2"
+    class="admin-input">${word.content.examples?.[1] || ""}</textarea>
+
+<label>
+
+    Example 3
+
+</label>
+
+<textarea
+    id="edit-example3"
+    class="admin-input">${word.content.examples?.[2] || ""}</textarea>
+
+<button
+    class="admin-btn"
+    onclick="saveVocabularyChanges()">
+
+    Save
+
+</button>
+
+`;
+
+}
+
+function saveVocabularyChanges() {
+
+    const word =
+
+        learningItems.find(
+            item =>
+
+                item.contentId ==
+                window.currentVocabularyId
+
+                &&
+
+                item.contentType ===
+                "word"
+        );
+
+    word.title =
+        document.getElementById(
+            "edit-word"
+        ).value;
+
+    word.content.partOfSpeech =
+        document.getElementById(
+            "edit-pos"
+        ).value;
+
+    word.content.pronunciation =
+        document.getElementById(
+            "edit-pronunciation"
+        ).value;
+
+    word.content.definition =
+        document.getElementById(
+            "edit-definition"
+        ).value;
+
+    word.content.synonyms =
+        document.getElementById(
+            "edit-synonyms"
+        ).value;
+
+    word.content.antonyms =
+        document.getElementById(
+            "edit-antonyms"
+        ).value;
+
+    word.content.examples = [
+
+        document.getElementById(
+            "edit-example1"
+        ).value,
+
+        document.getElementById(
+            "edit-example2"
+        ).value,
+
+        document.getElementById(
+            "edit-example3"
+        ).value
+
+    ];
+
+    localStorage.setItem(
+        "learningItems",
+        JSON.stringify(
+            learningItems
+        )
+    );
+
+    alert(
+        "Vocabulary Updated Successfully"
+    );
+
+}
