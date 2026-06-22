@@ -7612,17 +7612,44 @@ function openEditVocabularyPage() {
         "edit-vocabulary-content"
     ).innerHTML = `
 
+<div id="edit-vocabulary-search-container">
+
 <h3>
 
-    Edit Vocabulary
+    Search By Content ID
 
 </h3>
 
-<label>
 
-    Learning Area
 
-</label>
+<div class="search-row">
+
+<input
+    type="text"
+    id="vocabulary-content-id-search"
+    class="admin-input"
+    placeholder="Enter Content ID">
+
+<button
+    class="admin-btn"
+    onclick="
+        searchVocabularyByContentId()
+    ">
+
+    Load Vocabulary
+
+</button>
+
+</div>
+<hr>
+</div>
+
+<h3>
+
+    Search By Filter
+
+</h3>
+
 
 <select
     id="edit-vocabulary-area"
@@ -7698,12 +7725,6 @@ function loadEditVocabularyThemes() {
 
     let html = `
 
-<label>
-
-    Theme
-
-</label>
-
 <select
     id="edit-vocabulary-theme"
     class="admin-input"
@@ -7768,12 +7789,6 @@ function loadEditVocabularyLists() {
         );
 
     let html = `
-
-<label>
-
-    List
-
-</label>
 
 <select
     id="edit-vocabulary-list"
@@ -8178,5 +8193,196 @@ function saveVocabularyChanges() {
     alert(
         "Vocabulary Updated Successfully"
     );
+
+}
+
+function searchVocabularyByContentId() {
+
+    const contentId =
+        document.getElementById(
+            "vocabulary-content-id-search"
+        ).value;
+
+    loadVocabularyForEdit(
+        contentId
+    );
+
+}
+
+
+/*=============================
+    MASTER DATA
+==============================*/
+
+function toggleMasterDataMenu() {
+
+    document
+        .getElementById(
+            "master-data-submenu"
+        )
+        .classList
+        .toggle(
+            "hidden"
+        );
+
+}
+
+function openMasterDataPage() {
+
+    showPage(
+        "master-data-page"
+    );
+
+    document.getElementById(
+        "master-data-content"
+    ).innerHTML = `
+
+<label>
+
+    Data Type
+
+</label>
+
+<select
+    id="master-data-type"
+    class="admin-input"
+    onchange="
+        loadMasterDataGrid()
+    ">
+
+    <option value="">
+
+        Select Type
+
+    </option>
+
+    <option value="courses">
+
+        Courses
+
+    </option>
+
+    <option value="areas">
+
+        Learning Areas
+
+    </option>
+
+    <option value="themes">
+
+        Themes
+
+    </option>
+
+    <option value="lists">
+
+        Lists
+
+    </option>
+
+</select>
+
+<div
+    id="master-data-grid-container">
+
+</div>
+
+`;
+
+}
+
+function loadMasterDataGrid() {
+
+    const type =
+        document.getElementById(
+            "master-data-type"
+        ).value;
+
+    const container =
+        document.getElementById(
+            "master-data-grid-container"
+        );
+
+    if (
+        type === "courses"
+    ) {
+
+        let html = `
+
+<h3>
+
+    Courses
+
+</h3>
+
+<table
+    class="admin-table">
+
+<tr>
+
+<th>
+
+    Course ID
+
+</th>
+
+<th>
+
+    Title
+
+</th>
+
+<th>
+
+    Status
+
+</th>
+
+</tr>
+
+`;
+
+        courses.forEach(
+            function(course) {
+
+                html += `
+
+<tr>
+
+<td>
+
+    ${course.courseId}
+
+</td>
+
+<td>
+
+    ${course.title}
+
+</td>
+
+<td>
+
+    ${course.status || "Active"}
+
+</td>
+
+</tr>
+
+`;
+
+            }
+        );
+
+        html += `
+
+</table>
+
+`;
+
+        container.innerHTML =
+            html;
+
+    }
 
 }
