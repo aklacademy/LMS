@@ -8372,6 +8372,8 @@ function loadMasterDataGrid() {
 `;
 
             }
+
+
         );
 
         html += `
@@ -8384,5 +8386,309 @@ function loadMasterDataGrid() {
             html;
 
     }
+
+    else if (
+    type === "areas"
+) {
+
+    let html = `
+
+<h3>
+
+    Learning Areas
+
+</h3>
+
+<table
+    class="admin-table">
+
+<tr>
+
+<th>
+
+    Area ID
+
+</th>
+
+<th>
+
+    Title
+
+</th>
+
+<th>
+
+    Status
+
+</th>
+
+</tr>
+
+`;
+
+    learningAreas.forEach(
+        function(area) {
+
+            html += `
+
+<tr>
+
+<td>
+
+    ${area.areaId}
+
+</td>
+
+<td>
+
+    ${area.title}
+
+</td>
+
+<td>
+
+    ${
+        area.isActive
+            ? "Active"
+            : "Inactive"
+    }
+
+</td>
+
+</tr>
+
+`;
+
+        }
+    );
+
+    html += `
+
+</table>
+
+`;
+
+    container.innerHTML =
+        html;
+
+} 
+
+else if (
+    type === "themes"
+) {
+
+    let html = `
+
+<h3>
+
+    Themes
+
+</h3>
+
+<table
+    class="admin-table">
+
+<tr>
+
+<th>
+
+    Theme ID
+
+</th>
+
+<th>
+
+    Title
+
+</th>
+
+<th>
+
+    Learning Area
+
+</th>
+
+<th>
+
+    Status
+
+</th>
+
+</tr>
+
+`;
+
+    themes.forEach(
+        function(theme) {
+
+            const area =
+                learningAreas.find(
+                    a =>
+                        a.areaId ===
+                        theme.learningAreaId
+                );
+
+            html += `
+
+<tr>
+
+<td>
+
+    ${theme.themeId}
+
+</td>
+
+<td>
+
+    ${theme.title}
+
+</td>
+
+<td>
+
+    ${
+        area
+            ? area.title
+            : ""
+    }
+
+</td>
+
+<td>
+
+    ${
+        theme.isActive
+            ? "Active"
+            : "Inactive"
+    }
+
+</td>
+
+</tr>
+
+`;
+
+        }
+    );
+
+    html += `
+
+</table>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
+
+else if (
+    type === "lists"
+) {
+
+    let html = `
+
+<h3>
+
+    Lists
+
+</h3>
+
+<table
+    class="admin-table">
+
+<tr>
+
+<th>
+
+    List ID
+
+</th>
+
+<th>
+
+    Title
+
+</th>
+
+<th>
+
+    Theme
+
+</th>
+
+<th>
+
+    Status
+
+</th>
+
+</tr>
+
+`;
+
+    lists.forEach(
+        function(list) {
+
+            const theme =
+                themes.find(
+                    t =>
+                        t.themeId ===
+                        list.themeId
+                );
+
+            html += `
+
+<tr>
+
+<td>
+
+    ${list.listId}
+
+</td>
+
+<td>
+
+    ${list.title}
+
+</td>
+
+<td>
+
+    ${
+        theme
+            ? theme.title
+            : ""
+    }
+
+</td>
+
+<td>
+
+    ${
+        list.isActive
+            ? "Active"
+            : "Inactive"
+    }
+
+</td>
+
+</tr>
+
+`;
+
+        }
+    );
+
+    html += `
+
+</table>
+
+`;
+
+    container.innerHTML =
+        html;
+
+}
 
 }
