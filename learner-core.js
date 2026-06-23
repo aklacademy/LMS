@@ -410,10 +410,6 @@ function openThemes(areaName) {
 
     });
 
-    console.log(
-    "Themes Page",
-    currentMode
-);
 
 }
 
@@ -586,10 +582,6 @@ else if (
 
 });
 
-console.log(
-    "Lists Page",
-    currentMode
-);
 }
 
 // open item
@@ -1156,23 +1148,35 @@ function openProgressDashboard() {
             "progress-dashboard-container"
         );
 
-    const totalLists =
-    getLists().length;
+        const course =
+    courses.find(
+        c =>
+        c.courseId === currentCourse
+    );
+
+const assignedLists =
+    course.assignedLists || [];
+
+   const totalLists =
+    assignedLists.length;
 
     let learnedLists = 0;
 
     let masteredLists = 0;
 
-    Object.keys(
-        learnerProgress.lists
-    ).forEach(function(listName) {
-
-
+    assignedLists.forEach(
+    function(listId) {
 
         const progress =
             learnerProgress.lists[
-                listName
+                listId
             ];
+
+        if (!progress) {
+
+            return;
+
+        }
 
         if (
             progress.learned
@@ -1190,30 +1194,112 @@ function openProgressDashboard() {
 
         }
 
-    });
+    }
+);
+
+const progressPercent =
+
+    totalLists > 0
+
+    ?
+
+    Math.round(
+        (
+            masteredLists
+            /
+            totalLists
+        ) * 100
+    )
+
+    :
+
+    0;
+
+    const status =
+
+    progressPercent === 100
+
+    ?
+
+    "Mastered"
+
+    :
+
+    learnedLists > 0
+
+    ?
+
+    "In Progress"
+
+    :
+
+    "Not Started";
 
     container.innerHTML = `
     
         <div class="item-card">
-
             <h2>
-                Overall Progress
-            </h2>
+
+    Progress Card
+
+</h2>
+
+<p>
+    <strong>Learner ID:</strong>
+    ${currentLearner.learnerId}
+</p>
+
+<p>
+
+    <strong>Learner:</strong>
+    ${currentLearner.fullName}
+
+</p>
+
+<p>
+
+    <strong>Course ID:</strong>
+    ${course.courseId}
+
+</p>
+
+<p>
+
+    <strong>Course:</strong>
+    ${course.title}
+
+</p>
+
+<hr>
 
             <p>
-                Total Lists:
+                <strong>Total Lists:</strong>
                 ${totalLists}
             </p>
 
             <p>
-                Learned Lists:
+                <strong>Learned Lists:</strong>
                 ${learnedLists}
             </p>
 
             <p>
-                Mastered Lists:
+                <strong>Mastered Lists:</strong>
                 ${masteredLists}
             </p>
+
+            <p>
+
+    <strong>Progress:</strong>
+    ${progressPercent}%
+
+</p>
+
+<p>
+
+    <strong>Status:</strong>
+    ${status}
+
+</p>
 
         </div>
 
@@ -1311,10 +1397,60 @@ function openAssessmentDashboard() {
 
         });
 
-    const learningAreas =
-        selectedCourse.learningAreas;
+    const courseLearningAreas = [];
 
-    learningAreas.forEach(function(area) {
+selectedCourse.assignedLists.forEach(
+    function(listId) {
+
+        const list =
+            lists.find(
+                l =>
+                l.listId === listId
+            );
+
+        if (!list) {
+
+            return;
+
+        }
+
+        const theme =
+            themes.find(
+                t =>
+                t.themeId ===
+                list.themeId
+            );
+
+        if (!theme) {
+
+            return;
+
+        }
+
+        const area =
+            learningAreas.find(
+                a =>
+                a.areaId ===
+                theme.learningAreaId
+            );
+
+        if (
+            area &&
+            !courseLearningAreas.includes(
+                area.title
+            )
+        ) {
+
+            courseLearningAreas.push(
+                area.title
+            );
+
+        }
+
+
+    });
+
+    courseLearningAreas.forEach(function(area) {
 
     // CHECK IF AREA HAS
     // ELIGIBLE LEARNED LISTS
@@ -1360,6 +1496,7 @@ function openAssessmentDashboard() {
 
     // SHOW ONLY ELIGIBLE AREA
 
+
     if (hasEligibleLists) {
 
         container.innerHTML += `
@@ -1380,11 +1517,6 @@ function openAssessmentDashboard() {
     }
 
 });
-
-console.log(
-    "Assessment Dashboard",
-    currentMode
-);
 
 }
 
@@ -1423,7 +1555,15 @@ function openAssessment(listId) {
     getAssessmentSetsByListId(
         currentList
     );
+console.log(
+    "Current List:",
+    currentList
+);
 
+console.log(
+    "Assessment Sets:",
+    setNames
+);
    
 
 const completedSets =
@@ -2075,10 +2215,62 @@ function openRevisionDashboard() {
 
         });
 
-    const learningAreas =
-        selectedCourse.learningAreas;
+    const courseLearningAreas = [];
 
-    learningAreas.forEach(function(area) {
+    selectedCourse.assignedLists.forEach(
+    function(listId) {
+
+        const list =
+            lists.find(
+                l =>
+                l.listId === listId
+            );
+
+        if (!list) {
+
+            return;
+
+        }
+
+        const theme =
+            themes.find(
+                t =>
+                t.themeId ===
+                list.themeId
+            );
+
+        if (!theme) {
+
+            return;
+
+        }
+
+        const area =
+            learningAreas.find(
+                a =>
+                a.areaId ===
+                theme.learningAreaId
+            );
+
+        if (
+            area &&
+            !courseLearningAreas.includes(
+                area.title
+            )
+        ) {
+
+            courseLearningAreas.push(
+                area.title
+            );
+
+        }
+
+    });
+
+        console.log(selectedCourse);
+console.log(learningAreas);
+
+    courseLearningAreas.forEach(function(area) {
 
         const areaThemes =
     getThemesByLearningArea(
