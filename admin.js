@@ -2,7 +2,7 @@
     Admin data Page
 ===================================*/
 
-function openAdminPage() {
+/*function openAdminPage() {
 
     showPage(
         "admin-page"
@@ -1106,22 +1106,13 @@ else {
     courses.push(course);
 
 }
-    localStorage.setItem(
-    "courses",
-    JSON.stringify(courses)
-);
-
-
-
-
+    saveAllCourses();
 
     document.getElementById(
         "course-preview"
     ).innerHTML = `
 
 <pre>
-
-
 
 ${JSON.stringify(
     course,
@@ -1342,12 +1333,7 @@ if (existingArea) {
 
 }
 
-localStorage.setItem(
-    "learningAreas",
-    JSON.stringify(
-        learningAreas
-    )
-);
+saveAllLearningAreas();
 
    
 
@@ -1460,12 +1446,7 @@ function toggleAreaStatus(areaId) {
     area.isActive =
         !area.isActive;
 
-    localStorage.setItem(
-        "learningAreas",
-        JSON.stringify(
-            learningAreas
-        )
-    );
+    saveAllLearningAreas();
 
     showManageAreas();
 
@@ -1694,12 +1675,7 @@ function toggleThemeStatus(themeId) {
     theme.isActive =
         !theme.isActive;
 
-    localStorage.setItem(
-        "themes",
-        JSON.stringify(
-            themes
-        )
-    );
+    saveAllThemes();
 
     showManageThemes();
 
@@ -1768,12 +1744,7 @@ if (existingTheme) {
 
 }
 
-localStorage.setItem(
-    "themes",
-    JSON.stringify(
-        themes
-    )
-);
+saveAllThemes();
 
     console.log(
         theme
@@ -1927,8 +1898,6 @@ function saveList() {
 
     };
 
-    
-
     const existingList =
     lists.find(
         l =>
@@ -1954,12 +1923,7 @@ if (existingList) {
 
 }
 
-localStorage.setItem(
-    "lists",
-    JSON.stringify(
-        lists
-    )
-);
+saveAllLists();
 
 
     document.getElementById(
@@ -6577,7 +6541,7 @@ else {
 
 }
 
-saveLearners();
+saveAllLearners();
 
 if (learnerBeingEdited) {
 
