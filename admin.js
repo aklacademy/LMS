@@ -56,6 +56,196 @@ const totalItems =
 const totalQuestions =
     assessmentQuestions.length;
 
+const totalLearners =
+    learners.length;
+
+let totalAssignedLists = 0;
+
+learners.forEach(function(
+    learner
+) {
+
+    learner.assignedCourses.forEach(
+        function(courseId) {
+
+            const course =
+                courses.find(
+                    function(course) {
+
+                        return (
+                            course.courseId
+                            === courseId
+                        );
+
+                    }
+                );
+
+            if (!course) {
+
+                return;
+
+            }
+
+            totalAssignedLists +=
+                course.assignedLists.length;
+
+        }
+
+        
+    );
+});
+
+
+const allLearnerProgress =
+    JSON.parse(
+        localStorage.getItem(
+            "learnerProgress"
+        )
+    ) || {};
+
+let startedLearners = 0;
+
+let learnedLists = 0;
+
+let masteredLists = 0;
+
+let learningCompletion = 0;
+
+let masteryCompletion = 0;
+
+let notStartedLearners = 0;
+
+learners.forEach(function(
+    learner
+) {
+
+    let assignedLists = 0;
+
+    learner.assignedCourses.forEach(
+        function(courseId) {
+
+            const course =
+                courses.find(
+                    function(course) {
+
+                        return (
+                            course.courseId
+                            === courseId
+                        );
+
+                    }
+                );
+
+            if (!course) {
+
+                return;
+
+            }
+
+            assignedLists +=
+                course.assignedLists.length;
+
+        }
+    );
+
+    const learnerData =
+        allLearnerProgress[
+            learner.learnerId
+        ];
+
+    if (
+        assignedLists > 0
+        &&
+        !learnerData
+    ) {
+
+        notStartedLearners++;
+
+    }
+
+});
+
+Object.keys(
+    allLearnerProgress
+).forEach(function(learnerId) {
+
+    const learnerData =
+    allLearnerProgress[
+        learnerId
+    ];
+
+ 
+    if (
+    learnerData &&
+    learnerData.lists &&
+    Object.keys(
+        learnerData.lists
+    ).length > 0
+) {
+
+    startedLearners++;
+
+    Object.values(
+    learnerData.lists
+).forEach(function(listProgress) {
+
+    if (
+        listProgress.learned === true
+    ) {
+
+        learnedLists++;
+
+    }
+
+    if (
+    listProgress.mastered === true
+) {
+
+    masteredLists++;
+
+}
+
+});
+}
+
+});
+
+if (
+    totalAssignedLists > 0
+) {
+
+    learningCompletion =
+
+        Math.round(
+
+            (
+                learnedLists
+                /
+                totalAssignedLists
+            ) * 100
+
+        );
+
+}
+
+if (
+    totalAssignedLists > 0
+) {
+
+    masteryCompletion =
+
+        Math.round(
+
+            (
+                masteredLists
+                /
+                totalAssignedLists
+            ) * 100
+
+        );
+
+}
+
 statsContainer.innerHTML = `
 
 <div class="dashboard-card">
@@ -108,13 +298,166 @@ statsContainer.innerHTML = `
 
     </p>
 
+    </div>
+
+    <div class="dashboard-card">
+
+
+<h3>
+
+    Learners Overview
+
+</h3>
+
+<table class="admin-table">
+
+    <tr>
+
+        <th>
+
+            Metric
+
+        </th>
+
+        <th>
+
+            Count
+
+        </th>
+
+        <th>
+
+            Percentage
+
+        </th>
+
+    </tr>
+
+    <tr>
+
+        <td>
+
+            Total Learners
+
+        </td>
+
+        <td>
+
+            ${totalLearners}
+
+        </td>
+
+        <td>
+
+            -
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td>
+
+            Started Learners
+
+        </td>
+
+        <td>
+
+            ${startedLearners}
+
+        </td>
+
+        <td>
+
+            ${Math.round(
+                (startedLearners /
+                totalLearners) * 100
+            )}%
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td>
+
+            Lists Learned
+
+        </td>
+
+        <td>
+
+            ${learnedLists}
+
+        </td>
+
+        <td>
+
+            ${learningCompletion}%
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td>
+
+            Lists Mastered
+
+        </td>
+
+        <td>
+
+            ${masteredLists}
+
+        </td>
+
+        <td>
+
+            ${masteryCompletion}%
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td>
+
+            Not Started Learners
+
+        </td>
+
+        <td>
+
+            ${notStartedLearners}
+
+        </td>
+
+        <td>
+
+            ${Math.round(
+                (notStartedLearners /
+                totalLearners) * 100
+            )}%
+
+        </td>
+
+    </tr>
+
+</table>
+
 </div>
 
 `;
 
 courseContainer.innerHTML = `
 
-<div class="item-card">
+<div class="dashboard-card">
 
     <h3>
 
