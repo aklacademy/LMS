@@ -1,10 +1,28 @@
 // LIST INITIALIZER
 
-function initializeListProgress(listName) {
+function initializeListProgress(
+    listName
+) {
 
-    if (!learnerProgress.lists[listName]) {
+    if (!listName) {
 
-        learnerProgress.lists[listName] = {
+        console.error(
+            "Invalid listName:",
+            listName
+        );
+
+        return;
+
+    }
+
+    const learnerData =
+        getCurrentLearnerProgress();
+
+    if (
+        !learnerData.lists[listName]
+    ) {
+
+        learnerData.lists[listName] = {
 
             learned: false,
 
@@ -30,8 +48,9 @@ function initializeListProgress(listName) {
 
     }
 
+
     const progress =
-        learnerProgress.lists[listName];
+        learnerData.lists[listName];
 
     progress.completedMasteredSets =
         progress.completedMasteredSets || [];
@@ -68,6 +87,22 @@ function loginLearner() {
 
     currentLearner =
         learner;
+
+        if (
+    !learnerProgress[
+        currentLearner.learnerId
+    ]
+) {
+
+    learnerProgress[
+        currentLearner.learnerId
+    ] = {
+
+        lists: {}
+
+    };
+
+}
 
     renderCourses();
 
@@ -448,6 +483,8 @@ function openLists(themeId) {
         themeId
     );
 
+    const learnerData =
+    getCurrentLearnerProgress();
 
     filteredLists.forEach(function(list) {
 
@@ -468,8 +505,11 @@ function openLists(themeId) {
 
     {
 
-        const progress =
-    learnerProgress.lists[
+        const learnerData =
+    getCurrentLearnerProgress();
+
+const progress =
+    learnerData.lists[
         list.listId
     ];
 
@@ -489,8 +529,8 @@ function openLists(themeId) {
     let displayTitle =
     list.listTitle;
 
-const progress =
-    learnerProgress.lists[
+ const progress =
+    learnerData.lists[
         list.listId
     ];
 
@@ -868,13 +908,16 @@ function completeLearning() {
         currentList
     );
 
+    const learnerData =
+        getCurrentLearnerProgress();
+
     if (masteredMode) {
 
         return;
 
     }
 
-    learnerProgress.lists[currentList]
+    learnerData.lists[currentList]
         .learned = true;
 
     saveProgress();
@@ -1157,6 +1200,9 @@ function openProgressDashboard() {
 const assignedLists =
     course.assignedLists || [];
 
+    const learnerData =
+    getCurrentLearnerProgress();
+
    const totalLists =
     assignedLists.length;
 
@@ -1167,10 +1213,10 @@ const assignedLists =
     assignedLists.forEach(
     function(listId) {
 
-        const progress =
-            learnerProgress.lists[
-                listId
-            ];
+         const progress =
+    learnerData.lists[
+        listId
+    ];
 
         if (!progress) {
 
@@ -1240,7 +1286,7 @@ const progressPercent =
         <div class="item-card">
             <h2>
 
-    Progress Card
+    Progress Card 
 
 </h2>
 
@@ -1346,7 +1392,47 @@ function loadProgress() {
 
     }
 
+    // CLEAN OLD ARCHITECTURE
+
+    delete learnerProgress.lists;
+
 }
+
+/*======================================
+    LEARNER PROGRESS MODEL
+
+    learnerProgress = {
+
+        AKL0001: {
+
+            lists: {
+
+                LI001: {
+
+                    learned: true,
+
+                    completedSets: [],
+
+                    revisionQuestions: [],
+
+                    masteredQuestions: [],
+
+                    attemptHistory: [],
+
+                    mastered: false
+
+                }
+
+            }
+
+        }
+
+    }
+        
+    Progress is stored per learner.
+    Never use learnerProgress.lists.
+
+======================================*/
 
 function saveProgress() {
 
@@ -1471,10 +1557,14 @@ selectedCourse.assignedLists.forEach(
 
         themeLists.forEach(function(list) {
 
-            const progress =
-    learnerProgress.lists[
+            const learnerData =
+    getCurrentLearnerProgress();
+
+const progress =
+    learnerData.lists[
         list.listId
     ];
+
 
             if (
                 progress
@@ -1527,12 +1617,13 @@ function openAssessment(listId) {
 
     currentList = listId;
 
-    initializeListProgress(currentList);
+    const learnerData =
+    getCurrentLearnerProgress();
 
     if (
-        !learnerProgress.lists[currentList]
-            .learned
-    ) {
+    !learnerData.lists[currentList]
+        .learned
+) {
 
         alert(
             "Complete learning first to unlock assessment."
@@ -1555,26 +1646,18 @@ function openAssessment(listId) {
     getAssessmentSetsByListId(
         currentList
     );
-console.log(
-    "Current List:",
-    currentList
-);
 
-console.log(
-    "Assessment Sets:",
-    setNames
-);
    
 
 const completedSets =
-    learnerProgress.lists[currentList]
+    learnerData.lists[currentList]
         .completedSets;
 
 let activeSetIndex =
     setNames.findIndex(function(setName) {
 
         const unresolvedQuestions =
-            learnerProgress.lists[currentList]
+            learnerData.lists[currentList]
                 .revisionQuestions
                 .filter(function(question) {
 
@@ -1603,7 +1686,7 @@ setNames.forEach(function(setName, index) {
     // COMPLETED
 
     const unresolvedQuestions =
-    learnerProgress.lists[currentList]
+    learnerData.lists[currentList]
         .revisionQuestions
         .filter(function(question) {
 
@@ -1792,8 +1875,11 @@ function checkAnswer(selectedOption) {
 
         initializeListProgress(currentList);
 
+        const learnerData =
+    getCurrentLearnerProgress();
+
 const currentListProgress =
-    learnerProgress.lists[currentList];
+    learnerData.lists[currentList];
 
 const questionRecord = {
 
@@ -1941,9 +2027,6 @@ else {
 
     }
 
-    console.log(
-    currentListProgress.revisionQuestions
-);
 
     alert(
         "Wrong! Moved to Revision."
@@ -2117,10 +2200,59 @@ function openAssessmentReviewDashboard() {
 
         });
 
-    const learningAreas =
-        selectedCourse.learningAreas;
+    const courseLearningAreas = [];
 
-    learningAreas.forEach(function(area) {
+    selectedCourse.assignedLists.forEach(
+    function(listId) {
+
+        const list =
+            lists.find(
+                l =>
+                l.listId === listId
+            );
+
+        if (!list) {
+
+            return;
+
+        }
+
+        const theme =
+            themes.find(
+                t =>
+                t.themeId ===
+                list.themeId
+            );
+
+        if (!theme) {
+
+            return;
+
+        }
+
+        const area =
+            learningAreas.find(
+                a =>
+                a.areaId ===
+                theme.learningAreaId
+            );
+
+        if (
+            area &&
+            !courseLearningAreas.includes(
+                area.title
+            )
+        ) {
+
+            courseLearningAreas.push(
+                area.title
+            );
+
+        }
+
+    });
+
+    courseLearningAreas.forEach(function(area) {
 
         const areaThemes =
     getThemesByLearningArea(
@@ -2138,8 +2270,11 @@ function openAssessmentReviewDashboard() {
 
             themeLists.forEach(function(list) {
 
+const learnerData =
+    getCurrentLearnerProgress();
+
 const progress =
-    learnerProgress.lists[
+    learnerData.lists[
         list.listId
     ];
 
@@ -2267,9 +2402,6 @@ function openRevisionDashboard() {
 
     });
 
-        console.log(selectedCourse);
-console.log(learningAreas);
-
     courseLearningAreas.forEach(function(area) {
 
         const areaThemes =
@@ -2288,10 +2420,13 @@ console.log(learningAreas);
 
             themeLists.forEach(function(list) {
 
+                const learnerData =
+    getCurrentLearnerProgress();
+
                 const progress =
-    learnerProgress.lists[
-        list.listId
-    ];
+                    learnerData.lists[
+                        list.listId
+                    ];
 
                 if (
                     progress
@@ -2352,8 +2487,11 @@ function loadRevisionCard(contentId) {
 
         });
 
-    const currentListProgress =
-        learnerProgress.lists[currentList];
+     const learnerData =
+    getCurrentLearnerProgress();
+
+const currentListProgress =
+    learnerData.lists[currentList];
 
 const revisionQuestion =
     currentListProgress.revisionQuestions
@@ -2584,10 +2722,11 @@ function nextRevisionItem() {
                 revisionItemIndex
             ];
 
-        const currentListProgress =
-            learnerProgress.lists[
-                currentList
-            ];
+         const learnerData =
+    getCurrentLearnerProgress();
+
+const currentListProgress =
+    learnerData.lists[currentList];
 
         currentRevisionQuestion =
             currentListProgress
@@ -2620,10 +2759,11 @@ function previousRevisionItem() {
                 revisionItemIndex
             ];
 
-        const currentListProgress =
-            learnerProgress.lists[
-                currentList
-            ];
+        const learnerData =
+    getCurrentLearnerProgress();
+
+const currentListProgress =
+    learnerData.lists[currentList];
 
         currentRevisionQuestion =
             currentListProgress
@@ -2645,8 +2785,11 @@ function previousRevisionItem() {
 
 function completeRevision() {
 
-    const currentListProgress =
-        learnerProgress.lists[currentList];
+    const learnerData =
+    getCurrentLearnerProgress();
+
+const currentListProgress =
+    learnerData.lists[currentList];
 
         console.log(
     "Revision Questions:",
@@ -2713,10 +2856,63 @@ learningAreasContainer.innerHTML = "";
 
         });
 
-    const learningAreas =
-        selectedCourse.learningAreas;
+    const courseLearningAreas = [];
 
-    learningAreas.forEach(function(area) {
+    selectedCourse.assignedLists.forEach(
+    function(listId) {
+
+        const list =
+            lists.find(
+                l =>
+                l.listId === listId
+            );
+
+        if (!list) {
+
+            return;
+
+        }
+
+        const theme =
+            themes.find(
+                t =>
+                t.themeId ===
+                list.themeId
+            );
+
+        if (!theme) {
+
+            return;
+
+        }
+
+        const area =
+            learningAreas.find(
+                a =>
+                a.areaId ===
+                theme.learningAreaId
+            );
+
+        if (
+            area &&
+            !courseLearningAreas.includes(
+                area.title
+            )
+        ) {
+
+            courseLearningAreas.push(
+                area.title
+            );
+
+        }
+
+    });
+
+    console.log(
+    courseLearningAreas
+);
+
+    courseLearningAreas.forEach(function(area) {
 
     const areaThemes =
     getThemesByLearningArea(
@@ -2734,23 +2930,25 @@ learningAreasContainer.innerHTML = "";
 
         themeLists.forEach(function(list) {
 
-          const progress =
-    learnerProgress.lists[
-        list.listId
-    ];
+    const learnerData =
+        getCurrentLearnerProgress();
 
-            if (
-                progress
-                &&
-                progress.mastered
-            ) {
+    const progress =
+        learnerData.lists[
+            list.listId
+        ];
 
-                hasMasteredLists = true;
+    if (
+        progress
+        &&
+        progress.mastered
+    ) {
 
-            }
+        hasMasteredLists = true;
 
-        });
+    }
 
+});
     });
 
     if (!hasMasteredLists) {
@@ -2784,8 +2982,11 @@ function openMastered() {
 
     initializeListProgress(currentList);
 
-    const currentListProgress =
-        learnerProgress.lists[currentList];
+    const learnerData =
+    getCurrentLearnerProgress();
+
+const currentListProgress =
+    learnerData.lists[currentList];
 
     showPage("mastered-page");
 
@@ -2850,8 +3051,11 @@ function openRevision() {
 ).textContent =
     "Revision";
 
-    const currentListProgress =
-        learnerProgress.lists[currentList];
+    const learnerData =
+    getCurrentLearnerProgress();
+
+const currentListProgress =
+    learnerData.lists[currentList];
 
     showPage("revision-page");
 
@@ -2958,8 +3162,11 @@ function openRevisionSet(setName) {
 
     initializeListProgress(currentList);
 
-    const currentListProgress =
-        learnerProgress.lists[currentList];
+    const learnerData =
+    getCurrentLearnerProgress();
+
+     const currentListProgress =
+        learnerData.lists[currentList];
 
     currentSet = setName;
 
@@ -3085,8 +3292,11 @@ function openAssessmentReview(setName) {
 
     initializeListProgress(currentList);
 
+    const learnerData =
+    getCurrentLearnerProgress();
+
     const currentListProgress =
-        learnerProgress.lists[currentList];
+    learnerData.lists[currentList];
 
     const attemptHistory =
         currentListProgress.attemptHistory
@@ -3098,6 +3308,16 @@ function openAssessmentReview(setName) {
                 );
 
             });
+
+            console.log(
+    "Review Set:",
+    setName
+);
+
+console.log(
+    "Attempt History:",
+    attemptHistory
+);
 
     showPage("assessment-page");
 
@@ -3146,13 +3366,17 @@ showAssessmentReviewCard();
 
 function showAssessmentReviewCard() {
 
+
     const questionContainer =
         document.getElementById(
             "question-container"
         );
 
+        const learnerData =
+    getCurrentLearnerProgress();
+
     const currentListProgress =
-        learnerProgress.lists[currentList];
+        learnerData.lists[currentList];
 
     const attemptHistory =
         currentListProgress.attemptHistory
@@ -3259,8 +3483,11 @@ updateAssessmentReviewButtons();
 
 function nextAssessmentReview() {
 
-    const currentListProgress =
-        learnerProgress.lists[currentList];
+     const learnerData =
+    getCurrentLearnerProgress();
+
+const currentListProgress =
+    learnerData.lists[currentList];
 
     const attemptHistory =
         currentListProgress.attemptHistory
@@ -3313,8 +3540,11 @@ function updateAssessmentReviewButtons() {
             "review-next-btn"
         );
 
-    const currentListProgress =
-        learnerProgress.lists[currentList];
+     const learnerData =
+    getCurrentLearnerProgress();
+
+const currentListProgress =
+    learnerData.lists[currentList];
 
     const attemptHistory =
         currentListProgress.attemptHistory
@@ -3366,6 +3596,9 @@ function openAssessmentReviewSets(
 
     currentList = listId;
 
+    const learnerData =
+    getCurrentLearnerProgress();
+
     showPage(
         "assessment-sets-page"
     );
@@ -3378,9 +3611,9 @@ function openAssessmentReviewSets(
     setsContainer.innerHTML = "";
 
     const completedSets =
-        learnerProgress.lists[
-            currentList
-        ].completedSets;
+    learnerData.lists[
+        currentList
+    ].completedSets;
 
     completedSets.forEach(function(
         setName
@@ -3414,6 +3647,9 @@ function openMasteredAssessment(
     initializeListProgress(
         currentList
     );
+
+    const learnerData =
+    getCurrentLearnerProgress();
 
     showPage(
         "assessment-sets-page"
@@ -3451,8 +3687,8 @@ if (
 
 }
 
-const progress =
-    learnerProgress.lists[
+ const progress =
+    learnerData.lists[
         currentList
     ];
 
@@ -3618,11 +3854,13 @@ function openMasteredRevision() {
 ).textContent =
     "Mastered Revision";
 
-    const currentListProgress =
-        learnerProgress.lists[
-            currentList
-        ];
+    const learnerData =
+    getCurrentLearnerProgress();
 
+const currentListProgress =
+    learnerData.lists[
+        currentList
+    ];
     showPage(
         "revision-page"
     );
@@ -3800,10 +4038,13 @@ function nextMasteredRevisionItem() {
                 revisionItemIndex
             ];
 
-        const currentListProgress =
-            learnerProgress.lists[
-                currentList
-            ];
+        const learnerData =
+    getCurrentLearnerProgress();
+
+const currentListProgress =
+    learnerData.lists[
+        currentList
+    ];
 
         currentRevisionQuestion =
             currentListProgress
@@ -3837,10 +4078,13 @@ function previousMasteredRevisionItem() {
                 revisionItemIndex
             ];
 
-        const currentListProgress =
-            learnerProgress.lists[
-                currentList
-            ];
+        const learnerData =
+    getCurrentLearnerProgress();
+
+const currentListProgress =
+    learnerData.lists[
+        currentList
+    ];
 
         currentRevisionQuestion =
             currentListProgress
@@ -4189,10 +4433,63 @@ function openMasteredAssessmentDashboard() {
 
         });
 
-    const learningAreas =
-        selectedCourse.learningAreas;
+        const learnerData =
+    getCurrentLearnerProgress();
 
-    learningAreas.forEach(function(area) {
+        const courseLearningAreas = [];
+
+selectedCourse.assignedLists.forEach(
+    function(listId) {
+
+        const list =
+            lists.find(
+                l =>
+                l.listId === listId
+            );
+
+        if (!list) {
+
+            return;
+
+        }
+
+        const theme =
+            themes.find(
+                t =>
+                t.themeId ===
+                list.themeId
+            );
+
+        if (!theme) {
+
+            return;
+
+        }
+
+        const area =
+            learningAreas.find(
+                a =>
+                a.areaId ===
+                theme.learningAreaId
+            );
+
+        if (
+            area &&
+            !courseLearningAreas.includes(
+                area.title
+            )
+        ) {
+
+            courseLearningAreas.push(
+                area.title
+            );
+
+        }
+
+    });
+
+
+    courseLearningAreas.forEach(function(area) {
 
     const areaThemes =
     getThemesByLearningArea(
@@ -4210,8 +4507,9 @@ function openMasteredAssessmentDashboard() {
 
         themeLists.forEach(function(list) {
 
+
 const progress =
-    learnerProgress.lists[
+    learnerData.lists[
         list.listId
     ];
 
@@ -4323,10 +4621,13 @@ function checkMasteredAnswer(
         currentList
     );
 
-    const currentListProgress =
-        learnerProgress.lists[
-            currentList
-        ];
+    const learnerData =
+    getCurrentLearnerProgress();
+
+     const currentListProgress =
+    learnerData.lists[
+        currentList
+    ];
 
     const questionRecord = {
 
@@ -4578,10 +4879,62 @@ function openMasteredRevisionDashboard() {
 
         });
 
-    const learningAreas =
-        selectedCourse.learningAreas;
+        const learnerData =
+    getCurrentLearnerProgress();
 
-    learningAreas.forEach(function(area) {
+  const courseLearningAreas = [];
+
+        selectedCourse.assignedLists.forEach(
+    function(listId) {
+
+        const list =
+            lists.find(
+                l =>
+                l.listId === listId
+            );
+
+        if (!list) {
+
+            return;
+
+        }
+
+        const theme =
+            themes.find(
+                t =>
+                t.themeId ===
+                list.themeId
+            );
+
+        if (!theme) {
+
+            return;
+
+        }
+
+        const area =
+            learningAreas.find(
+                a =>
+                a.areaId ===
+                theme.learningAreaId
+            );
+
+        if (
+            area &&
+            !courseLearningAreas.includes(
+                area.title
+            )
+        ) {
+
+            courseLearningAreas.push(
+                area.title
+            );
+
+        }
+
+    });
+
+    courseLearningAreas.forEach(function(area)  {
 
         const areaThemes =
     getThemesByLearningArea(
@@ -4600,7 +4953,7 @@ function openMasteredRevisionDashboard() {
             themeLists.forEach(function(list) {
 
                 const progress =
-    learnerProgress.lists[
+    learnerData.lists[
         list.listId
     ];
 
@@ -4656,10 +5009,13 @@ function loadMasteredRevisionCard(
         currentList
     );
 
-    const currentListProgress =
-        learnerProgress.lists[
-            currentList
-        ];
+    const learnerData =
+    getCurrentLearnerProgress();
+
+const currentListProgress =
+    learnerData.lists[
+        currentList
+    ];
 
     const revisionQuestion =
     currentListProgress
@@ -4774,8 +5130,11 @@ console.log(
 
 function completeMasteredRevision() {
 
-    currentQuestions =
-    learnerProgress.lists[currentList]
+    const learnerData =
+    getCurrentLearnerProgress();
+
+currentQuestions =
+    learnerData.lists[currentList]
         .masteredRevisionQuestions;
 
     currentQuestionIndex = 0;
