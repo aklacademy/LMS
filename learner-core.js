@@ -303,81 +303,72 @@ selectedCourse.assignedLists.forEach(
             );
 
         if (
-            area &&
-            !courseLearningAreas.includes(
-                area.title
-            )
-        ) {
+    area &&
+    !courseLearningAreas.includes(
+        area.areaId
+    )
+) {
 
-            courseLearningAreas.push(
-                area.title
-            );
+    courseLearningAreas.push(
+        area.areaId
+    );
 
-        }
+}
 
     });
 
-    courseLearningAreas.forEach(function(area) {
+    courseLearningAreas.forEach(
+    function(areaId) {
 
-        let hasEligibleContent = false;
+        const area =
+            learningAreas.find(
+                a =>
+                a.areaId === areaId
+            );
 
-       const areaThemes =
-    getThemesByLearningArea(
-        area
-    );
-
-        areaThemes.forEach(function(theme) {
-
-           const themeLists =
-    getListsByThemeId(
-        theme.themeId
-    );
-
-            themeLists.forEach(function(list) {
-
-                if (
-    getItemsByListId(
-        list.listId
-    ).length > 0
-) {
-
-    hasEligibleContent = true;
-
-}
-            });
-
-        });
-
-        if (!hasEligibleContent) {
+        if (!area) {
 
             return;
 
         }
 
+        let hasEligibleContent = false;
+
+        const areaThemes =
+            getThemesByLearningArea(
+                areaId
+            );
+
+        // ...
+
         learningAreasContainer.innerHTML += `
-        
-            <button class="learning-area-card"
+
+            <button
+                class="learning-area-card"
                 onclick="
                     openThemes(
-                        '${area}'
+                        '${area.areaId}'
                     )
                 ">
 
-                ${area}
+                ${area.title}
 
             </button>
 
         `;
 
-    });
+    }
+);
 
 }
 
 // open Themes
 
-function openThemes(areaName) {
+function openThemes(areaId) {
 
-    currentSection = areaName;
+    console.log("openThemes:", areaId);
+
+    currentSection = areaId;
 
     showPage("themes-page");
 
@@ -390,7 +381,7 @@ function openThemes(areaName) {
 
    const filteredThemes =
     getThemesByLearningArea(
-        areaName
+        areaId
     );
 
     filteredThemes.forEach(function(theme) {
@@ -431,7 +422,7 @@ function openThemes(areaName) {
                     )
                 ">
 
-                ${theme.themeTitle}
+                ${theme.title}
 
             </button>
 
@@ -469,7 +460,7 @@ function openLists(themeId) {
     document.getElementById(
     "lists-title"
 ).innerText =
-    theme.themeTitle;
+    theme.title;
 
     const listsContainer =
         document.getElementById(
@@ -527,7 +518,7 @@ const progress =
     }
 
     let displayTitle =
-    list.listTitle;
+    list.title;
 
  const progress =
     learnerData.lists[
@@ -545,7 +536,7 @@ if (
     ) {
 
         displayTitle =
-            "🏆 " + list.listTitle;
+            "🏆 " + list.title;
 
     }
 
@@ -556,7 +547,7 @@ if (
     ) {
 
         displayTitle =
-            "📖 " + list.listTitle;
+            "📖 " + list.title;
 
     }
 
@@ -569,7 +560,7 @@ else if (
 ) {
 
     displayTitle =
-        "📖 " + list.listTitle;
+        "📖 " + list.title;
 
 }
 
@@ -668,7 +659,7 @@ function openItems(listId) {
     document.getElementById(
     "items-title"
 ).innerText =
-    list.listTitle;
+    list.title;
 
     currentItems =
     getItemsByListId(
@@ -920,7 +911,7 @@ function completeLearning() {
     learnerData.lists[currentList]
         .learned = true;
 
-    saveProgress();
+    saveLearnerProgress();
 
     alert(
         "Learning Completed. Assessment Unlocked."
@@ -1376,76 +1367,6 @@ function toggleAssessmentMenu() {
 
 
 
-function loadProgress() {
-
-    const savedProgress =
-        localStorage.getItem(
-            "learnerProgress"
-        );
-
-    if (savedProgress) {
-
-        learnerProgress =
-            JSON.parse(
-                savedProgress
-            );
-
-    }
-
-    // CLEAN OLD ARCHITECTURE
-
-    delete learnerProgress.lists;
-
-}
-
-/*======================================
-    LEARNER PROGRESS MODEL
-
-    learnerProgress = {
-
-        AKL0001: {
-
-            lists: {
-
-                LI001: {
-
-                    learned: true,
-
-                    completedSets: [],
-
-                    revisionQuestions: [],
-
-                    masteredQuestions: [],
-
-                    attemptHistory: [],
-
-                    mastered: false
-
-                }
-
-            }
-
-        }
-
-    }
-        
-    Progress is stored per learner.
-    Never use learnerProgress.lists.
-
-======================================*/
-
-function saveProgress() {
-
-    localStorage.setItem(
-        "learnerProgress",
-        JSON.stringify(
-            learnerProgress
-        )
-    );
-
-}
-
-
 /*========================
     Assessment
 ===========================*/
@@ -1523,12 +1444,12 @@ selectedCourse.assignedLists.forEach(
         if (
             area &&
             !courseLearningAreas.includes(
-                area.title
+                area.areaId
             )
         ) {
 
             courseLearningAreas.push(
-                area.title
+                area.areaId
             );
 
         }
@@ -1536,14 +1457,26 @@ selectedCourse.assignedLists.forEach(
 
     });
 
-    courseLearningAreas.forEach(function(area) {
+    courseLearningAreas.forEach(function(areaId) {
 
     // CHECK IF AREA HAS
     // ELIGIBLE LEARNED LISTS
 
+    const area =
+    learningAreas.find(
+        a =>
+            a.areaId === areaId
+    );
+
+if (!area) {
+
+    return;
+
+}
+
    const areaThemes =
     getThemesByLearningArea(
-        area
+        areaId
     );
 
     let hasEligibleLists = false;
@@ -1594,11 +1527,11 @@ const progress =
             <button class="learning-area-card"
                 onclick="
                     openThemes(
-                        '${area}'
+                        '${area.areaId}'
                     )
                 ">
 
-                ${area}
+                ${area.title}
 
             </button>
 
@@ -2161,7 +2094,7 @@ if (
         true;
 
 }
-    saveProgress();
+    saveLearnerProgress();
     console.log(learnerProgress);
 
 }
@@ -2240,24 +2173,36 @@ function openAssessmentReviewDashboard() {
         if (
             area &&
             !courseLearningAreas.includes(
-                area.title
+                area.areaId
             )
         ) {
 
             courseLearningAreas.push(
-                area.title
+                area.areaId
             );
 
         }
 
     });
 
-    courseLearningAreas.forEach(function(area) {
+    courseLearningAreas.forEach(function(areaId) {
 
-        const areaThemes =
-    getThemesByLearningArea(
-        area
-    );
+    const area =
+        learningAreas.find(
+            a =>
+                a.areaId === areaId
+        );
+
+    if (!area) {
+
+        return;
+
+    }
+
+    const areaThemes =
+        getThemesByLearningArea(
+            areaId
+        );
 
         let hasReviewLists = false;
 
@@ -2300,11 +2245,11 @@ const progress =
                 <button class="theme-card"
                     onclick="
                         openThemes(
-                            '${area}'
+                            '${area.areaId}'
                         )
                     ">
 
-                    ${area}
+                    ${area.title}
 
                 </button>
 
@@ -2390,23 +2335,35 @@ function openRevisionDashboard() {
         if (
             area &&
             !courseLearningAreas.includes(
-                area.title
+                area.areaId
             )
         ) {
 
             courseLearningAreas.push(
-                area.title
+                area.areaId
             );
 
         }
 
     });
 
-    courseLearningAreas.forEach(function(area) {
+    courseLearningAreas.forEach(function(areaId) {
+
+        const area =
+        learningAreas.find(
+            a =>
+                a.areaId === areaId
+        );
+
+    if (!area) {
+
+        return;
+
+    }
 
         const areaThemes =
     getThemesByLearningArea(
-        area
+        areaId
     );
 
         let hasRevisionLists = false;
@@ -2453,11 +2410,11 @@ function openRevisionDashboard() {
                 <button class="theme-card"
                     onclick="
                         openThemes(
-                            '${area}'
+                            '${area.areaId}'
                         )
                     ">
 
-                    ${area}
+                    ${area.title}
 
                 </button>
 
@@ -2896,12 +2853,12 @@ learningAreasContainer.innerHTML = "";
         if (
             area &&
             !courseLearningAreas.includes(
-                area.title
+                area.areaId
             )
         ) {
 
             courseLearningAreas.push(
-                area.title
+                area.areaId
             );
 
         }
@@ -2912,12 +2869,26 @@ learningAreasContainer.innerHTML = "";
     courseLearningAreas
 );
 
-    courseLearningAreas.forEach(function(area) {
+    courseLearningAreas.forEach(function(areaId) {
+
+        const area =
+        learningAreas.find(
+            a =>
+                a.areaId === areaId
+        );
+
+    if (!area) {
+
+        return;
+
+    }
 
     const areaThemes =
     getThemesByLearningArea(
-        area
+        areaId
     );
+
+
 
     let hasMasteredLists = false;
 
@@ -2962,11 +2933,11 @@ learningAreasContainer.innerHTML = "";
         <button class="theme-card"
             onclick="
                 openThemes(
-                    '${area}'
+                    '${area.areaId}'
                 )
             ">
 
-            ${area}
+            ${area.title}
 
         </button>
 
@@ -4476,12 +4447,12 @@ selectedCourse.assignedLists.forEach(
         if (
             area &&
             !courseLearningAreas.includes(
-                area.title
+                area.areaId
             )
         ) {
 
             courseLearningAreas.push(
-                area.title
+                area.areaId
             );
 
         }
@@ -4489,11 +4460,23 @@ selectedCourse.assignedLists.forEach(
     });
 
 
-    courseLearningAreas.forEach(function(area) {
+    courseLearningAreas.forEach(function(areaId) {
+
+        const area =
+        learningAreas.find(
+            a =>
+                a.areaId === areaId
+        );
+
+    if (!area) {
+
+        return;
+
+    }
 
     const areaThemes =
     getThemesByLearningArea(
-        area
+        areaId
     );
 
     let hasMasteredLists = false;
@@ -4596,11 +4579,11 @@ if (
         <button class="theme-card"
             onclick="
                 openThemes(
-                    '${area}'
+                    '${area.areaId}'
                 )
             ">
 
-            ${area}
+            ${area.title}
 
         </button>
 
@@ -4837,7 +4820,7 @@ function checkMasteredAnswer(
             "Mastered Assessment Completed"
         );
 
-        saveProgress();
+        saveLearnerProgress();
         openMasteredAssessment(
             currentList
         );
@@ -4922,19 +4905,19 @@ function openMasteredRevisionDashboard() {
         if (
             area &&
             !courseLearningAreas.includes(
-                area.title
+                area.areaId
             )
         ) {
 
             courseLearningAreas.push(
-                area.title
+                area.areaId
             );
 
         }
 
     });
 
-    courseLearningAreas.forEach(function(area)  {
+    courseLearningAreas.forEach(function(areaId)  {
 
         const areaThemes =
     getThemesByLearningArea(
@@ -5251,6 +5234,6 @@ function updateNavigationButtons() {
 
 }
 
-loadProgress();
+loadLearnerProgress();
 renderCourses();
-loadLearners();
+loadAllLearners();
