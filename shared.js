@@ -155,20 +155,45 @@ function closeSidebar() {
 }
 
 
-function getThemesByLearningArea(
-    learningArea
+/*======================================
+    Get Themes by Learning Area
+========================================*/
+
+/*function getThemesByLearningArea(
+    learningAreaId
 ) {
 
     return getThemes().filter(
         function(theme) {
 
             return (
-                theme.learningArea
-                === learningArea
+                theme.learningAreaId ===
+                learningAreaId
             );
 
         }
     );
+
+}*/
+
+function getThemesByLearningArea(
+    learningAreaId
+) {
+
+    const filtered = getThemes().filter(
+        function(theme) {
+
+            return (
+                theme.learningAreaId ===
+                learningAreaId
+            );
+
+        }
+    );
+
+    console.log("Found:", filtered);
+
+    return filtered;
 
 }
 
@@ -299,21 +324,38 @@ function getNextQuestionId() {
 
 //Storage
 
+/*======================================
+    Load Courses
+========================================*/
+
+/*
+Purpose
+-------
+Loads all Courses into the application's
+memory.
+
+Why
+---
+This function acts as the application's
+initialisation layer.
+
+The Repository is responsible for reading
+the data, while this function prepares
+the Courses for use by the LMS.
+
+Migration Note
+--------------
+If future versions require data upgrades
+or compatibility fixes, they should be
+added here rather than in the Repository.
+*/
+
 function loadCoursesFromStorage() {
 
-    const savedCourses =
-        localStorage.getItem(
-            "courses"
-        );
-
-    if (savedCourses) {
-
-        window.courses =
-            JSON.parse(
-                savedCourses
-            );
-
-    }
+    /*
+    Load all Courses from the Repository.
+    */
+    loadAllCourses();
 
 }
 
@@ -417,118 +459,105 @@ function getSetsByListId(
 
 }
 
+/*======================================
+    Ensure Active Property
+========================================*/
+
+/*
+Purpose
+-------
+Ensures that every object in a collection
+contains the 'isActive' property.
+
+Used By
+-------
+- Learning Areas
+- Themes
+- Lists
+- Learning Items
+- Assessment Questions
+*/
+
+function ensureIsActiveProperty(
+    collection
+) {
+
+    collection.forEach(
+        function(item) {
+
+            if (
+                item.isActive ===
+                undefined
+            ) {
+
+                item.isActive = true;
+
+            }
+
+        }
+    );
+
+}
+
+
+/*======================================
+    Load Lists
+========================================*/
+
+/*
+Purpose
+-------
+Loads all Lists into the application's
+memory and upgrades older List records
+to the current LMS version.
+
+Why
+---
+Earlier versions of the LMS did not
+contain the 'isActive' property.
+
+This function ensures every List has
+an 'isActive' value before the rest
+of the application uses it.
+*/
 
 function loadListsFromStorage() {
 
-    const savedLists =
-        localStorage.getItem(
-            "lists"
-        );
+    /*
+    Load all Lists from the Repository.
+    */
+    loadAllLists();
 
-    if (savedLists) {
+    /*
+    Upgrade older List records.
 
-        window.lists =
-            JSON.parse(
-                savedLists
-            );
+    Older versions of the LMS may not
+    contain the 'isActive' property.
+    */
+    lists.forEach(
+        function(list) {
 
-        lists.forEach(
-            function(list) {
+            if (
+                list.isActive ===
+                undefined
+            ) {
 
-                if (
-                    list.isActive ===
-                    undefined
-                ) {
-
-                    list.isActive =
-                        true;
-
-                }
+                list.isActive = true;
 
             }
-        );
 
-    }
+        }
+    );
 
 }
 
 function getLists() {
 
-    const lists = [];
-
-    learningItems.forEach(function(item) {
-
-        const exists = lists.find(
-            function(list) {
-
-                return (
-                    list.listId
-                    === item.listId
-                );
-
-            }
-        );
-
-        if (!exists) {
-
-            lists.push({
-
-                listId:
-                    item.listId,
-
-                listTitle:
-                    item.listTitle,
-
-                themeId:
-                    item.themeId,
-
-                themeTitle:
-                    item.themeTitle
-
-            });
-
-        }
-
-    });
-
     return lists;
 
 }
+
 function getThemes() {
-
-    const themes = [];
-
-    learningItems.forEach(function(item) {
-
-        const exists = themes.find(
-            function(theme) {
-
-                return (
-                    theme.themeId
-                    === item.themeId
-                );
-
-            }
-        );
-
-        if (!exists) {
-
-            themes.push({
-
-                themeId:
-                    item.themeId,
-
-                themeTitle:
-                    item.themeTitle,
-
-                learningArea:
-                    item.learningArea
-
-            });
-
-        }
-
-    });
 
     return themes;
 
@@ -569,71 +598,102 @@ function loadLearningItemsFromStorage() {
 
 }
 
+/*======================================
+    Load Themes
+========================================*/
+
+/*
+Purpose
+-------
+Loads all Themes into the application's
+memory and upgrades older Theme records
+to the current LMS version.
+
+Why
+---
+Earlier versions of the LMS did not
+contain the 'isActive' property.
+
+This function ensures every Theme has
+an 'isActive' value before the rest of
+the application uses it.
+*/
+
 function loadThemesFromStorage() {
 
-    const savedThemes =
-        localStorage.getItem(
-            "themes"
-        );
+    /*
+    Load all Themes from the Repository.
+    */
+    loadAllThemes();
 
-    if (savedThemes) {
+    /*
+    Upgrade older Theme records.
 
-        window.themes =
-            JSON.parse(
-                savedThemes
-            );
+    Older versions of the LMS may not
+    contain the 'isActive' property.
+    */
+    themes.forEach(
+        function(theme) {
 
-        themes.forEach(
-            function(theme) {
+            if (
+                theme.isActive ===
+                undefined
+            ) {
 
-                if (
-                    theme.isActive ===
-                    undefined
-                ) {
-
-                    theme.isActive =
-                        true;
-
-                }
+                theme.isActive = true;
 
             }
-        );
 
-    }
+        }
+    );
 
 }
 
+
+/*======================================
+    Load Learning Areas
+========================================*/
+
+/*
+Purpose
+-------
+Loads all Learning Areas into memory and
+ensures that older data remains compatible
+with the current LMS version.
+
+Why
+---
+Earlier versions of the LMS did not contain
+the 'isActive' property.
+
+This function upgrades older Learning Area
+records after they are loaded so that the
+rest of the application can safely assume
+every Learning Area has an 'isActive' value.
+*/
+
 function loadLearningAreasFromStorage() {
 
-    const savedLearningAreas =
-        localStorage.getItem(
-            "learningAreas"
-        );
+    /*
+    Load all Learning Areas from the
+    Repository.
+    */
+    loadAllLearningAreas();
 
-    if (savedLearningAreas) {
+    /*
+    Upgrade older Learning Area records.
 
-        window.learningAreas =
-            JSON.parse(
-                savedLearningAreas
-            );
+    Older versions of the LMS may not have
+    stored the 'isActive' property.
 
-        learningAreas.forEach(
-            function(area) {
-
-                if (
-                    area.isActive ===
-                    undefined
-                ) {
-
-                    area.isActive =
-                        true;
-
-                }
-
-            }
-        );
-
-    }
+    Assign a default value so that the
+    application can work with both old
+    and new data.
+    */
+   
+   ensureIsActiveProperty(
+        learningAreas
+    );
 
 }
 
@@ -665,10 +725,37 @@ function loadAssessmentQuestions() {
 
 }
 
+function getCurrentLearnerProgress() {
+
+    const learnerId =
+        currentLearner.learnerId;
+
+    if (
+        !learnerProgress[
+            learnerId
+        ]
+    ) {
+
+        learnerProgress[
+            learnerId
+        ] = {
+
+            lists: {}
+
+        };
+
+    }
+
+    return learnerProgress[
+        learnerId
+    ];
+
+}
+
 loadCoursesFromStorage();
 loadLearningAreasFromStorage();
 loadThemesFromStorage();
 loadListsFromStorage();
 loadLearningItemsFromStorage();
 loadAssessmentQuestions();
-loadLearners();
+loadAllLearners();
